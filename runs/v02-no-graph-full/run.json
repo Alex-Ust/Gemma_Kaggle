@@ -1,0 +1,8 @@
+{
+  "task_ids": null,
+  "concurrency": 4,
+  "bundle": "v02_no_graph",
+  "tag": "full",
+  "slug": "alexust/gemma-eval-v02-no-graph-full",
+  "model": "gemma-4-31b-it-qat-w4a16-ct"
+}

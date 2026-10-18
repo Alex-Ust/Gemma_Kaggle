@@ -1,0 +1,8 @@
+{
+  "task_ids": null,
+  "concurrency": 4,
+  "bundle": "v03_locate",
+  "tag": "full",
+  "slug": "alexust/gemma-eval-v03-locate-full",
+  "model": "gemma-4-31b-it-qat-w4a16-ct"
+}
