@@ -1,0 +1,17 @@
+{
+  "task_ids": [
+    "fastapi_15280",
+    "fastapi_15800",
+    "fastapi_9425",
+    "httpx_3672",
+    "requests_6757",
+    "requests_7328",
+    "rich_2943",
+    "rich_3469"
+  ],
+  "concurrency": 4,
+  "bundle": "v02_no_graph",
+  "tag": "smoke",
+  "slug": "alexust/gemma-eval-v02-no-graph-smoke",
+  "model": "gemma-4-31b-it-qat-w4a16-ct"
+}
