@@ -1,0 +1,19 @@
+# secrets
+kaggle/
+*.json.key
+access_token
+
+# big / downloaded / generated
+data/
+vendor/
+.venv/
+logs/
+submissions/out/
+research/notebooks/
+results/
+
+# misc
+.DS_Store
+__pycache__/
+*.pyc
+*.zip
