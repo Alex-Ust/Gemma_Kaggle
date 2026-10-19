@@ -1,0 +1,248 @@
+{
+  "schema_version": "ATIF-v1.7",
+  "agent": {
+    "name": "adk-eval-core",
+    "version": "1.0"
+  },
+  "steps": [
+    {
+      "step_id": 1,
+      "source": "system",
+      "message": "You are an autonomous software engineer. Your job: make the smallest correct change to the SOURCE code in /workspace so that the hidden tests for the issue below pass. The hidden tests were written from the issue text, so the exact names, messages, types and behaviours in the issue are the specification.\n\n# HARD LIMITS\n- 28 tool calls and 8 minutes in total. When either runs out, the working tree is graded as it is. An edit that exists counts, even if you never call `submit_patch`. An unedited tree always scores zero.\n- Never create, modify or delete test files (`test_*.py`, `*_test.py`, anything under `tests/`, `pytest.ini`, `conftest.py`). This is an automatic failure.\n- Scratch files go in /tmp only, created with run_command and a quoted heredoc (`cat > /tmp/check.py <<'EOF'`). write_file and edit_file cannot write outside /workspace. Any file left under /workspace becomes part of the graded patch.\n- Tool responses gain a `budget_warning` field when 10 tool calls remain. If you see it and have not yet edited a source file, your very next call must be edit_file with your best fix. Reading more cannot score; an edit can.\n- Never run a full test suite (bare `pytest`, `pytest .`, `unittest discover`). Always name one test file, and add `-k` when you can.\n- Never look outside /workspace. All dependencies are already installed.\n\n# CALL PLAN\n- Call 1: the `locate` skill (see Locate). Calls 2-8: read and confirm. Calls 9-12: edit. You MUST have edited a source file by call 12. If you are unsure, make your best-guess edit in the most likely place now. A wrong edit can still be corrected. Pure reading cannot score.\n- Calls 13-20: verify and correct.\n- Call 20 onward: no new exploration. Check, fix, submit.\n- Always finish with `git diff` followed by `submit_patch`.\n\n# PROCEDURE\n\n## 1. Extract the specification (no tool call)\nFrom the issue, list for yourself: the exact file, function, class or CLI name; the exact error message and exception type; the expected return value or output; the inputs that trigger the bug; every edge case mentioned (None, empty, negative, unicode, duplicates, defaults). Treat every concrete string and name in the issue as a literal that must appear exactly in your code.\n\n## 2. Locate\n- Your FIRST tool call is `run_skill_script` with skill_name `locate`, file_path `scripts/locate.py`, and args holding one key `query`: the issue title followed by the exact identifiers, option names, error messages and file names from the issue (under 300 characters). It returns the most relevant source files with function names and line ranges in a single call. Do not call `load_skill`; this paragraph is all you need.\n- Read the best-ranked symbol's line range next. If it does not fit the issue, check the next candidates, and only then fall back to git grep.\n- Use exact paths from the issue directly. When searches are necessary, combine independent searches for the issue's exact symbols, their callers and relevant test paths into one run_command. Use git grep with fixed-string patterns for literal identifiers and git ls-files for tracked file paths; each result should show its file path and line number where applicable.\n- Batch only searches whose inputs are already known. If the next search depends on the first result, inspect that result before searching again. Limit each search to about 20 matching lines and keep total output short; never dump whole files or the repository tree.\n- Once the target is located, read the relevant implementation plus one relevant caller or test case. When both paths and line ranges are known, read these small regions in one run_command using sed with explicit line ranges, or use read_file for a single region. Aim for about 40 lines per region and at most three regions per command. Include enough surrounding code to understand signatures, defaults and error handling.\n- For a bug: find where the wrong behaviour is produced and use the caller or test to understand the contract before editing.\n- For a feature: find the closest existing sibling (a similar function, option, class, or doc example) and copy its pattern, including registration points such as __all__, option lists, dispatch tables and imports.\n- Reuse paths and test names already discovered. Do not spend another tool call repeating a search that already answered the question.\n- If the issue includes a code snippet that reproduces the problem, you may run it once with python -c (one call, never create a file) to see the real error. Never run more than one reproduction. If it does not reproduce, do not investigate why: implement the change the issue describes.\n\n## 3. Edit\n- Use edit_file for changes to existing code. Copy old_string exactly from the source, including whitespace, and choose a short unique match. Use write_file only for a genuinely new source file that the issue requires.\n- If edit_file reports no match or multiple matches, read the exact source region and retry with a smaller unique snippet. Never repeat an identical failed edit. After two matching failures, use one inline Python script through run_command with a quoted heredoc; assert that the old text occurs exactly once before replacing it and writing the file. Preserve unrelated content and do not rewrite the file from memory.\n- Fix the cause, not the symptom. Do not special-case the example from the issue.\n- If the issue names one member of a group (one type in a tuple or isinstance check, one parameter kind, one of several sibling classes or options), check the other members and apply the same fix to all of them unless the issue says otherwise. Hidden tests often cover the siblings too.\n- Change only what the issue requires. Keep existing signatures, defaults, and backward compatibility unless the issue says otherwise. Match the style, naming and error-handling idioms of the surrounding code.\n- If the same behaviour has parallel implementations (sync and async variants, Client and AsyncClient, several backends or transports, typing overloads, re-exports in `__init__.py` or `__all__`), apply the change to every one of them. Hidden tests often exercise more than one.\n- Use the exact exception class and exact message text from the issue. If the issue only describes the error, reuse the wording style of neighbouring error messages.\n- Handle every edge case you listed in step 1.\n- For documentation-code tasks (for example FastAPI), edit the executable code under `docs_src/`.\n\n## 4. Verify (2-3 calls)\n- Run `run_skill_script` with skill_name `check` and file_path `scripts/check.py` (no args). In one call it compiles and imports every changed module, warns about scratch or test files in the diff, and runs the existing tests that import the changed modules. A `SYNTAX ERROR` or `IMPORT FAILED` line means the patch scores zero as it is: fix that before anything else, then run `check` again.\n- If the issue shows a code example or an expected output, run that exact example once with python -c after your edit and compare the result with what the issue expects.\n- Failures that come from missing fixtures, missing data, or import errors unrelated to your change are pre-existing. Ignore them. Never repair tests or the environment.\n- If a test related to your change fails, read the assertion, fix the source once, and run `check` again.\n\n## 5. Final check and submit\n- The `check` report lists the changed source files. If it warns about scratch files or changed test files, delete them or restore them with `git checkout --` before submitting. Confirm that every name, message and type from step 1 appears exactly and that nothing unrelated was touched. If calls remain, `git diff` shows the full change.\n- Call `submit_patch`. Confirm `patch_size > 0` and `files_changed > 0`. If either is 0, you have not edited anything. Edit now and submit again.\n- End with a single-sentence summary of the fix.\n\n# DECISION RULES\n- Ambiguous issue: choose the most literal reading of the issue text and act on it. Do not ask questions and do not stall.\n- Several possible locations: pick the one where the wrong behaviour is produced, not where it is merely observed.\n- Search returned nothing: try one different specific string, then edit your best candidate anyway.\n- Stuck after a failed fix: make a different, smaller change. Do not repeat the same edit.\n- Never conclude that nothing needs to change. Every task requires a non-empty source patch.",
+      "extra": {
+        "event_type": "system_instruction",
+        "elapsed_s": 8.619961023330688,
+        "timestamp": 1792413996.235766,
+        "author": "harness"
+      }
+    },
+    {
+      "step_id": 2,
+      "source": "user",
+      "message": "You are evaluating a software engineering task for repository fastapi/fastapi.\n\nProblem Statement:\n\ud83d\udc1b Fix `on_startup` and `on_shutdown` parameters of `APIRouter`\n\nThis fixes the issue reported in this comment: https://github.com/fastapi/fastapi/pull/14851#issuecomment-3863896385\r\n\r\n```py\r\nfrom fastapi import FastAPI\r\n\r\n\r\ndef s_start():\r\n    print(\"SYNC START\", flush=True)\r\n\r\n\r\napp = FastAPI(on_startup=[s_start])\r\n\r\n\r\n@app.get(\"/health\")\r\nasync def health():\r\n    return {\"ok\": True}\r\n```\r\n\r\nStartup event is not called because `APIRouter.on_startup` is set in `APIRouter.__init__` before calling `super().__init__` and  is overridden by `router.__init__` (https://github.com/Kludex/starlette/blob/e5b8a5d200504a2608bed11fe6f66b1d20b9ae2c/starlette/routing.py#L597-L598)\n\n## Task Budget (Session terminates when any budget is exhausted)\n- Time allowance: 8.0 minutes\n- Tool calls allowance: 28 calls\n- Max loop iterations: 80 turns\n\n## Execution Environment Rules\n- Single command timeout: 240 seconds (commands exceeding this fail without ending the session)\n- Command output limit: 5000 characters\n- File view limit: 150 lines per read_file call\n- File character limit: 10000 characters per read_file call\n- Environment is offline (no network/PyPI access). All repository and test dependencies are ALREADY pre-installed. Do NOT attempt to run pip install or download packages.\n\n## Instructions:\n0. All source code is under `/workspace`. Do NOT search outside `/workspace` (e.g. `/usr/`, `/wheels/`, system site-packages). If imports fail, the issue is in the source code under `/workspace`, not in missing system packages.\n1. Analyze the problem statement and any provided hints carefully to identify all requested script paths, CLI subcommands, or Python modules.\n2. Inspect existing codebase conventions and test files before making edits.\n3. Verify your implementation using targeted tests or inline assertions before submitting.\n4. Call submit_patch only after your implementation is complete and verified.\n5. As your final action, you must return a text-only response reporting your completion to terminate the session.\n## Workspace Layout\nThe repository is located at `/workspace`. Here is the directory tree (up to 3 levels):\n```\n./CITATION.cff\n./CONTRIBUTING.md\n./LICENSE\n./README.md\n./SECURITY.md\n./conftest.py\n./docs\n./docs_src\n./fastapi\n./fastapi/__init__.py\n./fastapi/__main__.py\n./fastapi/_compat\n./fastapi/_compat/__init__.py\n./fastapi/_compat/shared.py\n./fastapi/_compat/v2.py\n./fastapi/applications.py\n./fastapi/background.py\n./fastapi/cli.py\n./fastapi/concurrency.py\n./fastapi/datastructures.py\n./fastapi/dependencies\n./fastapi/dependencies/__init__.py\n./fastapi/dependencies/models.py\n./fastapi/dependencies/utils.py\n./fastapi/encoders.py\n./fastapi/exception_handlers.py\n./fastapi/exceptions.py\n./fastapi/logger.py\n./fastapi/middleware\n./fastapi/middleware/__init__.py\n./fastapi/middleware/asyncexitstack.py\n./fastapi/middleware/cors.py\n./fastapi/middleware/gzip.py\n./fastapi/middleware/httpsredirect.py\n./fastapi/middleware/trustedhost.py\n./fastapi/middleware/wsgi.py\n./fastapi/openapi\n./fastapi/openapi/__init__.py\n./fastapi/openapi/constants.py\n./fastapi/openapi/docs.py\n./fastapi/openapi/models.py\n./fastapi/openapi/utils.py\n./fastapi/param_functions.py\n./fastapi/params.py\n./fastapi/py.typed\n./fastapi/requests.py\n./fastapi/responses.py\n./fastapi/routing.py\n./fastapi/security\n./fastapi/security/__init__.py\n./fastapi/security/api_key.py\n./fastapi/security/base.py\n./fastapi/security/http.py\n./fastapi/security/oauth2.py\n./fastapi/security/open_id_connect_url.py\n./fastapi/security/utils.py\n./fastapi/staticfiles.py\n./fastapi/templating.py\n./fastapi/testclient.py\n./fastapi/types.py\n./fastapi/utils.py\n./fastapi/websockets.py\n./pdm_build.py\n./pyproject.toml\n./pytest.ini\n./scripts\n./scripts/contributors.py\n./scripts/coverage.sh\n./scripts/deploy_docs_status.py\n./scripts/doc_parsing_utils.py\n./scripts/docs.py\n./scripts/format.sh\n./scripts/general-llm-prompt.md\n./scripts/label_approved.py\n./scripts/lint.sh\n./scripts/mkdocs_hooks.py\n./scripts/notify_translations.py\n./scripts/people.py\n./scripts/playwright\n./scripts/playwright/cookie_param_models\n./scripts/playwright/header_param_models\n./scripts/playwright/query_param_models\n./scripts/playwright/request_form_models\n./scripts/playwright/separate_openapi_schemas\n./scripts/playwright/sql_databases\n./scripts/sponsors.py\n./scripts/test-cov-html.sh\n./scripts/test.sh\n./scripts/tests\n./scripts/tests/test_translation_fixer\n./scripts/topic_repos.py\n./scripts/translate.py\n./scripts/translation_fixer.py\n./tests\n./uv.lock\n```\n",
+      "extra": {
+        "event_type": "task_prompt",
+        "elapsed_s": 8.619965314865112,
+        "timestamp": 1792413996.2357702,
+        "author": "harness"
+      }
+    },
+    {
+      "step_id": 3,
+      "source": "agent",
+      "model_name": "gemma-4-31b-it-qat-w4a16-ct",
+      "tool_calls": [
+        {
+          "tool_call_id": "call_2",
+          "function_name": "run_skill_script",
+          "arguments": {
+            "skill_name": "locate",
+            "file_path": "scripts/locate.py",
+            "args": {
+              "query": "\ud83d\udc1b Fix `on_startup` and `on_shutdown` parameters of `APIRouter`"
+            }
+          },
+          "extra": {
+            "elapsed_s": 8.626724004745483,
+            "timestamp": 1792413996.242529,
+            "author": "swe_agent",
+            "usage": {
+              "prompt_tokens": 1,
+              "completion_tokens": 1,
+              "cached_tokens": 0,
+              "total_tokens": 2
+            },
+            "model_version": "gemma-4-31b-it-qat-w4a16-ct"
+          }
+        }
+      ],
+      "observation": {
+        "content": "{\"skill_name\": \"locate\", \"file_path\": \"scripts/locate.py\", \"stdout\": \"Most relevant source files for the issue (root=/workspace); best symbols with line ranges:\\n 129.2  fastapi/routing.py: APIRouter._shutdown L4562-4575, APIRouter._startup L4546-4559, APIRouter.add_event_handler L4578-4595\\n  60.0  docs_src/sql_databases/tutorial001_py39.py: on_startup L33-35\\n  60.0  docs_src/sql_databases/tutorial002_py310.py: on_startup L48-50\\n  60.0  docs_src/sql_databases/tutorial001_py310.py: on_startup L31-33\\n  60.0  docs_src/sql_databases/tutorial002_py39.py: on_startup L50-52\\n  60.0  docs_src/sql_databases/tutorial002_an_py39.py: on_startup L51-53\\nRead the top symbol's line range with read_file before editing; test files are excluded here.\\n\", \"stderr\": \"\", \"status\": \"success\"}",
+        "extra": {
+          "tool_name": "run_skill_script",
+          "elapsed_s": 9.675933122634888,
+          "timestamp": 1792413997.291738,
+          "author": "swe_agent"
+        }
+      },
+      "metrics": {
+        "prompt_tokens": 1,
+        "completion_tokens": 1,
+        "cached_tokens": 0,
+        "total_tokens": 2
+      },
+      "llm_call_count": 1,
+      "extra": {
+        "elapsed_s": 8.626724004745483,
+        "timestamp": 1792413996.242529,
+        "author": "swe_agent"
+      }
+    },
+    {
+      "step_id": 4,
+      "source": "agent",
+      "model_name": "gemma-4-31b-it-qat-w4a16-ct",
+      "tool_calls": [
+        {
+          "tool_call_id": "call_4",
+          "function_name": "run_command",
+          "arguments": {
+            "command": "cat > /tmp/agent.diff <<'PATCHEOF'\n--- a/fastapi/routing.py\n+++ b/fastapi/routing.py\n@@ -952,16 +952,6 @@ def __init__(\n             ),\n         ] = Default(generate_unique_id),\n     ) -> None:\n-        # Handle on_startup/on_shutdown locally since Starlette removed support\n-        # Ref: https://github.com/Kludex/starlette/pull/3117\n-        # TODO: deprecate this once the lifespan (or alternative) interface is improved\n-        self.on_startup: list[Callable[[], Any]] = (\n-            [] if on_startup is None else list(on_startup)\n-        )\n-        self.on_shutdown: list[Callable[[], Any]] = (\n-            [] if on_shutdown is None else list(on_shutdown)\n-        )\n-\n         # Determine the lifespan context to use\n         if lifespan is None:\n             # Use the default lifespan that runs on_startup/on_shutdown handlers\n@@ -985,6 +975,17 @@ def __init__(\n             assert not prefix.endswith(\"/\"), (\n                 \"A path prefix must not end with '/', as the routes will start with '/'\"\n             )\n+\n+        # Handle on_startup/on_shutdown locally since Starlette removed support\n+        # Ref: https://github.com/Kludex/starlette/pull/3117\n+        # TODO: deprecate this once the lifespan (or alternative) interface is improved\n+        self.on_startup: list[Callable[[], Any]] = (\n+            [] if on_startup is None else list(on_startup)\n+        )\n+        self.on_shutdown: list[Callable[[], Any]] = (\n+            [] if on_shutdown is None else list(on_shutdown)\n+        )\n+\n         self.prefix = prefix\n         self.tags: list[Union[str, Enum]] = tags or []\n         self.dependencies = list(dependencies or [])\nPATCHEOF\ngit apply --recount /tmp/agent.diff && git status --short"
+          },
+          "extra": {
+            "elapsed_s": 9.687000036239624,
+            "timestamp": 1792413997.302805,
+            "author": "swe_agent",
+            "usage": {
+              "prompt_tokens": 1,
+              "completion_tokens": 1,
+              "cached_tokens": 0,
+              "total_tokens": 2
+            },
+            "model_version": "gemma-4-31b-it-qat-w4a16-ct"
+          }
+        }
+      ],
+      "observation": {
+        "content": "{\"status\": \"ok\", \"stdout\": \" M fastapi/routing.py\\n\", \"stderr\": \"\", \"exit_code\": 0}",
+        "extra": {
+          "tool_name": "run_command",
+          "elapsed_s": 10.016617059707642,
+          "timestamp": 1792413997.632422,
+          "author": "swe_agent"
+        }
+      },
+      "metrics": {
+        "prompt_tokens": 1,
+        "completion_tokens": 1,
+        "cached_tokens": 0,
+        "total_tokens": 2
+      },
+      "llm_call_count": 1,
+      "extra": {
+        "elapsed_s": 9.687000036239624,
+        "timestamp": 1792413997.302805,
+        "author": "swe_agent"
+      }
+    },
+    {
+      "step_id": 5,
+      "source": "agent",
+      "model_name": "gemma-4-31b-it-qat-w4a16-ct",
+      "tool_calls": [
+        {
+          "tool_call_id": "call_6",
+          "function_name": "run_skill_script",
+          "arguments": {
+            "skill_name": "check",
+            "file_path": "scripts/check.py"
+          },
+          "extra": {
+            "elapsed_s": 10.028975009918213,
+            "timestamp": 1792413997.64478,
+            "author": "swe_agent",
+            "usage": {
+              "prompt_tokens": 1,
+              "completion_tokens": 1,
+              "cached_tokens": 0,
+              "total_tokens": 2
+            },
+            "model_version": "gemma-4-31b-it-qat-w4a16-ct"
+          }
+        }
+      ],
+      "observation": {
+        "content": "{\"skill_name\": \"check\", \"file_path\": \"scripts/check.py\", \"stdout\": \"changed source files: ['fastapi/routing.py']\\ncompile + import: OK\\ntests run: tests/test_route_scope.py tests/test_custom_route_class.py tests/test_generate_unique_id_function.py\\n1 error in 0.56s\\nERROR tests/test_custom_route_class.py\\nE   ModuleNotFoundError: No module named 'inline_snapshot'\\nOnly failures about your change matter; failures from missing fixtures or imports unrelated to your edit are pre-existing.\\n\", \"stderr\": \"\", \"status\": \"success\"}",
+        "extra": {
+          "tool_name": "run_skill_script",
+          "elapsed_s": 12.465116262435913,
+          "timestamp": 1792414000.0809212,
+          "author": "swe_agent"
+        }
+      },
+      "metrics": {
+        "prompt_tokens": 1,
+        "completion_tokens": 1,
+        "cached_tokens": 0,
+        "total_tokens": 2
+      },
+      "llm_call_count": 1,
+      "extra": {
+        "elapsed_s": 10.028975009918213,
+        "timestamp": 1792413997.64478,
+        "author": "swe_agent"
+      }
+    },
+    {
+      "step_id": 6,
+      "source": "agent",
+      "model_name": "gemma-4-31b-it-qat-w4a16-ct",
+      "tool_calls": [
+        {
+          "tool_call_id": "call_8",
+          "function_name": "submit_patch",
+          "arguments": {},
+          "extra": {
+            "elapsed_s": 12.477021217346191,
+            "timestamp": 1792414000.0928261,
+            "author": "swe_agent",
+            "usage": {
+              "prompt_tokens": 1,
+              "completion_tokens": 1,
+              "cached_tokens": 0,
+              "total_tokens": 2
+            },
+            "model_version": "gemma-4-31b-it-qat-w4a16-ct"
+          }
+        }
+      ],
+      "observation": {
+        "content": "{\"status\": \"ok\", \"patch_size\": 1747, \"files_changed\": 1}",
+        "extra": {
+          "tool_name": "submit_patch",
+          "elapsed_s": 12.743810176849365,
+          "timestamp": 1792414000.359615,
+          "author": "swe_agent"
+        }
+      },
+      "metrics": {
+        "prompt_tokens": 1,
+        "completion_tokens": 1,
+        "cached_tokens": 0,
+        "total_tokens": 2
+      },
+      "llm_call_count": 1,
+      "extra": {
+        "elapsed_s": 12.477021217346191,
+        "timestamp": 1792414000.0928261,
+        "author": "swe_agent"
+      }
+    },
+    {
+      "step_id": 7,
+      "source": "agent",
+      "message": "Done.",
+      "model_name": "gemma-4-31b-it-qat-w4a16-ct",
+      "metrics": {
+        "prompt_tokens": 1,
+        "completion_tokens": 1,
+        "cached_tokens": 0,
+        "total_tokens": 2
+      },
+      "llm_call_count": 1,
+      "extra": {
+        "event_type": "final",
+        "elapsed_s": 12.75115418434143,
+        "timestamp": 1792414000.366959,
+        "author": "swe_agent"
+      }
+    }
+  ],
+  "final_metrics": {
+    "total_prompt_tokens": 5,
+    "total_completion_tokens": 5,
+    "total_cached_tokens": 0,
+    "total_tokens": 10,
+    "total_steps": 7
+  }
+}

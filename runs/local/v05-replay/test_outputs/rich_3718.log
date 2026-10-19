@@ -1,0 +1,14 @@
+STDOUT:
+.............                                                            [100%]
+=============================== warnings summary ===============================
+../usr/local/lib/python3.13/site-packages/_pytest/python.py:124
+  /usr/local/lib/python3.13/site-packages/_pytest/python.py:124: PytestRemovedIn10Warning: Passing a non-Collection iterable to parametrize is deprecated.
+  Test: test_panel.py::test_render_panel, argvalues type: zip
+  Please convert to a list or tuple.
+  See https://docs.pytest.org/en/stable/deprecations.html#parametrize-iterators
+    metafunc.parametrize(*marker.args, **marker.kwargs, _param_mark=marker)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+13 passed, 1 warning in 0.12s
+
+STDERR:

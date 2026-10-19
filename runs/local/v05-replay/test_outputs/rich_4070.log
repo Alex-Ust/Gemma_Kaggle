@@ -1,0 +1,48 @@
+STDOUT:
+
+==================================== ERRORS ====================================
+_______________________ ERROR collecting test_console.py _______________________
+tests/test_console.py:15: in <module>
+    from rich.console import (
+rich/console.py:44: in <module>
+    from ._log_render import FormatTimeCallable, LogRender
+rich/_log_render.py:5: in <module>
+    from .text import Text, TextType
+rich/text.py:22: in <module>
+    from .align import AlignMethod
+rich/align.py:4: in <module>
+    from .constrain import Constrain
+rich/constrain.py:3: in <module>
+    from .jupyter import JupyterMixin
+rich/jupyter.py:7: in <module>
+    from .segment import Segment
+rich/segment.py:30: in <module>
+    log = getLogger("rich")
+          ^^^^^^^^^
+E   NameError: name 'getLogger' is not defined
+_______________________ ERROR collecting test_syntax.py ________________________
+tests/test_syntax.py:10: in <module>
+    from rich.console import Console
+rich/console.py:44: in <module>
+    from ._log_render import FormatTimeCallable, LogRender
+rich/_log_render.py:5: in <module>
+    from .text import Text, TextType
+rich/text.py:22: in <module>
+    from .align import AlignMethod
+rich/align.py:4: in <module>
+    from .constrain import Constrain
+rich/constrain.py:3: in <module>
+    from .jupyter import JupyterMixin
+rich/jupyter.py:7: in <module>
+    from .segment import Segment
+rich/segment.py:30: in <module>
+    log = getLogger("rich")
+          ^^^^^^^^^
+E   NameError: name 'getLogger' is not defined
+=========================== short test summary info ============================
+ERROR tests/test_console.py - NameError: name 'getLogger' is not defined
+ERROR tests/test_syntax.py - NameError: name 'getLogger' is not defined
+!!!!!!!!!!!!!!!!!!! Interrupted: 2 errors during collection !!!!!!!!!!!!!!!!!!!!
+2 errors in 0.43s
+
+STDERR:

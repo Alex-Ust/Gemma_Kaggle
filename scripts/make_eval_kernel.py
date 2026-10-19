@@ -53,6 +53,7 @@ def main():
     ap.add_argument("--tag", required=True)
     ap.add_argument("--n", type=int, default=None, help="number of tasks (default: all 129)")
     ap.add_argument("--task-ids", nargs="*")
+    ap.add_argument("--set", choices=["sound"], help="use a named task set from data/task_sets.json")
     ap.add_argument("--concurrency", type=int, default=4)
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--mode", default="agent", choices=["agent", "gold", "empty"],
@@ -65,7 +66,7 @@ def main():
              for p in sorted(bundle.rglob("*")) if p.is_file() and p.name != ".DS_Store"}
     text = (bundle / "agent.yaml").read_text()
     model = next(m for m in MODELS if m in text)
-    task_ids = a.task_ids or pick_tasks(a.n, a.seed)
+    task_ids = a.task_ids or (json.load(open(ROOT / "data/task_sets.json"))[a.set] if a.set else pick_tasks(a.n, a.seed))
     run = {"task_ids": task_ids, "concurrency": a.concurrency, "bundle": bundle.name, "tag": a.tag, "mode": a.mode}
     gpu = a.mode == "agent"
 

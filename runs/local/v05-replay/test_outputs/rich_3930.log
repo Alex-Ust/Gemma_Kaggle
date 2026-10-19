@@ -1,0 +1,77 @@
+STDOUT:
+
+==================================== ERRORS ====================================
+________________________ ERROR collecting test_cells.py ________________________
+/usr/local/lib/python3.13/site-packages/_pytest/python.py:508: in importtestmodule
+    mod = import_path(
+/usr/local/lib/python3.13/site-packages/_pytest/pathlib.py:596: in import_path
+    importlib.import_module(module_name)
+/usr/local/lib/python3.13/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1404: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1369: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1340: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+/usr/local/lib/python3.13/site-packages/_pytest/assertion/rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests/test_cells.py:7: in <module>
+    from rich import cells
+E     File "/workspace/rich/cells.py", line 187
+E       for line in chop_cells("""这是对亚洲语言支持的测试。面对模棱两可的想法，拒绝猜测的诱惑。""", 8):
+E                                             ^
+E   SyntaxError: invalid character '。' (U+3002)
+________________________ ERROR collecting test_text.py _________________________
+/usr/local/lib/python3.13/site-packages/_pytest/python.py:508: in importtestmodule
+    mod = import_path(
+/usr/local/lib/python3.13/site-packages/_pytest/pathlib.py:596: in import_path
+    importlib.import_module(module_name)
+/usr/local/lib/python3.13/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1404: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1369: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1340: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+/usr/local/lib/python3.13/site-packages/_pytest/assertion/rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests/test_text.py:7: in <module>
+    from rich.console import Console, Group
+rich/console.py:44: in <module>
+    from ._log_render import FormatTimeCallable, LogRender
+rich/_log_render.py:5: in <module>
+    from .text import Text, TextType
+rich/text.py:21: in <module>
+    from ._wrap import divide_line
+rich/_wrap.py:7: in <module>
+    from .cells import cell_len, chop_cells
+E     File "/workspace/rich/cells.py", line 187
+E       for line in chop_cells("""这是对亚洲语言支持的测试。面对模棱两可的想法，拒绝猜测的诱惑。""", 8):
+E                                             ^
+E   SyntaxError: invalid character '。' (U+3002)
+____________________ ERROR collecting test_unicode_data.py _____________________
+ImportError while importing test module '/workspace/tests/test_unicode_data.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/usr/local/lib/python3.13/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_unicode_data.py:5: in <module>
+    from rich._unicode_data import VERSIONS, _parse_version, load
+E   ModuleNotFoundError: No module named 'rich._unicode_data'
+=========================== short test summary info ============================
+ERROR tests/test_cells.py
+ERROR tests/test_text.py
+ERROR tests/test_unicode_data.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 3 errors during collection !!!!!!!!!!!!!!!!!!!!
+3 errors in 0.43s
+
+STDERR:

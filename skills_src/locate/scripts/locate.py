@@ -123,7 +123,8 @@ def collect_units(root):
         parts = set(rel_dir.replace("\\", "/").split("/"))
         is_test_dir = bool(parts & {"tests", "test", "testing"})
         for fn in filenames:
-            if not fn.endswith(".py"):
+            # skip hidden files: the harness drops its skill wrapper (.adk_exec_*.py) into the repo root
+            if not fn.endswith(".py") or fn.startswith("."):
                 continue
             if is_test_dir or fn.startswith("test_") or fn.endswith("_test.py") or fn == "conftest.py":
                 continue
