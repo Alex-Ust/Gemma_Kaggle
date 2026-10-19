@@ -75,13 +75,19 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("run")
     ap.add_argument("--vs")
+    ap.add_argument("--set", choices=["sound"], help="restrict both runs to a task set from data/task_sets.json")
     a = ap.parse_args()
     run_dir = ROOT / a.run
     rows = load(run_dir)
+    keep = set(json.load(open(ROOT / "data/task_sets.json"))[a.set]) if a.set else None
+    if keep:
+        rows = {k: v for k, v in rows.items() if k in keep}
     summary(run_dir.name, rows, json.loads((run_dir / "run.json").read_text()).get("concurrency"))
     if a.vs:
         base_dir = ROOT / a.vs
         base = load(base_dir)
+        if keep:
+            base = {k: v for k, v in base.items() if k in keep}
         summary(base_dir.name, base, json.loads((base_dir / "run.json").read_text()).get("concurrency"))
         common = sorted(set(rows) & set(base))
         wins = [i for i in common if rows[i]["resolved"] and not base[i]["resolved"]]

@@ -7,7 +7,7 @@
 4. Finds existing tests that reference the changed modules and runs them (quick, with a timeout).
 
 Stdlib only: runs inside the offline sandbox.
-  check.py [--tests "tests/test_x.py::test_y tests/test_z.py"] [--no-tests] [--timeout 150]
+  check.py [--tests "tests/test_x.py::test_y tests/test_z.py"] [--no-tests] [--timeout 60]
 """
 import argparse
 import os
@@ -111,7 +111,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--tests", default="")
     ap.add_argument("--no-tests", action="store_true")
-    ap.add_argument("--timeout", type=int, default=150)
+    ap.add_argument("--timeout", type=int, default=60)
     ap.add_argument("--root", default=None)
     a, _ = ap.parse_known_args()
     root = find_root(a.root)
@@ -151,8 +151,9 @@ def main():
             code, so, se = sh(cmd, root, timeout=a.timeout)
             out.append(f"tests run: {' '.join(targets)}")
             out.append(summarize_pytest(so + "\n" + se) if code != -9 else f"pytest {se}")
-            out.append("Only failures about your change matter; failures from missing fixtures or imports "
-                       "unrelated to your edit are pre-existing.")
+            out.append("A failure matters only if it checks behaviour the issue did NOT ask to change. A test that "
+                       "asserts the old behaviour the issue asks to change is expected to fail (hidden tests replace "
+                       "it): keep your fix. Failures from missing fixtures or unrelated imports are pre-existing.")
         else:
             out.append("no related existing tests found; check behaviour with a short python -c instead")
     text = "\n".join(out)

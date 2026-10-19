@@ -42,7 +42,7 @@ def plan(task, patch):
         if not patch.endswith("\n"):
             patch += "\n"  # git apply needs the final newline
         b64 = base64.b64encode(patch.encode()).decode()
-        cmd = f"echo {b64} | base64 -d > /tmp/agent.diff && git apply --recount /tmp/agent.diff && git status --short"
+        cmd = f"echo {b64} | base64 -d > /tmp/agent.diff && (git apply --recount /tmp/agent.diff || git apply -3 /tmp/agent.diff || git apply --ignore-whitespace /tmp/agent.diff || patch -p1 --batch --forward < /tmp/agent.diff) && git status --short"
         steps.append(("run_command", {"command": cmd}))
     steps.append(("run_skill_script", {"skill_name": "check", "file_path": "scripts/check.py"}))
     steps.append(("submit_patch", {}))

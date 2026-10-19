@@ -37,6 +37,7 @@ def clean_query(q):
     q = re.sub(r"</?(details|summary)>", " ", q)
     return q
 
+SHOW_LINES = 60
 CAMEL = re.compile(r"[A-Z]+(?=[A-Z][a-z])|[A-Z]?[a-z]+|[A-Z]+|\d+")
 
 
@@ -218,6 +219,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--query", "-q", default="")
     ap.add_argument("--k", type=int, default=6)
+    ap.add_argument("--show", type=int, default=1, help="print the source of the N best functions in the top file")
     ap.add_argument("--root", default=None)
     ap.add_argument("rest", nargs="*")
     a, unknown = ap.parse_known_args()
@@ -235,7 +237,34 @@ def main():
         syms = [u for _, u in by_file[path] if u.kind != "module"][:3]
         sym_txt = ", ".join(f"{u.name} L{u.start}-{u.end}" for u in syms) or "(module level)"
         print(f"{fs:6.1f}  {path}: {sym_txt}")
-    print("Read the top symbol's line range with read_file before editing; test files are excluded here.")
+    if a.show > 0:
+        top_path = files[0][0]
+        ranked = [u for _, u in by_file[top_path] if u.kind != "module"]
+        # show the best symbol; a huge class is replaced by the best function inside the file
+        best = []
+        for u in ranked:
+            if u.kind == "class" and u.end - u.start + 1 > 80:
+                continue
+            if any(b.start <= u.start and u.end <= b.end for b in best):
+                continue
+            best.append(u)
+            if len(best) >= a.show:
+                break
+        try:
+            lines = open(os.path.join(root, top_path), encoding="utf-8", errors="replace").read().splitlines()
+        except OSError:
+            lines = []
+        budget = 2600
+        for u in best:
+            end = min(u.end, u.start + SHOW_LINES - 1)
+            body = "\n".join(f"{i:5d}  {lines[i - 1]}" for i in range(u.start, end + 1) if i <= len(lines))
+            body = body[:budget]
+            budget -= len(body)
+            more = f" (first {SHOW_LINES} of {u.end - u.start + 1} lines)" if end < u.end else ""
+            print(f"\n--- {top_path} {u.name} L{u.start}-{u.end}{more}\n{body}")
+            if budget <= 200:
+                break
+    print("\nConfirm the location against the issue before editing; test files are excluded here.")
 
 
 if __name__ == "__main__":
