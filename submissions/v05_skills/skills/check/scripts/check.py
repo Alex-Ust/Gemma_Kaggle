@@ -182,8 +182,14 @@ def main():
     mb = [module_and_base(root, f) for f in src]
     mods = [m for m, _ in mb if m]
     bases = sorted({b for m, b in mb if m})
-    for m in mods:
-        if m.startswith(("docs_src", "docs", "scripts", "examples")):
+    root_abs = os.path.abspath(root)
+    import_roots = {root_abs, os.path.join(root_abs, "src")}
+    for f, (m, b) in zip(src, mb):
+        # import only library code: modules inside a package or at the repo/src root.
+        # Docs examples and scripts run app code on import, so they get the syntax check only.
+        if not m or f.startswith(("docs_src/", "docs/", "doc/", "scripts/", "examples/", "benchmarks/")):
+            continue
+        if "." not in m and b not in import_roots:
             continue
         code, so, se = sh([sys.executable, "-c", f"import {m}"], root, timeout=30, env=with_pythonpath(bases))
         if code != 0:
