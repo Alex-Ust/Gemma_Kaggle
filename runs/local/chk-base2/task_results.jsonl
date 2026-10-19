@@ -1,0 +1,2 @@
+{"instance_id": "rich_4076", "repo": "Textualize/rich", "resolved": true, "agent_patch_size": 751, "test_exit_code": 0, "duration_seconds": 47.17, "error": null, "tool_calls": 3, "total_llm_calls": 5, "task_index": 1}
+{"instance_id": "fastapi_13537", "repo": "fastapi/fastapi", "resolved": false, "agent_patch_size": 604, "test_exit_code": 2, "duration_seconds": 25.21, "error": null, "tool_calls": 3, "total_llm_calls": 5, "task_index": 2}

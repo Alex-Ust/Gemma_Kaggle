@@ -7,14 +7,16 @@
 4. Finds existing tests that reference the changed modules and runs them (quick, with a timeout).
 
 Stdlib only: runs inside the offline sandbox.
-  check.py [--tests "tests/test_x.py::test_y tests/test_z.py"] [--no-tests] [--timeout 60]
+  check.py [--tests "tests/test_x.py::test_y tests/test_z.py"] [--no-tests] [--timeout 45]
 """
 import argparse
 import os
 import py_compile
 import re
+import shutil
 import subprocess
 import sys
+import tempfile
 
 TEST_RE = re.compile(r"(^|/)(tests?|testing)/|(^|/)test_[^/]*\.py$|_test\.py$")
 CONFIG_FILES = {"conftest.py", "pytest.ini", "pyproject.toml", "tox.ini", "setup.cfg", ".pytest.ini"}
@@ -29,10 +31,10 @@ def find_root(cli_root):
     return cli_root or os.getcwd()
 
 
-def sh(cmd, cwd, timeout=60):
+def sh(cmd, cwd, timeout=60, env=None):
     try:
         r = subprocess.run(cmd, cwd=cwd, shell=isinstance(cmd, str), capture_output=True, text=True,
-                           timeout=timeout)
+                           timeout=timeout, env=env)
         return r.returncode, r.stdout, r.stderr
     except subprocess.TimeoutExpired as e:
         return -9, e.stdout or "", f"timed out after {timeout}s"
@@ -46,18 +48,56 @@ def changed_files(root):
     return t, u
 
 
-def module_name(root, path):
-    """Dotted module for a changed file, or None if it is not importable from root."""
+def module_and_base(root, path):
+    """(dotted module, directory to put on sys.path) for a changed .py file, else (None, None).
+
+    Walks up from the file while directories are packages (have __init__.py), so src/ layouts and
+    monorepos (package code under a plain sub-directory) resolve to the importable name."""
     if not path.endswith(".py"):
-        return None
-    parts = path[:-3].split("/")
-    if parts[0] == "src" and len(parts) > 1:
-        parts = parts[1:]
+        return None, None
+    root = os.path.abspath(root)
+    d = os.path.dirname(os.path.join(root, path))
+    parts = [os.path.basename(path)[:-3]]
+    while d != root and d.startswith(root) and os.path.exists(os.path.join(d, "__init__.py")):
+        parts.insert(0, os.path.basename(d))
+        d = os.path.dirname(d)
     if parts[-1] == "__init__":
         parts = parts[:-1]
     if not parts or not all(p.isidentifier() for p in parts):
-        return None
-    return ".".join(parts)
+        return None, None
+    return ".".join(parts), d
+
+
+def module_name(root, path):
+    return module_and_base(root, path)[0]
+
+
+def with_pythonpath(dirs):
+    env = dict(os.environ)
+    env["PYTHONPATH"] = os.pathsep.join([d for d in dirs if d] + [env.get("PYTHONPATH", "")])
+    return env
+
+
+def baseline_failures(root, nodeids, bases, timeout):
+    """Run the given test ids on the untouched HEAD in a temporary git worktree (the workspace is not modified).
+
+    Returns the set of ids that also fail without the change, or None if the check could not run."""
+    wt = tempfile.mkdtemp(prefix="check_base_")
+    try:
+        code, _, _ = sh(["git", "worktree", "add", "--detach", "-f", wt, "HEAD"], root, timeout=60)
+        if code != 0:
+            return None
+        rel_bases = [os.path.join(wt, os.path.relpath(b, os.path.abspath(root))) for b in bases]
+        code, so, se = sh([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", *nodeids], wt,
+                          timeout=timeout, env=with_pythonpath(rel_bases + [wt]))
+        if code == -9:
+            return None
+        bad = set(re.findall(r"^(?:FAILED|ERROR) (\S+)", so, re.M))
+        return {n for n in nodeids if any(b == n or b.startswith(n) for b in bad)} if bad else set()
+    finally:
+        sh(["git", "worktree", "remove", "--force", wt], root)
+        sh(["git", "worktree", "prune"], root)
+        shutil.rmtree(wt, ignore_errors=True)
 
 
 GENERIC = {"utils", "util", "base", "core", "main", "compat", "types", "models", "common", "helpers",
@@ -117,7 +157,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--tests", default="")
     ap.add_argument("--no-tests", action="store_true")
-    ap.add_argument("--timeout", type=int, default=60)
+    ap.add_argument("--timeout", type=int, default=45)
     ap.add_argument("--root", default=None)
     a, _ = ap.parse_known_args()
     root = find_root(a.root)
@@ -139,11 +179,13 @@ def main():
             except py_compile.PyCompileError as e:
                 ok = False
                 out.append(f"SYNTAX ERROR {f}: {str(e).strip()[-400:]}")
-    mods = [m for m in (module_name(root, f) for f in src) if m]
+    mb = [module_and_base(root, f) for f in src]
+    mods = [m for m, _ in mb if m]
+    bases = sorted({b for m, b in mb if m})
     for m in mods:
         if m.startswith(("docs_src", "docs", "scripts", "examples")):
             continue
-        code, so, se = sh([sys.executable, "-c", f"import {m}"], root, timeout=60)
+        code, so, se = sh([sys.executable, "-c", f"import {m}"], root, timeout=30, env=with_pythonpath(bases))
         if code != 0:
             ok = False
             last = (se.strip().splitlines() or ["?"])[-1]
@@ -153,10 +195,27 @@ def main():
     if not a.no_tests:
         targets = a.tests.split() if a.tests else related_tests(root, mods)
         if targets:
-            cmd = [sys.executable, "-m", "pytest", "-x", "-q", "-p", "no:cacheprovider", *targets]
-            code, so, se = sh(cmd, root, timeout=a.timeout)
+            cmd = [sys.executable, "-m", "pytest", "--maxfail=3", "-q", "-p", "no:cacheprovider", *targets]
+            code, so, se = sh(cmd, root, timeout=a.timeout, env=with_pythonpath(bases))
             out.append(f"tests run: {' '.join(targets)}")
-            out.append(summarize_pytest(so + "\n" + se) if code != -9 else f"pytest {se}")
+            if code == -9:
+                out.append(f"pytest {se}")
+            else:
+                text = so + "\n" + se
+                tail = [l for l in text.splitlines() if re.search(r"\d+ (passed|failed|error)", l)]
+                out.append((tail[-1:] or ["(no pytest summary line)"])[0][:200])
+                failed = re.findall(r"^(?:FAILED|ERROR) (\S+)", so, re.M)[:5]
+                pre = baseline_failures(root, failed, bases, timeout=25) if failed else None
+                for n in failed:
+                    if pre is None:
+                        verdict = "could not compare with the original code"
+                    elif n in pre:
+                        verdict = "also fails WITHOUT your change -> pre-existing, ignore it"
+                    else:
+                        verdict = "passes without your change -> your edit changed this behaviour"
+                    out.append(f"FAILED {n[:150]}: {verdict}")
+                errs = [l[:220] for l in text.splitlines() if l.startswith("E ")][:8]
+                out.extend(errs)
             out.append("A failure matters only if it checks behaviour the issue did NOT ask to change. A test that "
                        "asserts the old behaviour the issue asks to change is expected to fail (hidden tests replace "
                        "it): keep your fix. Failures from missing fixtures or unrelated imports are pre-existing.")
