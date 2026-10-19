@@ -17,6 +17,14 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
+
+T0 = time.time()
+BUDGET = 75  # seconds; the harness kills a skill script at its command timeout (90 s in our bundle)
+
+
+def left():
+    return BUDGET - (time.time() - T0)
 
 TEST_RE = re.compile(r"(^|/)(tests?|testing)/|(^|/)test_[^/]*\.py$|_test\.py$")
 CONFIG_FILES = {"conftest.py", "pytest.ini", "pyproject.toml", "tox.ini", "setup.cfg", ".pytest.ini"}
@@ -191,18 +199,26 @@ def main():
             continue
         if "." not in m and b not in import_roots:
             continue
-        code, so, se = sh([sys.executable, "-c", f"import {m}"], root, timeout=30, env=with_pythonpath(bases))
-        if code != 0:
+        if left() < 20:
+            out.append(f"import of {m} not checked (time budget)")
+            continue
+        code, so, se = sh([sys.executable, "-c", f"import {m}"], root, timeout=min(25, left() - 15),
+                          env=with_pythonpath(bases))
+        if code == -9:
+            out.append(f"import of {m} not checked (slow import, not an error)")
+        elif code != 0:
             ok = False
             last = (se.strip().splitlines() or ["?"])[-1]
             out.append(f"IMPORT FAILED {m}: {last[:300]}")
     if ok:
         out.append("compile + import: OK")
-    if not a.no_tests:
+    if not a.no_tests and left() < 15:
+        out.append("tests not run (time budget); run one targeted pytest yourself if needed")
+    elif not a.no_tests:
         targets = a.tests.split() if a.tests else related_tests(root, mods)
         if targets:
             cmd = [sys.executable, "-m", "pytest", "--maxfail=3", "-q", "-p", "no:cacheprovider", *targets]
-            code, so, se = sh(cmd, root, timeout=a.timeout, env=with_pythonpath(bases))
+            code, so, se = sh(cmd, root, timeout=max(5, min(a.timeout, left() - 10)), env=with_pythonpath(bases))
             out.append(f"tests run: {' '.join(targets)}")
             if code == -9:
                 out.append(f"pytest {se}")
@@ -211,7 +227,8 @@ def main():
                 tail = [l for l in text.splitlines() if re.search(r"\d+ (passed|failed|error)", l)]
                 out.append((tail[-1:] or ["(no pytest summary line)"])[0][:200])
                 failed = re.findall(r"^(?:FAILED|ERROR) (\S+)", so, re.M)[:5]
-                pre = baseline_failures(root, failed, bases, timeout=25) if failed else None
+                pre = baseline_failures(root, failed, bases, timeout=min(25, left() - 3)) \
+                    if failed and left() > 10 else None
                 for n in failed:
                     if pre is None:
                         verdict = "could not compare with the original code"

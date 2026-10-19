@@ -1,0 +1,20 @@
+diff --git a/rich/segment.py b/rich/segment.py
+index 0df63fde..2a63f7f0 100644
+--- a/rich/segment.py
++++ b/rich/segment.py
+@@ -1,7 +1,6 @@
+ from enum import IntEnum
+ from functools import lru_cache
+ from itertools import filterfalse
+-from logging import getLogger
+ from operator import attrgetter
+ from typing import (
+     TYPE_CHECKING,
+@@ -23,7 +22,6 @@ from .cells import (
+     get_character_cell_size,
+     set_cell_size,
+ )
+-from .repr import Result, rich_repr
+ from .style import Style
+ 
+ if TYPE_CHECKING:
