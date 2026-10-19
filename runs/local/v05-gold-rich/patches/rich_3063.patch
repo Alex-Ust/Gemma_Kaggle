@@ -1,0 +1,22 @@
+diff --git a/rich/markup.py b/rich/markup.py
+index 0ffd056d..cb927edd 100644
+--- a/rich/markup.py
++++ b/rich/markup.py
+@@ -64,6 +64,9 @@ def escape(
+         return f"{backslashes}{backslashes}\\{text}"
+ 
+     markup = _escape(escape_backslashes, markup)
++    if markup.endswith("\\") and not markup.endswith("\\\\"):
++        return markup + "\\"
++
+     return markup
+ 
+ 
+@@ -226,7 +229,6 @@ def render(
+ 
+ 
+ if __name__ == "__main__":  # pragma: no cover
+-
+     MARKUP = [
+         "[red]Hello World[/red]",
+         "[magenta]Hello [b]World[/b]",

@@ -15,6 +15,7 @@ from pathlib import Path
 
 BUNDLE_FILES = json.loads(base64.b64decode("__BUNDLE_B64__").decode())
 RUN = json.loads(base64.b64decode("__RUN_B64__").decode())
+FAKE_SERVER_SRC = base64.b64decode("__FAKE_B64__").decode()
 T0 = time.time()
 
 
@@ -98,6 +99,25 @@ server = None
 if MODE in ('gold', 'empty'):
     from adk_submission import ModelRegistry  # noqa: E402
     models = ModelRegistry()
+elif MODE == 'fake':
+    # scripted model: locate -> apply patch -> check -> submit (tests skills in the real sandbox)
+    import socket  # noqa: E402
+    from adk_submission import ModelRegistry  # noqa: E402
+    from google.adk.models.lite_llm import LiteLlm  # noqa: E402
+    srv = WORK / 'fake_llm_server.py'
+    srv.write_text(FAKE_SERVER_SRC)
+    subprocess.Popen([sys.executable, str(srv), '--patches', RUN.get('patches', 'gold'), '--port', '8011',
+                      '--tasks', str(DATA_DIR / 'tasks.jsonl'), '--log', str(WORK / 'fake_llm.jsonl')])
+    for _ in range(60):
+        try:
+            socket.create_connection(('127.0.0.1', 8011), timeout=1).close()
+            break
+        except OSError:
+            time.sleep(1)
+    models = ModelRegistry()
+    models.register(model_name, LiteLlm(model=f'openai/{model_name}', api_base='http://127.0.0.1:8011/v1',
+                                        api_key='EMPTY', num_retries=1))
+    log("fake model server up")
 else:
     MODEL_PATH = Path(glob.glob(f'/kaggle/input/**/{model_name}/*/config.json', recursive=True)[0]).parent
     log(f"model {model_name} at {MODEL_PATH}")

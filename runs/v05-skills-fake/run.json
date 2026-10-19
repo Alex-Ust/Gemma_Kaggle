@@ -1,0 +1,22 @@
+{
+  "task_ids": [
+    "fastapi_14463",
+    "fastapi_14301",
+    "fastapi_14487",
+    "fastapi_15588",
+    "fastapi_13537",
+    "fastapi_13920",
+    "rich_3944",
+    "rich_3063",
+    "rich_3718",
+    "rich_4070",
+    "rich_3043",
+    "rich_3938"
+  ],
+  "concurrency": 4,
+  "bundle": "v05_skills",
+  "tag": "fake",
+  "mode": "fake",
+  "slug": "alexust/gemma-eval-v05-skills-fake",
+  "model": "gemma-4-31b-it-qat-w4a16-ct"
+}

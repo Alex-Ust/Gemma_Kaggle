@@ -56,7 +56,7 @@ def main():
     ap.add_argument("--set", choices=["sound"], help="use a named task set from data/task_sets.json")
     ap.add_argument("--concurrency", type=int, default=4)
     ap.add_argument("--seed", type=int, default=0)
-    ap.add_argument("--mode", default="agent", choices=["agent", "gold", "empty"],
+    ap.add_argument("--mode", default="agent", choices=["agent", "gold", "empty", "fake"],
                     help="gold/empty: CPU-only check with the reference / an empty patch")
     ap.add_argument("--push", action="store_true")
     a = ap.parse_args()
@@ -66,6 +66,8 @@ def main():
              for p in sorted(bundle.rglob("*")) if p.is_file() and p.name != ".DS_Store"}
     text = (bundle / "agent.yaml").read_text()
     model = next(m for m in MODELS if m in text)
+    if a.task_ids:  # tolerate one space-separated string (zsh does not word-split $VAR)
+        a.task_ids = [t for x in a.task_ids for t in x.split()]
     task_ids = a.task_ids or (json.load(open(ROOT / "data/task_sets.json"))[a.set] if a.set else pick_tasks(a.n, a.seed))
     run = {"task_ids": task_ids, "concurrency": a.concurrency, "bundle": bundle.name, "tag": a.tag, "mode": a.mode}
     gpu = a.mode == "agent"
@@ -76,7 +78,8 @@ def main():
     kdir.mkdir(parents=True, exist_ok=True)
     tpl = (ROOT / "scripts/eval_kernel_template.py").read_text()
     code = (tpl.replace("__BUNDLE_B64__", base64.b64encode(json.dumps(files).encode()).decode())
-               .replace("__RUN_B64__", base64.b64encode(json.dumps(run).encode()).decode()))
+               .replace("__RUN_B64__", base64.b64encode(json.dumps(run).encode()).decode())
+               .replace("__FAKE_B64__", base64.b64encode((ROOT / "scripts/fake_llm_server.py").read_bytes()).decode()))
     (kdir / "run.py").write_text(code)
     meta = {
         "id": f"{USER}/{slug}",

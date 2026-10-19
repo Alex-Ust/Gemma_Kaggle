@@ -14,7 +14,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-TASKS = [json.loads(line) for line in open(ROOT / "data/tasks.jsonl")]
+TASKS = []
 LOG = ROOT / "logs/fake_llm.jsonl"
 
 
@@ -100,10 +100,15 @@ class Handler(BaseHTTPRequestHandler):
 
 
 def main():
+    global LOG
     ap = argparse.ArgumentParser()
     ap.add_argument("--patches", default="gold")
     ap.add_argument("--port", type=int, default=8011)
+    ap.add_argument("--tasks", default=str(ROOT / "data/tasks.jsonl"))
+    ap.add_argument("--log", default=str(LOG))
     a = ap.parse_args()
+    LOG = Path(a.log)
+    TASKS.extend(json.loads(line) for line in open(a.tasks))
     Handler.patches = a.patches
     LOG.parent.mkdir(exist_ok=True)
     ThreadingHTTPServer(("127.0.0.1", a.port), Handler).serve_forever()
