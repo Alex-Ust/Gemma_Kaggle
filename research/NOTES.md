@@ -37,3 +37,16 @@
 - One public score is noisy: identical bundles drew 7-13 of 58. Judge by means or by local eval.
 - Thinking on + include_thoughts is essential; thinking 2048 vs 4096 ~equal (50 vs 48 /129).
 - Graph tools: no measured benefit.
+
+## Update 2026-10-19 evening
+- Kaggle bills 4xL4 GPU time at 2x against the 30 h weekly quota.
+- v02 sound-set endings: submitted 31 (18 resolved), call cap 17 (2), time cap 19 (0). Time-capped tasks:
+  31% of their time is long-thinking steps; hung commands in 2 tasks (240 s each).
+- OOD-45 (rodrigospalma/ood45-bugfix-split, 45 tasks / 17 unseen repos): `locate` top-1 82-87%, top-5 96%.
+  `check` picks the hidden-test file in 18/21. Fake-model gold replay of v05 in the scorer sandbox:
+  public sound 69/71 (2 stand issues), OOD 44/44.
+- `check` now re-runs failing tests on the untouched HEAD in a temporary `git worktree` and labels each as
+  pre-existing or caused by the edit (gold patches: 14 changed-behaviour, 11 pre-existing on public sound).
+- v05 = v02 + budget_warning edit rule, /tmp heredoc, single reproduction with `timeout 20`, sibling-group fix,
+  edit escaping rules, brevity rule, thinking 2048, command timeout 90 s, `locate` (first call, shows code),
+  `check` (before submit). GPU eval on sound 71 started 17:35.

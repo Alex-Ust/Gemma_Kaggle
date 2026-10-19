@@ -76,6 +76,8 @@
   "bundle": "v05_skills",
   "tag": "sound",
   "mode": "agent",
+  "ood": false,
+  "ood_ids": null,
   "slug": "alexust/gemma-eval-v05-skills-sound",
   "model": "gemma-4-31b-it-qat-w4a16-ct"
 }
