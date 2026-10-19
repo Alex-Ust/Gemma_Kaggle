@@ -1,0 +1,585 @@
+[{"stream_name":"stderr","time":6.4745845410000005,"data":"/usr/local/lib/python3.12/dist-packages/nbformat/__init__.py:96: MissingIDFieldWarning: Cell is missing an id field, this will become a hard error in future nbformat versions. You may want to use `normalize()` on your notebooks before validations (available since nbformat 5.1.4). Previous versions of nbformat are fixing this issue transparently, and will stop doing so in the future.\n"}
+,{"stream_name":"stderr","time":6.474621172,"data":"  validate(nb)\n"}
+,{"stream_name":"stderr","time":7.325543271,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":7.3255636,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":7.325566878,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":7.325569194,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stderr","time":7.92218568,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":7.922207338,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":7.92221014,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":7.922212537,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stdout","time":9.105921344,"data":"{\n"}
+,{"stream_name":"stdout","time":9.105956667,"data":"  \"gpus\": [\n"}
+,{"stream_name":"stdout","time":9.105959646,"data":"    \"0, NVIDIA L4, 23034 MiB, 580.178.04\",\n"}
+,{"stream_name":"stdout","time":9.105961787,"data":"    \"1, NVIDIA L4, 23034 MiB, 580.178.04\",\n"}
+,{"stream_name":"stdout","time":9.105963721,"data":"    \"2, NVIDIA L4, 23034 MiB, 580.178.04\",\n"}
+,{"stream_name":"stdout","time":9.105965683,"data":"    \"3, NVIDIA L4, 23034 MiB, 580.178.04\"\n"}
+,{"stream_name":"stdout","time":9.105967757,"data":"  ],\n"}
+,{"stream_name":"stdout","time":9.10599782,"data":"  \"cpu_count\": 48,\n"}
+,{"stream_name":"stdout","time":9.105999926,"data":"  \"meminfo\": [\n"}
+,{"stream_name":"stdout","time":9.106001917,"data":"    \"MemTotal:       197859164 kB\",\n"}
+,{"stream_name":"stdout","time":9.106003801,"data":"    \"MemFree:        190878304 kB\"\n"}
+,{"stream_name":"stdout","time":9.106005757,"data":"  ],\n"}
+,{"stream_name":"stdout","time":9.106007557,"data":"  \"disk_working\": {\n"}
+,{"stream_name":"stdout","time":9.106009515,"data":"    \"total\": 20957446144,\n"}
+,{"stream_name":"stdout","time":9.106011404,"data":"    \"used\": 278528,\n"}
+,{"stream_name":"stdout","time":9.106013262,"data":"    \"free\": 20940390400\n"}
+,{"stream_name":"stdout","time":9.10601501,"data":"  },\n"}
+,{"stream_name":"stdout","time":9.106016907,"data":"  \"disk_tmp\": {\n"}
+,{"stream_name":"stdout","time":9.106018658,"data":"    \"total\": 8758385086464,\n"}
+,{"stream_name":"stdout","time":9.106020428,"data":"    \"used\": 7609547350016,\n"}
+,{"stream_name":"stdout","time":9.106022232,"data":"    \"free\": 1148820959232\n"}
+,{"stream_name":"stdout","time":9.106024067,"data":"  },\n"}
+,{"stream_name":"stdout","time":9.106025773,"data":"  \"python\": \"3.12.13 (main, Mar  4 2026, 09:23:07) [GCC 11.4.0]\",\n"}
+,{"stream_name":"stdout","time":9.106027749,"data":"  \"inputs\": [\n"}
+,{"stream_name":"stdout","time":9.106029504,"data":"    \"/kaggle/input/competitions/gemma-4-developer-agent/HARNESS_README.md\",\n"}
+,{"stream_name":"stdout","time":9.106043552,"data":"    \"/kaggle/input/competitions/gemma-4-developer-agent/docker\",\n"}
+,{"stream_name":"stdout","time":9.106046876,"data":"    \"/kaggle/input/competitions/gemma-4-developer-agent/embeddings\",\n"}
+,{"stream_name":"stdout","time":9.106049766,"data":"    \"/kaggle/input/competitions/gemma-4-developer-agent/graphs\",\n"}
+,{"stream_name":"stdout","time":9.106052694,"data":"    \"/kaggle/input/competitions/gemma-4-developer-agent/sample_submission\",\n"}
+,{"stream_name":"stdout","time":9.106055705,"data":"    \"/kaggle/input/competitions/gemma-4-developer-agent/sandbox\",\n"}
+,{"stream_name":"stdout","time":9.10605894,"data":"    \"/kaggle/input/competitions/gemma-4-developer-agent/snapshots\",\n"}
+,{"stream_name":"stdout","time":9.106061773,"data":"    \"/kaggle/input/competitions/gemma-4-developer-agent/tasks.jsonl\",\n"}
+,{"stream_name":"stdout","time":9.106065768,"data":"    \"/kaggle/input/competitions/gemma-4-developer-agent/wheels\",\n"}
+,{"stream_name":"stdout","time":9.106068672,"data":"    \"/kaggle/input/datasets/metric/gemma-4-developer-agent-wheelhouse\",\n"}
+,{"stream_name":"stdout","time":9.106071978,"data":"    \"/kaggle/input/datasets/rodrigospalma/ood45-bugfix-split\",\n"}
+,{"stream_name":"stdout","time":9.106075006,"data":"    \"/kaggle/input/models/google/gemma-4\"\n"}
+,{"stream_name":"stdout","time":9.106077989,"data":"  ]\n"}
+,{"stream_name":"stdout","time":9.106080695,"data":"}\n"}
+,{"stream_name":"stdout","time":9.106083332,"data":"{\"ts\": 1792361978.0559437, \"since_start_s\": 0.1, \"event\": \"preflight_ok\", \"n_gpus\": 4}\n"}
+,{"stream_name":"stdout","time":64.974676198,"data":"{\"ts\": 1792362033.9061537, \"since_start_s\": 55.9, \"event\": \"wheels_installed\", \"n_wheels\": 41, \"seconds\": 55.8}\n"}
+,{"stream_name":"stdout","time":64.974706402,"data":"{'vllm': '0.19.1', 'torch': '2.10.0+cu128', 'transformers': '5.13.1', 'swegemma': '0.2.11', 'adk-submission': '0.2.13', 'adk-eval-core': '0.1.0', 'google-adk': '1.36.1', 'litellm': '1.82.4', 'aiohttp': '3.13.5'}\n"}
+,{"stream_name":"stdout","time":97.815410218,"data":"{\"ts\": 1792362066.7563179, \"since_start_s\": 88.8, \"event\": \"tasks_loaded\", \"n\": 129}\n"}
+,{"stream_name":"stdout","time":97.875569348,"data":"{\"ts\": 1792362066.8264518, \"since_start_s\": 88.8, \"event\": \"agent_compiles\", \"source\": \"competition sample_submission without adapters\"}\n"}
+,{"stream_name":"stdout","time":98.131531724,"data":"{\"ts\": 1792362067.0819123, \"since_start_s\": 89.1, \"event\": \"ood_tasks_loaded\", \"n\": 45, \"wheel_set\": \"x86_64-cp312\", \"repos\": 17, \"swegemma\": \"0.2.11\", \"swegemma_validated\": [\"0.2.7\", \"0.2.11\"], \"env_overlay\": 14}\n"}
+,{"stream_name":"stdout","time":468.711017808,"data":"{\"ts\": 1792362437.4575891, \"since_start_s\": 459.5, \"event\": \"vllm_ready\", \"boot_seconds\": 362.5, \"dropped_config_keys\": [], \"config\": {\"model\": \"/kaggle/input/models/google/gemma-4/other/gemma-4-31b-it-qat-w4a16-ct/2\", \"port\": \"8000\", \"host\": \"127.0.0.1\", \"tool_call_parser\": \"gemma4\", \"reasoning_parser\": \"gemma4\", \"reasoning_config\": \"None\", \"default_chat_template_kwargs\": \"{'enable_thinking': True}\", \"limit_mm_per_prompt\": \"None\", \"speculative_config\": \"None\", \"kv_cache_dtype\": \"None\", \"max_model_len\": \"32768\", \"dtype\": \"bfloat16\", \"gpu_memory_utilization\": \"0.8\", \"enable_auto_tool_choice\": \"True\", \"enable_lora\": \"True\", \"max_loras\": \"8\", \"max_lora_rank\": \"128\", \"scheduler_reserve_full_isl\": \"False\", \"extra_args\": \"[]\", \"startup_timeout\": \"1200\", \"tensor_parallel_size\": \"4\", \"health_check_interval\": \"1.0\", \"nvidia_lib_dir\": \"/usr/local/nvidia/lib64\"}}\n"}
+,{"stream_name":"stdout","time":468.711061706,"data":"served model id: /kaggle/input/models/google/gemma-4/other/gemma-4-31b-it-qat-w4a16-ct/2\n"}
+,{"stream_name":"stdout","time":469.520879891,"data":"{\"ts\": 1792362438.4695382, \"since_start_s\": 460.5, \"event\": \"proxy_status\", \"ok\": true}\n"}
+,{"stream_name":"stderr","time":469.718751297,"data":"/usr/local/lib/python3.12/dist-packages/google/adk/features/_feature_decorator.py:72: UserWarning: [EXPERIMENTAL] feature FeatureName.AGENT_CONFIG is enabled.\n"}
+,{"stream_name":"stderr","time":469.718772679,"data":"  check_feature_enabled()\n"}
+,{"stream_name":"stderr","time":469.718775403,"data":"/tmp/ipykernel_65/1531616885.py:52: UserWarning: [EXPERIMENTAL] EventsCompactionConfig: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.\n"}
+,{"stream_name":"stderr","time":469.718778634,"data":"  events_compaction_config=EventsCompactionConfig(\n"}
+,{"stream_name":"stderr","time":469.71878062,"data":"/tmp/ipykernel_65/1531616885.py:52: UserWarning: [EXPERIMENTAL] EventsCompactionConfig: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.\n"}
+,{"stream_name":"stderr","time":469.718782998,"data":"  events_compaction_config=EventsCompactionConfig(\n"}
+,{"stream_name":"stderr","time":469.718784827,"data":"/tmp/ipykernel_65/1531616885.py:52: UserWarning: [EXPERIMENTAL] EventsCompactionConfig: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.\n"}
+,{"stream_name":"stderr","time":469.718786982,"data":"  events_compaction_config=EventsCompactionConfig(\n"}
+,{"stream_name":"stderr","time":469.718788839,"data":"/tmp/ipykernel_65/1531616885.py:52: UserWarning: [EXPERIMENTAL] EventsCompactionConfig: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.\n"}
+,{"stream_name":"stderr","time":469.718791196,"data":"  events_compaction_config=EventsCompactionConfig(\n"}
+,{"stream_name":"stderr","time":469.718793033,"data":"/tmp/ipykernel_65/1531616885.py:52: UserWarning: [EXPERIMENTAL] EventsCompactionConfig: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.\n"}
+,{"stream_name":"stderr","time":469.71879509,"data":"  events_compaction_config=EventsCompactionConfig(\n"}
+,{"stream_name":"stderr","time":469.718796874,"data":"/tmp/ipykernel_65/1531616885.py:52: UserWarning: [EXPERIMENTAL] EventsCompactionConfig: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.\n"}
+,{"stream_name":"stderr","time":469.718799303,"data":"  events_compaction_config=EventsCompactionConfig(\n"}
+,{"stream_name":"stderr","time":469.718801982,"data":"/tmp/ipykernel_65/1531616885.py:52: UserWarning: [EXPERIMENTAL] EventsCompactionConfig: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.\n"}
+,{"stream_name":"stderr","time":469.718804261,"data":"  events_compaction_config=EventsCompactionConfig(\n"}
+,{"stream_name":"stderr","time":469.718806007,"data":"/tmp/ipykernel_65/1531616885.py:52: UserWarning: [EXPERIMENTAL] EventsCompactionConfig: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.\n"}
+,{"stream_name":"stderr","time":469.71880807,"data":"  events_compaction_config=EventsCompactionConfig(\n"}
+,{"stream_name":"stderr","time":469.718809839,"data":"/tmp/ipykernel_65/1531616885.py:52: UserWarning: [EXPERIMENTAL] EventsCompactionConfig: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.\n"}
+,{"stream_name":"stderr","time":469.718819704,"data":"  events_compaction_config=EventsCompactionConfig(\n"}
+,{"stream_name":"stderr","time":469.718821565,"data":"/tmp/ipykernel_65/1531616885.py:52: UserWarning: [EXPERIMENTAL] EventsCompactionConfig: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.\n"}
+,{"stream_name":"stderr","time":469.718823633,"data":"  events_compaction_config=EventsCompactionConfig(\n"}
+,{"stream_name":"stderr","time":469.718825407,"data":"/tmp/ipykernel_65/1531616885.py:52: UserWarning: [EXPERIMENTAL] EventsCompactionConfig: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.\n"}
+,{"stream_name":"stderr","time":469.718827538,"data":"  events_compaction_config=EventsCompactionConfig(\n"}
+,{"stream_name":"stderr","time":469.718829281,"data":"/tmp/ipykernel_65/1531616885.py:52: UserWarning: [EXPERIMENTAL] EventsCompactionConfig: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.\n"}
+,{"stream_name":"stderr","time":469.718831749,"data":"  events_compaction_config=EventsCompactionConfig(\n"}
+,{"stream_name":"stderr","time":469.718833565,"data":"/tmp/ipykernel_65/1531616885.py:52: UserWarning: [EXPERIMENTAL] EventsCompactionConfig: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.\n"}
+,{"stream_name":"stderr","time":469.718835715,"data":"  events_compaction_config=EventsCompactionConfig(\n"}
+,{"stream_name":"stderr","time":469.718837439,"data":"/tmp/ipykernel_65/1531616885.py:52: UserWarning: [EXPERIMENTAL] EventsCompactionConfig: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.\n"}
+,{"stream_name":"stderr","time":469.718839587,"data":"  events_compaction_config=EventsCompactionConfig(\n"}
+,{"stream_name":"stderr","time":469.718841847,"data":"/tmp/ipykernel_65/1531616885.py:52: UserWarning: [EXPERIMENTAL] EventsCompactionConfig: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.\n"}
+,{"stream_name":"stderr","time":469.71884407,"data":"  events_compaction_config=EventsCompactionConfig(\n"}
+,{"stream_name":"stderr","time":469.718845825,"data":"/tmp/ipykernel_65/1531616885.py:52: UserWarning: [EXPERIMENTAL] EventsCompactionConfig: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.\n"}
+,{"stream_name":"stderr","time":469.718847952,"data":"  events_compaction_config=EventsCompactionConfig(\n"}
+,{"stream_name":"stderr","time":469.718849959,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 8fbbb182-1e9, creating venv without pip: Command '['/tmp/swegemma_sandbox_8fbbb182-1e9_7ls07lr5/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":469.718852173,"data":"\n"}
+,{"stream_name":"stderr","time":469.718853819,"data":"/usr/local/lib/python3.12/dist-packages/google/adk/features/_feature_decorator.py:72: UserWarning: [EXPERIMENTAL] feature FeatureName.AGENT_CONFIG is enabled.\n"}
+,{"stream_name":"stderr","time":469.718855762,"data":"  check_feature_enabled()\n"}
+,{"stream_name":"stderr","time":469.71885746,"data":"/tmp/ipykernel_65/1531616885.py:52: UserWarning: [EXPERIMENTAL] EventsCompactionConfig: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.\n"}
+,{"stream_name":"stderr","time":469.718861707,"data":"  events_compaction_config=EventsCompactionConfig(\n"}
+,{"stream_name":"stderr","time":469.718863696,"data":"/tmp/ipykernel_65/1531616885.py:52: UserWarning: [EXPERIMENTAL] EventsCompactionConfig: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.\n"}
+,{"stream_name":"stderr","time":469.718865856,"data":"  events_compaction_config=EventsCompactionConfig(\n"}
+,{"stream_name":"stderr","time":469.718867587,"data":"/tmp/ipykernel_65/1531616885.py:52: UserWarning: [EXPERIMENTAL] EventsCompactionConfig: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.\n"}
+,{"stream_name":"stderr","time":469.718869673,"data":"  events_compaction_config=EventsCompactionConfig(\n"}
+,{"stream_name":"stderr","time":469.71887175,"data":"/tmp/ipykernel_65/1531616885.py:52: UserWarning: [EXPERIMENTAL] EventsCompactionConfig: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.\n"}
+,{"stream_name":"stderr","time":469.718873873,"data":"  events_compaction_config=EventsCompactionConfig(\n"}
+,{"stream_name":"stderr","time":469.718875628,"data":"/tmp/ipykernel_65/1531616885.py:52: UserWarning: [EXPERIMENTAL] EventsCompactionConfig: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.\n"}
+,{"stream_name":"stderr","time":469.718877868,"data":"  events_compaction_config=EventsCompactionConfig(\n"}
+,{"stream_name":"stderr","time":469.718879678,"data":"/tmp/ipykernel_65/1531616885.py:52: UserWarning: [EXPERIMENTAL] EventsCompactionConfig: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.\n"}
+,{"stream_name":"stderr","time":469.718881776,"data":"  events_compaction_config=EventsCompactionConfig(\n"}
+,{"stream_name":"stderr","time":469.718884054,"data":"/tmp/ipykernel_65/1531616885.py:52: UserWarning: [EXPERIMENTAL] EventsCompactionConfig: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.\n"}
+,{"stream_name":"stderr","time":469.718886156,"data":"  events_compaction_config=EventsCompactionConfig(\n"}
+,{"stream_name":"stderr","time":469.718887936,"data":"/tmp/ipykernel_65/1531616885.py:52: UserWarning: [EXPERIMENTAL] EventsCompactionConfig: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.\n"}
+,{"stream_name":"stderr","time":469.718890003,"data":"  events_compaction_config=EventsCompactionConfig(\n"}
+,{"stream_name":"stderr","time":469.718891711,"data":"/tmp/ipykernel_65/1531616885.py:52: UserWarning: [EXPERIMENTAL] EventsCompactionConfig: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.\n"}
+,{"stream_name":"stderr","time":469.718893922,"data":"  events_compaction_config=EventsCompactionConfig(\n"}
+,{"stream_name":"stderr","time":469.718895649,"data":"/tmp/ipykernel_65/1531616885.py:52: UserWarning: [EXPERIMENTAL] EventsCompactionConfig: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.\n"}
+,{"stream_name":"stderr","time":469.718897819,"data":"  events_compaction_config=EventsCompactionConfig(\n"}
+,{"stream_name":"stderr","time":469.718899552,"data":"/tmp/ipykernel_65/1531616885.py:52: UserWarning: [EXPERIMENTAL] EventsCompactionConfig: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.\n"}
+,{"stream_name":"stderr","time":469.718903506,"data":"  events_compaction_config=EventsCompactionConfig(\n"}
+,{"stream_name":"stderr","time":469.718905732,"data":"/tmp/ipykernel_65/1531616885.py:52: UserWarning: [EXPERIMENTAL] EventsCompactionConfig: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.\n"}
+,{"stream_name":"stderr","time":469.718907804,"data":"  events_compaction_config=EventsCompactionConfig(\n"}
+,{"stream_name":"stderr","time":469.718909523,"data":"/tmp/ipykernel_65/1531616885.py:52: UserWarning: [EXPERIMENTAL] EventsCompactionConfig: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.\n"}
+,{"stream_name":"stderr","time":469.71891164,"data":"  events_compaction_config=EventsCompactionConfig(\n"}
+,{"stream_name":"stderr","time":469.71891339,"data":"/tmp/ipykernel_65/1531616885.py:52: UserWarning: [EXPERIMENTAL] EventsCompactionConfig: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.\n"}
+,{"stream_name":"stderr","time":469.718915488,"data":"  events_compaction_config=EventsCompactionConfig(\n"}
+,{"stream_name":"stderr","time":469.718917236,"data":"/tmp/ipykernel_65/1531616885.py:52: UserWarning: [EXPERIMENTAL] EventsCompactionConfig: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.\n"}
+,{"stream_name":"stderr","time":469.718919304,"data":"  events_compaction_config=EventsCompactionConfig(\n"}
+,{"stream_name":"stderr","time":469.718921022,"data":"/tmp/ipykernel_65/1531616885.py:52: UserWarning: [EXPERIMENTAL] EventsCompactionConfig: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.\n"}
+,{"stream_name":"stderr","time":469.718923076,"data":"  events_compaction_config=EventsCompactionConfig(\n"}
+,{"stream_name":"stderr","time":469.718924858,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 8fbbb182-1e9, creating venv without pip: Command '['/tmp/swegemma_sandbox_8fbbb182-1e9_7ls07lr5/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stdout","time":469.72087024,"data":"{\"ts\": 1792362438.5345771, \"since_start_s\": 460.5, \"event\": \"ood_start\", \"submission\": \"agent\", \"reps\": 1, \"rep_offset\": 0, \"n_tasks\": 44, \"n_done\": 0, \"gate_dropped\": [\"urllib3_5279\"], \"jobs\": 44, \"concurrency\": 4}\n"}
+,{"stream_name":"stderr","time":469.72160338,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox c80bf59e-e0d, creating venv without pip: Command '['/tmp/swegemma_sandbox_c80bf59e-e0d_gwcm_i5x/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":469.721611091,"data":"\n"}
+,{"stream_name":"stderr","time":469.721613037,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox c80bf59e-e0d, creating venv without pip: Command '['/tmp/swegemma_sandbox_c80bf59e-e0d_gwcm_i5x/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":469.722515114,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 858e52bf-3d6, creating venv without pip: Command '['/tmp/swegemma_sandbox_858e52bf-3d6_2vkhv5p9/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":469.72252744,"data":"\n"}
+,{"stream_name":"stderr","time":469.722529702,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 858e52bf-3d6, creating venv without pip: Command '['/tmp/swegemma_sandbox_858e52bf-3d6_2vkhv5p9/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":469.734263828,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 789cf9c3-32e, creating venv without pip: Command '['/tmp/swegemma_sandbox_789cf9c3-32e_6y_2_5s_/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":469.734280083,"data":"\n"}
+,{"stream_name":"stderr","time":469.734282316,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 789cf9c3-32e, creating venv without pip: Command '['/tmp/swegemma_sandbox_789cf9c3-32e_6y_2_5s_/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":572.116330736,"data":"WARNING:swegemma.harness.agent_runner:Task great_tables_869 agent timed out.\n"}
+,{"stream_name":"stderr","time":572.116359397,"data":"\n"}
+,{"stream_name":"stderr","time":572.116362783,"data":"WARNING:swegemma.harness.agent_runner:Task great_tables_869 agent timed out.\n"}
+,{"stream_name":"stderr","time":572.140009882,"data":"WARNING:swegemma.harness.agent_runner:Task great_tables_869 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stderr","time":572.140031937,"data":"\n"}
+,{"stream_name":"stderr","time":572.140035607,"data":"WARNING:swegemma.harness.agent_runner:Task great_tables_869 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stdout","time":572.937588118,"data":"[g1 r1 #1] great_tables_869: resolved=False agent=60.0s patch=0 err='Agent exceeded session timeout (1.0 min)'\n"}
+,{"stream_name":"stderr","time":573.058913105,"data":"WARNING:swegemma.harness.agent_runner:Task filesystem_spec_2216 agent timed out.\n"}
+,{"stream_name":"stderr","time":573.058935367,"data":"\n"}
+,{"stream_name":"stderr","time":573.058938622,"data":"WARNING:swegemma.harness.agent_runner:Task filesystem_spec_2216 agent timed out.\n"}
+,{"stream_name":"stderr","time":573.073525726,"data":"WARNING:swegemma.harness.agent_runner:Task filesystem_spec_2216 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stderr","time":573.073542021,"data":"\n"}
+,{"stream_name":"stderr","time":573.073544982,"data":"WARNING:swegemma.harness.agent_runner:Task filesystem_spec_2216 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stderr","time":573.078239215,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 499c7b70-f6a, creating venv without pip: Command '['/tmp/swegemma_sandbox_499c7b70-f6a_2sx0v2r9/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":573.078255317,"data":"\n"}
+,{"stream_name":"stderr","time":573.078258784,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 499c7b70-f6a, creating venv without pip: Command '['/tmp/swegemma_sandbox_499c7b70-f6a_2sx0v2r9/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stdout","time":573.754525856,"data":"[g1 r1 #2] filesystem_spec_2216: resolved=False agent=60.0s patch=0 err='Agent exceeded session timeout (1.0 min)'\n"}
+,{"stream_name":"stderr","time":573.896916476,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox f378e9be-bab, creating venv without pip: Command '['/tmp/swegemma_sandbox_f378e9be-bab_6gjmt8wc/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":573.896938467,"data":"\n"}
+,{"stream_name":"stderr","time":573.896940867,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox f378e9be-bab, creating venv without pip: Command '['/tmp/swegemma_sandbox_f378e9be-bab_6gjmt8wc/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":579.805286253,"data":"WARNING:swegemma.harness.agent_runner:Task kedro_5791 agent timed out.\n"}
+,{"stream_name":"stderr","time":579.805328433,"data":"\n"}
+,{"stream_name":"stderr","time":579.805331857,"data":"WARNING:swegemma.harness.agent_runner:Task kedro_5791 agent timed out.\n"}
+,{"stream_name":"stderr","time":579.825953252,"data":"WARNING:swegemma.harness.agent_runner:Task kedro_5791 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stderr","time":579.82598615,"data":"\n"}
+,{"stream_name":"stderr","time":579.825991203,"data":"WARNING:swegemma.harness.agent_runner:Task kedro_5791 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stdout","time":580.968606624,"data":"[g1 r1 #3] kedro_5791: resolved=False agent=60.0s patch=0 err='Agent exceeded session timeout (1.0 min)'\n"}
+,{"stream_name":"stderr","time":581.109888159,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox d0b9597e-6b5, creating venv without pip: Command '['/tmp/swegemma_sandbox_d0b9597e-6b5_e0dp58mm/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":581.109915072,"data":"\n"}
+,{"stream_name":"stderr","time":581.1099186,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox d0b9597e-6b5, creating venv without pip: Command '['/tmp/swegemma_sandbox_d0b9597e-6b5_e0dp58mm/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":587.492102951,"data":"WARNING:swegemma.harness.agent_runner:Task feast_6860 agent timed out.\n"}
+,{"stream_name":"stderr","time":587.49212915,"data":"\n"}
+,{"stream_name":"stderr","time":587.492131862,"data":"WARNING:swegemma.harness.agent_runner:Task feast_6860 agent timed out.\n"}
+,{"stream_name":"stderr","time":587.527547226,"data":"WARNING:swegemma.harness.agent_runner:Task feast_6860 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stderr","time":587.52756731,"data":"\n"}
+,{"stream_name":"stderr","time":587.527569931,"data":"WARNING:swegemma.harness.agent_runner:Task feast_6860 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stdout","time":588.431147664,"data":"[g1 r1 #4] feast_6860: resolved=False agent=60.0s patch=0 err='Agent exceeded session timeout (1.0 min)'\n"}
+,{"stream_name":"stderr","time":588.57172705,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 21345faf-0ec, creating venv without pip: Command '['/tmp/swegemma_sandbox_21345faf-0ec_6619fjht/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":588.571748922,"data":"\n"}
+,{"stream_name":"stderr","time":588.571751694,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 21345faf-0ec, creating venv without pip: Command '['/tmp/swegemma_sandbox_21345faf-0ec_6619fjht/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":640.428337739,"data":"WARNING:swegemma.harness.agent_runner:Task tox_4097 agent timed out.\n"}
+,{"stream_name":"stderr","time":640.428367019,"data":"\n"}
+,{"stream_name":"stderr","time":640.428370319,"data":"WARNING:swegemma.harness.agent_runner:Task tox_4097 agent timed out.\n"}
+,{"stream_name":"stderr","time":643.548749034,"data":"WARNING:swegemma.harness.agent_runner:Task tox_4097 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stderr","time":643.548771991,"data":"\n"}
+,{"stream_name":"stderr","time":643.548775477,"data":"WARNING:swegemma.harness.agent_runner:Task tox_4097 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stdout","time":643.640767814,"data":"[g1 r1 #6] tox_4097: resolved=False agent=60.01s patch=0 err='Agent exceeded session timeout (1.0 min)'\n"}
+,{"stream_name":"stderr","time":643.770773734,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox a52f2db4-bed, creating venv without pip: Command '['/tmp/swegemma_sandbox_a52f2db4-bed_3vsfynmq/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":643.770796402,"data":"\n"}
+,{"stream_name":"stderr","time":643.770799263,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox a52f2db4-bed, creating venv without pip: Command '['/tmp/swegemma_sandbox_a52f2db4-bed_3vsfynmq/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":647.876547842,"data":"WARNING:swegemma.harness.agent_runner:Task great_tables_874 agent timed out.\n"}
+,{"stream_name":"stderr","time":647.876575828,"data":"\n"}
+,{"stream_name":"stderr","time":647.876581221,"data":"WARNING:swegemma.harness.agent_runner:Task great_tables_874 agent timed out.\n"}
+,{"stream_name":"stderr","time":647.901380193,"data":"WARNING:swegemma.harness.agent_runner:Task great_tables_874 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stderr","time":647.901400867,"data":"\n"}
+,{"stream_name":"stderr","time":647.901404207,"data":"WARNING:swegemma.harness.agent_runner:Task great_tables_874 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stdout","time":649.222062518,"data":"[g1 r1 #5] great_tables_874: resolved=False agent=60.0s patch=0 err='Agent exceeded session timeout (1.0 min)'\n"}
+,{"stream_name":"stderr","time":649.359511171,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox b595c17e-c86, creating venv without pip: Command '['/tmp/swegemma_sandbox_b595c17e-c86_y5ijakd7/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":649.359530311,"data":"\n"}
+,{"stream_name":"stderr","time":649.35953341,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox b595c17e-c86, creating venv without pip: Command '['/tmp/swegemma_sandbox_b595c17e-c86_y5ijakd7/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":659.170781664,"data":"WARNING:swegemma.harness.agent_runner:Task pint_2437 agent timed out.\n"}
+,{"stream_name":"stderr","time":659.17081178,"data":"\n"}
+,{"stream_name":"stderr","time":659.170815339,"data":"WARNING:swegemma.harness.agent_runner:Task pint_2437 agent timed out.\n"}
+,{"stream_name":"stderr","time":659.18659783,"data":"WARNING:swegemma.harness.agent_runner:Task pint_2437 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stderr","time":659.186623276,"data":"\n"}
+,{"stream_name":"stderr","time":659.186625767,"data":"WARNING:swegemma.harness.agent_runner:Task pint_2437 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stdout","time":659.315469999,"data":"[g1 r1 #8] pint_2437: resolved=False agent=60.0s patch=0 err='Agent exceeded session timeout (1.0 min)'\n"}
+,{"stream_name":"stderr","time":659.458099508,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 1060fd4e-e99, creating venv without pip: Command '['/tmp/swegemma_sandbox_1060fd4e-e99_4j8g4zqa/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":659.458127192,"data":"\n"}
+,{"stream_name":"stderr","time":659.458130021,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 1060fd4e-e99, creating venv without pip: Command '['/tmp/swegemma_sandbox_1060fd4e-e99_4j8g4zqa/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":679.652315766,"data":"WARNING:swegemma.harness.agent_runner:Task iceberg_python_4005 agent timed out.\n"}
+,{"stream_name":"stderr","time":679.652344454,"data":"\n"}
+,{"stream_name":"stderr","time":679.652347966,"data":"WARNING:swegemma.harness.agent_runner:Task iceberg_python_4005 agent timed out.\n"}
+,{"stream_name":"stderr","time":680.556233846,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 51db4967-b80, creating venv without pip: Command '['/tmp/swegemma_sandbox_51db4967-b80_yfl0he2w/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":680.556257217,"data":"\n"}
+,{"stream_name":"stderr","time":680.55626061,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 51db4967-b80, creating venv without pip: Command '['/tmp/swegemma_sandbox_51db4967-b80_yfl0he2w/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stdout","time":716.922322398,"data":"[g1 r1 #7] iceberg_python_4005: resolved=True agent=60.0s patch=1790 err=''\n"}
+,{"stream_name":"stderr","time":717.048378313,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox eb3df6ad-daf, creating venv without pip: Command '['/tmp/swegemma_sandbox_eb3df6ad-daf_b9rn0pa3/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":717.048402656,"data":"\n"}
+,{"stream_name":"stderr","time":717.048405985,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox eb3df6ad-daf, creating venv without pip: Command '['/tmp/swegemma_sandbox_eb3df6ad-daf_b9rn0pa3/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":717.688713279,"data":"WARNING:swegemma.harness.agent_runner:Task great_tables_893 agent timed out.\n"}
+,{"stream_name":"stderr","time":717.688736808,"data":"\n"}
+,{"stream_name":"stderr","time":717.688739933,"data":"WARNING:swegemma.harness.agent_runner:Task great_tables_893 agent timed out.\n"}
+,{"stream_name":"stderr","time":717.713213268,"data":"WARNING:swegemma.harness.agent_runner:Task great_tables_893 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stderr","time":717.713232138,"data":"\n"}
+,{"stream_name":"stderr","time":717.713235515,"data":"WARNING:swegemma.harness.agent_runner:Task great_tables_893 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stdout","time":718.457281532,"data":"[g1 r1 #9] great_tables_893: resolved=False agent=60.0s patch=0 err='Agent exceeded session timeout (1.0 min)'\n"}
+,{"stream_name":"stderr","time":718.590894581,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 10e4c94a-b17, creating venv without pip: Command '['/tmp/swegemma_sandbox_10e4c94a-b17_poqasdfc/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":718.590912975,"data":"\n"}
+,{"stream_name":"stderr","time":718.590915643,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 10e4c94a-b17, creating venv without pip: Command '['/tmp/swegemma_sandbox_10e4c94a-b17_poqasdfc/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":718.675746473,"data":"WARNING:swegemma.harness.agent_runner:Task filesystem_spec_2218 agent timed out.\n"}
+,{"stream_name":"stderr","time":718.675768295,"data":"\n"}
+,{"stream_name":"stderr","time":718.675770783,"data":"WARNING:swegemma.harness.agent_runner:Task filesystem_spec_2218 agent timed out.\n"}
+,{"stream_name":"stderr","time":721.483757231,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 44ec702b-e28, creating venv without pip: Command '['/tmp/swegemma_sandbox_44ec702b-e28_r27zoygu/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":721.483786475,"data":"\n"}
+,{"stream_name":"stderr","time":721.483789587,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 44ec702b-e28, creating venv without pip: Command '['/tmp/swegemma_sandbox_44ec702b-e28_r27zoygu/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":746.268603487,"data":"WARNING:swegemma.harness.agent_runner:Task py_shiny_2510 agent timed out.\n"}
+,{"stream_name":"stderr","time":746.268636679,"data":"\n"}
+,{"stream_name":"stderr","time":746.268641191,"data":"WARNING:swegemma.harness.agent_runner:Task py_shiny_2510 agent timed out.\n"}
+,{"stream_name":"stdout","time":755.968596752,"data":"[g1 r1 #10] filesystem_spec_2218: resolved=False agent=60.0s patch=812 err='Agent exceeded session timeout (1.0 min)'\n"}
+,{"stream_name":"stderr","time":756.105565623,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox e215d74d-cea, creating venv without pip: Command '['/tmp/swegemma_sandbox_e215d74d-cea_tw2cpgkz/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":756.105593619,"data":"\n"}
+,{"stream_name":"stderr","time":756.105597091,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox e215d74d-cea, creating venv without pip: Command '['/tmp/swegemma_sandbox_e215d74d-cea_tw2cpgkz/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":756.345086525,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox a049028f-259, creating venv without pip: Command '['/tmp/swegemma_sandbox_a049028f-259_32puvk0d/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":756.345114009,"data":"\n"}
+,{"stream_name":"stderr","time":756.345117505,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox a049028f-259, creating venv without pip: Command '['/tmp/swegemma_sandbox_a049028f-259_32puvk0d/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stdout","time":784.835060017,"data":"[g1 r1 #11] py_shiny_2510: resolved=False agent=60.54s patch=1362 err='Agent exceeded session timeout (1.0 min)'\n"}
+,{"stream_name":"stderr","time":784.963292893,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox c0a4f433-abf, creating venv without pip: Command '['/tmp/swegemma_sandbox_c0a4f433-abf_e5d96tzy/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":784.963315579,"data":"\n"}
+,{"stream_name":"stderr","time":784.963318222,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox c0a4f433-abf, creating venv without pip: Command '['/tmp/swegemma_sandbox_c0a4f433-abf_e5d96tzy/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":791.760315168,"data":"WARNING:swegemma.harness.agent_runner:Task pyjanitor_1739 agent timed out.\n"}
+,{"stream_name":"stderr","time":791.760341097,"data":"\n"}
+,{"stream_name":"stderr","time":791.760344424,"data":"WARNING:swegemma.harness.agent_runner:Task pyjanitor_1739 agent timed out.\n"}
+,{"stream_name":"stderr","time":792.13747046,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox f152256f-a6f, creating venv without pip: Command '['/tmp/swegemma_sandbox_f152256f-a6f_ee9zo1h0/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":792.13749212,"data":"\n"}
+,{"stream_name":"stderr","time":792.137495341,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox f152256f-a6f, creating venv without pip: Command '['/tmp/swegemma_sandbox_f152256f-a6f_ee9zo1h0/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stdout","time":807.021467548,"data":"[g1 r1 #12] pyjanitor_1739: resolved=False agent=60.0s patch=909 err='Agent exceeded session timeout (1.0 min)'\n"}
+,{"stream_name":"stderr","time":807.155730818,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 047e6766-91c, creating venv without pip: Command '['/tmp/swegemma_sandbox_047e6766-91c_6n7f7dpa/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":807.155753998,"data":"\n"}
+,{"stream_name":"stderr","time":807.155757306,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 047e6766-91c, creating venv without pip: Command '['/tmp/swegemma_sandbox_047e6766-91c_6n7f7dpa/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":814.951469884,"data":"WARNING:swegemma.harness.agent_runner:Task great_tables_889 agent timed out.\n"}
+,{"stream_name":"stderr","time":814.951503474,"data":"\n"}
+,{"stream_name":"stderr","time":814.951508944,"data":"WARNING:swegemma.harness.agent_runner:Task great_tables_889 agent timed out.\n"}
+,{"stream_name":"stderr","time":814.9743675,"data":"WARNING:swegemma.harness.agent_runner:Task great_tables_889 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stderr","time":814.974390343,"data":"\n"}
+,{"stream_name":"stderr","time":814.974393861,"data":"WARNING:swegemma.harness.agent_runner:Task great_tables_889 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stdout","time":815.712998022,"data":"[g1 r1 #13] great_tables_889: resolved=False agent=60.0s patch=0 err='Agent exceeded session timeout (1.0 min)'\n"}
+,{"stream_name":"stderr","time":815.844957131,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 79821c5b-b5e, creating venv without pip: Command '['/tmp/swegemma_sandbox_79821c5b-b5e_67xq5cmt/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":815.844999137,"data":"\n"}
+,{"stream_name":"stderr","time":815.845002427,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 79821c5b-b5e, creating venv without pip: Command '['/tmp/swegemma_sandbox_79821c5b-b5e_67xq5cmt/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":823.760904986,"data":"WARNING:swegemma.harness.agent_runner:Task apprise_1747 agent timed out.\n"}
+,{"stream_name":"stderr","time":823.760934718,"data":"\n"}
+,{"stream_name":"stderr","time":823.760937278,"data":"WARNING:swegemma.harness.agent_runner:Task apprise_1747 agent timed out.\n"}
+,{"stream_name":"stderr","time":824.706390893,"data":"WARNING:swegemma.harness.agent_runner:Task apprise_1747 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stderr","time":824.706417586,"data":"\n"}
+,{"stream_name":"stderr","time":824.706420731,"data":"WARNING:swegemma.harness.agent_runner:Task apprise_1747 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stdout","time":824.795371625,"data":"[g1 r1 #14] apprise_1747: resolved=False agent=60.0s patch=0 err='Agent exceeded session timeout (1.0 min)'\n"}
+,{"stream_name":"stderr","time":824.927054249,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox b95db43f-3c6, creating venv without pip: Command '['/tmp/swegemma_sandbox_b95db43f-3c6_ztk_purw/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":824.927076394,"data":"\n"}
+,{"stream_name":"stderr","time":824.927079581,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox b95db43f-3c6, creating venv without pip: Command '['/tmp/swegemma_sandbox_b95db43f-3c6_ztk_purw/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":853.867255744,"data":"WARNING:swegemma.harness.agent_runner:Task filesystem_spec_2170 agent timed out.\n"}
+,{"stream_name":"stderr","time":853.867276071,"data":"\n"}
+,{"stream_name":"stderr","time":853.867279295,"data":"WARNING:swegemma.harness.agent_runner:Task filesystem_spec_2170 agent timed out.\n"}
+,{"stream_name":"stderr","time":854.667567924,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 3dc90e66-741, creating venv without pip: Command '['/tmp/swegemma_sandbox_3dc90e66-741_9_vf5r2s/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":854.667593471,"data":"\n"}
+,{"stream_name":"stderr","time":854.667597038,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 3dc90e66-741, creating venv without pip: Command '['/tmp/swegemma_sandbox_3dc90e66-741_9_vf5r2s/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stdout","time":871.106923427,"data":"[g1 r1 #15] filesystem_spec_2170: resolved=False agent=60.0s patch=832 err='Agent exceeded session timeout (1.0 min)'\n"}
+,{"stream_name":"stderr","time":871.246586875,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox eb7bea80-800, creating venv without pip: Command '['/tmp/swegemma_sandbox_eb7bea80-800_fi9ww7xf/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":871.246618754,"data":"\n"}
+,{"stream_name":"stderr","time":871.246622295,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox eb7bea80-800, creating venv without pip: Command '['/tmp/swegemma_sandbox_eb7bea80-800_fi9ww7xf/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":879.075242905,"data":"WARNING:swegemma.harness.agent_runner:Task kedro_5793 agent timed out.\n"}
+,{"stream_name":"stderr","time":879.075264971,"data":"\n"}
+,{"stream_name":"stderr","time":879.07526763,"data":"WARNING:swegemma.harness.agent_runner:Task kedro_5793 agent timed out.\n"}
+,{"stream_name":"stderr","time":881.941092805,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 5c537806-302, creating venv without pip: Command '['/tmp/swegemma_sandbox_5c537806-302_29z1sw3x/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":881.941114985,"data":"\n"}
+,{"stream_name":"stderr","time":881.941117829,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 5c537806-302, creating venv without pip: Command '['/tmp/swegemma_sandbox_5c537806-302_29z1sw3x/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":888.852255408,"data":"WARNING:swegemma.harness.agent_runner:Task great_tables_880 agent timed out.\n"}
+,{"stream_name":"stderr","time":888.852278964,"data":"\n"}
+,{"stream_name":"stderr","time":888.852281808,"data":"WARNING:swegemma.harness.agent_runner:Task great_tables_880 agent timed out.\n"}
+,{"stream_name":"stderr","time":890.420474726,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 87d80941-c2a, creating venv without pip: Command '['/tmp/swegemma_sandbox_87d80941-c2a_r66qdyig/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":890.420499423,"data":"\n"}
+,{"stream_name":"stderr","time":890.42050255,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 87d80941-c2a, creating venv without pip: Command '['/tmp/swegemma_sandbox_87d80941-c2a_r66qdyig/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":895.879165984,"data":"WARNING:swegemma.harness.agent_runner:Task plotnine_1129 agent timed out.\n"}
+,{"stream_name":"stderr","time":895.879190745,"data":"\n"}
+,{"stream_name":"stderr","time":895.879193686,"data":"WARNING:swegemma.harness.agent_runner:Task plotnine_1129 agent timed out.\n"}
+,{"stream_name":"stderr","time":896.570697879,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 5773a7fc-b29, creating venv without pip: Command '['/tmp/swegemma_sandbox_5773a7fc-b29_9y3boacq/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":896.5707238,"data":"\n"}
+,{"stream_name":"stderr","time":896.570726802,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 5773a7fc-b29, creating venv without pip: Command '['/tmp/swegemma_sandbox_5773a7fc-b29_9y3boacq/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stdout","time":899.006009624,"data":"[ood45_harness] EDITABLE INSTALL FAILED in sandbox eb7bea80-800 (exit 1):\n"}
+,{"stream_name":"stdout","time":899.006030553,"data":"Obtaining file:///tmp/swegemma_sandbox_eb7bea80-800_fi9ww7xf/workspace\n"}
+,{"stream_name":"stdout","time":899.00603343,"data":"ERROR: file:///tmp/swegemma_sandbox_eb7bea80-800_fi9ww7xf/workspace does not appear to be a Python project: neither 'setup.py' nor 'pyproject.toml' found.\n"}
+,{"stream_name":"stdout","time":899.006044155,"data":"\n"}
+,{"stream_name":"stdout","time":899.967918987,"data":"[g1 r1 #16] kedro_5793: resolved=False agent=60.0s patch=1104 err='Agent exceeded session timeout (1.0 min)'\n"}
+,{"stream_name":"stderr","time":900.111523257,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox ac422d98-a44, creating venv without pip: Command '['/tmp/swegemma_sandbox_ac422d98-a44_xsnndaab/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":900.111546166,"data":"\n"}
+,{"stream_name":"stderr","time":900.111549055,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox ac422d98-a44, creating venv without pip: Command '['/tmp/swegemma_sandbox_ac422d98-a44_xsnndaab/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stdout","time":914.25165812,"data":"[g1 r1 #18] plotnine_1129: resolved=False agent=60.0s patch=898 err='Agent exceeded session timeout (1.0 min)'\n"}
+,{"stream_name":"stderr","time":914.381631569,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox f6073fc8-587, creating venv without pip: Command '['/tmp/swegemma_sandbox_f6073fc8-587_tpmbjx9k/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":914.381655022,"data":"\n"}
+,{"stream_name":"stderr","time":914.381658487,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox f6073fc8-587, creating venv without pip: Command '['/tmp/swegemma_sandbox_f6073fc8-587_tpmbjx9k/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stdout","time":920.786550736,"data":"[g1 r1 #17] great_tables_880: resolved=False agent=60.0s patch=581 err='Agent exceeded session timeout (1.0 min)'\n"}
+,{"stream_name":"stderr","time":920.916294378,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 82431549-a22, creating venv without pip: Command '['/tmp/swegemma_sandbox_82431549-a22__ojzt8_6/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":920.916316537,"data":"\n"}
+,{"stream_name":"stderr","time":920.916320329,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 82431549-a22, creating venv without pip: Command '['/tmp/swegemma_sandbox_82431549-a22__ojzt8_6/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":959.816058108,"data":"WARNING:swegemma.harness.agent_runner:Task kedro_viz_2786 agent timed out.\n"}
+,{"stream_name":"stderr","time":959.816092048,"data":"\n"}
+,{"stream_name":"stderr","time":959.816095555,"data":"WARNING:swegemma.harness.agent_runner:Task kedro_viz_2786 agent timed out.\n"}
+,{"stream_name":"stderr","time":959.837839351,"data":"WARNING:swegemma.harness.agent_runner:Task kedro_viz_2786 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stderr","time":959.837860838,"data":"\n"}
+,{"stream_name":"stderr","time":959.837864082,"data":"WARNING:swegemma.harness.agent_runner:Task kedro_viz_2786 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stdout","time":960.833891364,"data":"[g1 r1 #19] kedro_viz_2786: resolved=False agent=60.0s patch=0 err='Agent exceeded session timeout (1.0 min)'\n"}
+,{"stream_name":"stderr","time":960.971680492,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 75919ea4-708, creating venv without pip: Command '['/tmp/swegemma_sandbox_75919ea4-708_kr3qtf8s/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":960.971711846,"data":"\n"}
+,{"stream_name":"stderr","time":960.971714655,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 75919ea4-708, creating venv without pip: Command '['/tmp/swegemma_sandbox_75919ea4-708_kr3qtf8s/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":965.400705028,"data":"WARNING:swegemma.harness.agent_runner:Task pdm_3902 agent timed out.\n"}
+,{"stream_name":"stderr","time":965.400732415,"data":"\n"}
+,{"stream_name":"stderr","time":965.400737114,"data":"WARNING:swegemma.harness.agent_runner:Task pdm_3902 agent timed out.\n"}
+,{"stream_name":"stderr","time":965.702591519,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 4d068b9b-085, creating venv without pip: Command '['/tmp/swegemma_sandbox_4d068b9b-085_iotrdxgp/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":965.702614508,"data":"\n"}
+,{"stream_name":"stderr","time":965.702618437,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 4d068b9b-085, creating venv without pip: Command '['/tmp/swegemma_sandbox_4d068b9b-085_iotrdxgp/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stdout","time":972.349237465,"data":"[g1 r1 #20] pdm_3902: resolved=False agent=60.0s patch=490 err='Agent exceeded session timeout (1.0 min)'\n"}
+,{"stream_name":"stderr","time":972.478384371,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox fdc8823b-33d, creating venv without pip: Command '['/tmp/swegemma_sandbox_fdc8823b-33d_fromp11i/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":972.478414645,"data":"\n"}
+,{"stream_name":"stderr","time":972.478419629,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox fdc8823b-33d, creating venv without pip: Command '['/tmp/swegemma_sandbox_fdc8823b-33d_fromp11i/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":985.300018704,"data":"WARNING:swegemma.harness.agent_runner:Task tox_4094 agent timed out.\n"}
+,{"stream_name":"stderr","time":985.300043868,"data":"\n"}
+,{"stream_name":"stderr","time":985.300046577,"data":"WARNING:swegemma.harness.agent_runner:Task tox_4094 agent timed out.\n"}
+,{"stream_name":"stderr","time":985.315878114,"data":"WARNING:swegemma.harness.agent_runner:Task tox_4094 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stderr","time":985.315897108,"data":"\n"}
+,{"stream_name":"stderr","time":985.315900036,"data":"WARNING:swegemma.harness.agent_runner:Task tox_4094 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stdout","time":985.458240598,"data":"[g1 r1 #22] tox_4094: resolved=False agent=60.0s patch=0 err='Agent exceeded session timeout (1.0 min)'\n"}
+,{"stream_name":"stderr","time":985.59062333,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 25150f8e-328, creating venv without pip: Command '['/tmp/swegemma_sandbox_25150f8e-328_g4jeag0_/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":985.590643263,"data":"\n"}
+,{"stream_name":"stderr","time":985.590654932,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 25150f8e-328, creating venv without pip: Command '['/tmp/swegemma_sandbox_25150f8e-328_g4jeag0_/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":987.547100243,"data":"WARNING:swegemma.harness.agent_runner:Task great_tables_873 agent timed out.\n"}
+,{"stream_name":"stderr","time":987.547122646,"data":"\n"}
+,{"stream_name":"stderr","time":987.547125512,"data":"WARNING:swegemma.harness.agent_runner:Task great_tables_873 agent timed out.\n"}
+,{"stream_name":"stderr","time":987.571842097,"data":"WARNING:swegemma.harness.agent_runner:Task great_tables_873 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stderr","time":987.571864701,"data":"\n"}
+,{"stream_name":"stderr","time":987.571867966,"data":"WARNING:swegemma.harness.agent_runner:Task great_tables_873 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stdout","time":988.943094262,"data":"[g1 r1 #21] great_tables_873: resolved=False agent=60.0s patch=0 err='Agent exceeded session timeout (1.0 min)'\n"}
+,{"stream_name":"stderr","time":989.09459372,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox a42d18a6-e8a, creating venv without pip: Command '['/tmp/swegemma_sandbox_a42d18a6-e8a_5dgxmn9l/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":989.094616271,"data":"\n"}
+,{"stream_name":"stderr","time":989.094620689,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox a42d18a6-e8a, creating venv without pip: Command '['/tmp/swegemma_sandbox_a42d18a6-e8a_5dgxmn9l/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stdout","time":997.081053641,"data":"[ood45_harness] EDITABLE INSTALL FAILED in sandbox a42d18a6-e8a (exit 1):\n"}
+,{"stream_name":"stdout","time":997.081078855,"data":"Obtaining file:///tmp/swegemma_sandbox_a42d18a6-e8a_5dgxmn9l/workspace\n"}
+,{"stream_name":"stdout","time":997.081082098,"data":"ERROR: file:///tmp/swegemma_sandbox_a42d18a6-e8a_5dgxmn9l/workspace does not appear to be a Python project: neither 'setup.py' nor 'pyproject.toml' found.\n"}
+,{"stream_name":"stdout","time":997.081085134,"data":"\n"}
+,{"stream_name":"stderr","time":1029.499888116,"data":"WARNING:swegemma.harness.agent_runner:Task filesystem_spec_2191 agent timed out.\n"}
+,{"stream_name":"stderr","time":1029.499915918,"data":"\n"}
+,{"stream_name":"stderr","time":1029.499919288,"data":"WARNING:swegemma.harness.agent_runner:Task filesystem_spec_2191 agent timed out.\n"}
+,{"stream_name":"stderr","time":1029.507209277,"data":"WARNING:swegemma.harness.agent_runner:Task filesystem_spec_2191 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stderr","time":1029.507222114,"data":"\n"}
+,{"stream_name":"stderr","time":1029.507224833,"data":"WARNING:swegemma.harness.agent_runner:Task filesystem_spec_2191 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stdout","time":1030.192464386,"data":"[g1 r1 #23] filesystem_spec_2191: resolved=False agent=60.0s patch=0 err='Agent exceeded session timeout (1.0 min)'\n"}
+,{"stream_name":"stderr","time":1030.323662943,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox c41d56f3-fd6, creating venv without pip: Command '['/tmp/swegemma_sandbox_c41d56f3-fd6_mr73ysn6/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1030.323696414,"data":"\n"}
+,{"stream_name":"stderr","time":1030.323699472,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox c41d56f3-fd6, creating venv without pip: Command '['/tmp/swegemma_sandbox_c41d56f3-fd6_mr73ysn6/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1051.624307845,"data":"WARNING:swegemma.harness.agent_runner:Task feast_6874 agent timed out.\n"}
+,{"stream_name":"stderr","time":1051.624335105,"data":"\n"}
+,{"stream_name":"stderr","time":1051.624337709,"data":"WARNING:swegemma.harness.agent_runner:Task feast_6874 agent timed out.\n"}
+,{"stream_name":"stderr","time":1051.686447757,"data":"WARNING:swegemma.harness.agent_runner:Task feast_6874 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stderr","time":1051.686471263,"data":"\n"}
+,{"stream_name":"stderr","time":1051.686474046,"data":"WARNING:swegemma.harness.agent_runner:Task feast_6874 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stdout","time":1052.408587838,"data":"[g1 r1 #24] feast_6874: resolved=False agent=60.0s patch=0 err='Agent exceeded session timeout (1.0 min)'\n"}
+,{"stream_name":"stderr","time":1052.537730142,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox a046bbd4-86c, creating venv without pip: Command '['/tmp/swegemma_sandbox_a046bbd4-86c_eqdn5e7s/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1052.537756419,"data":"\n"}
+,{"stream_name":"stderr","time":1052.537759257,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox a046bbd4-86c, creating venv without pip: Command '['/tmp/swegemma_sandbox_a046bbd4-86c_eqdn5e7s/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1057.567236819,"data":"WARNING:swegemma.harness.agent_runner:Task polars_29401 agent timed out.\n"}
+,{"stream_name":"stderr","time":1057.567263691,"data":"\n"}
+,{"stream_name":"stderr","time":1057.567266294,"data":"WARNING:swegemma.harness.agent_runner:Task polars_29401 agent timed out.\n"}
+,{"stream_name":"stderr","time":1057.600424207,"data":"WARNING:swegemma.harness.agent_runner:Task polars_29401 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stderr","time":1057.600445914,"data":"\n"}
+,{"stream_name":"stderr","time":1057.600448459,"data":"WARNING:swegemma.harness.agent_runner:Task polars_29401 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stdout","time":1057.820424648,"data":"[g1 r1 #26] polars_29401: resolved=False agent=60.0s patch=0 err='Agent exceeded session timeout (1.0 min)'\n"}
+,{"stream_name":"stderr","time":1057.959932061,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 8c1462c4-6e6, creating venv without pip: Command '['/tmp/swegemma_sandbox_8c1462c4-6e6_wirld7cy/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1057.959952812,"data":"\n"}
+,{"stream_name":"stderr","time":1057.959955548,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 8c1462c4-6e6, creating venv without pip: Command '['/tmp/swegemma_sandbox_8c1462c4-6e6_wirld7cy/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1061.195477518,"data":"WARNING:swegemma.harness.agent_runner:Task great_tables_895 agent timed out.\n"}
+,{"stream_name":"stderr","time":1061.195516945,"data":"\n"}
+,{"stream_name":"stderr","time":1061.1955209,"data":"WARNING:swegemma.harness.agent_runner:Task great_tables_895 agent timed out.\n"}
+,{"stream_name":"stderr","time":1062.760289799,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 83132fbe-bc6, creating venv without pip: Command '['/tmp/swegemma_sandbox_83132fbe-bc6_qc548gwy/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1062.760313025,"data":"\n"}
+,{"stream_name":"stderr","time":1062.7603168,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 83132fbe-bc6, creating venv without pip: Command '['/tmp/swegemma_sandbox_83132fbe-bc6_qc548gwy/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stdout","time":1092.925406423,"data":"[g1 r1 #25] great_tables_895: resolved=False agent=60.0s patch=448 err='Agent exceeded session timeout (1.0 min)'\n"}
+,{"stream_name":"stderr","time":1093.048349153,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 634d0aba-caf, creating venv without pip: Command '['/tmp/swegemma_sandbox_634d0aba-caf_4m6byc38/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1093.048376883,"data":"\n"}
+,{"stream_name":"stderr","time":1093.048380472,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 634d0aba-caf, creating venv without pip: Command '['/tmp/swegemma_sandbox_634d0aba-caf_4m6byc38/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1095.95157614,"data":"WARNING:swegemma.harness.agent_runner:Task cachetools_424 agent timed out.\n"}
+,{"stream_name":"stderr","time":1095.951600553,"data":"\n"}
+,{"stream_name":"stderr","time":1095.95160406,"data":"WARNING:swegemma.harness.agent_runner:Task cachetools_424 agent timed out.\n"}
+,{"stream_name":"stderr","time":1095.967796505,"data":"WARNING:swegemma.harness.agent_runner:Task cachetools_424 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stderr","time":1095.967820518,"data":"\n"}
+,{"stream_name":"stderr","time":1095.967824167,"data":"WARNING:swegemma.harness.agent_runner:Task cachetools_424 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stdout","time":1096.009800839,"data":"[g1 r1 #27] cachetools_424: resolved=False agent=60.0s patch=0 err='Agent exceeded session timeout (1.0 min)'\n"}
+,{"stream_name":"stderr","time":1096.150957399,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox bf2260ad-6c8, creating venv without pip: Command '['/tmp/swegemma_sandbox_bf2260ad-6c8_a536ury1/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1096.150997588,"data":"\n"}
+,{"stream_name":"stderr","time":1096.151001738,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox bf2260ad-6c8, creating venv without pip: Command '['/tmp/swegemma_sandbox_bf2260ad-6c8_a536ury1/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1116.248174394,"data":"WARNING:swegemma.harness.agent_runner:Task nox_1188 agent timed out.\n"}
+,{"stream_name":"stderr","time":1116.248204236,"data":"\n"}
+,{"stream_name":"stderr","time":1116.248207459,"data":"WARNING:swegemma.harness.agent_runner:Task nox_1188 agent timed out.\n"}
+,{"stream_name":"stderr","time":1116.261892492,"data":"WARNING:swegemma.harness.agent_runner:Task nox_1188 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stderr","time":1116.261922578,"data":"\n"}
+,{"stream_name":"stderr","time":1116.261925498,"data":"WARNING:swegemma.harness.agent_runner:Task nox_1188 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stdout","time":1116.299234685,"data":"[g1 r1 #28] nox_1188: resolved=False agent=60.01s patch=0 err='Agent exceeded session timeout (1.0 min)'\n"}
+,{"stream_name":"stderr","time":1116.430914862,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 04677b0e-b38, creating venv without pip: Command '['/tmp/swegemma_sandbox_04677b0e-b38_u1dwunn5/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1116.430932398,"data":"\n"}
+,{"stream_name":"stderr","time":1116.430934739,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 04677b0e-b38, creating venv without pip: Command '['/tmp/swegemma_sandbox_04677b0e-b38_u1dwunn5/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1133.312801593,"data":"WARNING:swegemma.harness.agent_runner:Task great_tables_876 agent timed out.\n"}
+,{"stream_name":"stderr","time":1133.312842649,"data":"\n"}
+,{"stream_name":"stderr","time":1133.312846078,"data":"WARNING:swegemma.harness.agent_runner:Task great_tables_876 agent timed out.\n"}
+,{"stream_name":"stderr","time":1133.331291423,"data":"WARNING:swegemma.harness.agent_runner:Task great_tables_876 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stderr","time":1133.331313105,"data":"\n"}
+,{"stream_name":"stderr","time":1133.33131655,"data":"WARNING:swegemma.harness.agent_runner:Task great_tables_876 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stdout","time":1134.124774394,"data":"[g1 r1 #29] great_tables_876: resolved=False agent=60.0s patch=0 err='Agent exceeded session timeout (1.0 min)'\n"}
+,{"stream_name":"stderr","time":1134.25508608,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 5613a8ae-2a9, creating venv without pip: Command '['/tmp/swegemma_sandbox_5613a8ae-2a9_vq023iv3/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1134.255117728,"data":"\n"}
+,{"stream_name":"stderr","time":1134.25512117,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 5613a8ae-2a9, creating venv without pip: Command '['/tmp/swegemma_sandbox_5613a8ae-2a9_vq023iv3/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1161.798826918,"data":"WARNING:swegemma.harness.agent_runner:Task filesystem_spec_2183 agent timed out.\n"}
+,{"stream_name":"stderr","time":1161.798851542,"data":"\n"}
+,{"stream_name":"stderr","time":1161.798854936,"data":"WARNING:swegemma.harness.agent_runner:Task filesystem_spec_2183 agent timed out.\n"}
+,{"stream_name":"stderr","time":1162.677419104,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox a1c85fff-f7f, creating venv without pip: Command '['/tmp/swegemma_sandbox_a1c85fff-f7f_agtysha8/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1162.677448316,"data":"\n"}
+,{"stream_name":"stderr","time":1162.677451553,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox a1c85fff-f7f, creating venv without pip: Command '['/tmp/swegemma_sandbox_a1c85fff-f7f_agtysha8/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1167.894481344,"data":"WARNING:swegemma.harness.agent_runner:Task kedro_5790 agent timed out.\n"}
+,{"stream_name":"stderr","time":1167.894506572,"data":"\n"}
+,{"stream_name":"stderr","time":1167.894510103,"data":"WARNING:swegemma.harness.agent_runner:Task kedro_5790 agent timed out.\n"}
+,{"stream_name":"stderr","time":1168.604617385,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 200ad915-3ad, creating venv without pip: Command '['/tmp/swegemma_sandbox_200ad915-3ad_vfni3hq3/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1168.604641555,"data":"\n"}
+,{"stream_name":"stderr","time":1168.604644976,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 200ad915-3ad, creating venv without pip: Command '['/tmp/swegemma_sandbox_200ad915-3ad_vfni3hq3/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stdout","time":1181.569903542,"data":"[g1 r1 #30] filesystem_spec_2183: resolved=False agent=60.01s patch=1100 err='Agent exceeded session timeout (1.0 min)'\n"}
+,{"stream_name":"stderr","time":1181.702991663,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 6fd5ca99-204, creating venv without pip: Command '['/tmp/swegemma_sandbox_6fd5ca99-204_ti6rxukx/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1181.703017911,"data":"\n"}
+,{"stream_name":"stderr","time":1181.7030213,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 6fd5ca99-204, creating venv without pip: Command '['/tmp/swegemma_sandbox_6fd5ca99-204_ti6rxukx/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stdout","time":1187.826751702,"data":"[g1 r1 #31] kedro_5790: resolved=False agent=60.0s patch=860 err='Agent exceeded session timeout (1.0 min)'\n"}
+,{"stream_name":"stderr","time":1187.970738532,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox c7f15f56-7d1, creating venv without pip: Command '['/tmp/swegemma_sandbox_c7f15f56-7d1_gm10geum/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1187.970761295,"data":"\n"}
+,{"stream_name":"stderr","time":1187.970764621,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox c7f15f56-7d1, creating venv without pip: Command '['/tmp/swegemma_sandbox_c7f15f56-7d1_gm10geum/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1191.423022965,"data":"WARNING:swegemma.harness.agent_runner:Task great_tables_865 agent timed out.\n"}
+,{"stream_name":"stderr","time":1191.423051887,"data":"\n"}
+,{"stream_name":"stderr","time":1191.423055347,"data":"WARNING:swegemma.harness.agent_runner:Task great_tables_865 agent timed out.\n"}
+,{"stream_name":"stderr","time":1192.30477265,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox d5c00985-90d, creating venv without pip: Command '['/tmp/swegemma_sandbox_d5c00985-90d_00rn6m7e/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1192.304795937,"data":"\n"}
+,{"stream_name":"stderr","time":1192.304799176,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox d5c00985-90d, creating venv without pip: Command '['/tmp/swegemma_sandbox_d5c00985-90d_00rn6m7e/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1208.701246183,"data":"WARNING:swegemma.harness.agent_runner:Task py_shiny_2505 agent timed out.\n"}
+,{"stream_name":"stderr","time":1208.701271029,"data":"\n"}
+,{"stream_name":"stderr","time":1208.701274316,"data":"WARNING:swegemma.harness.agent_runner:Task py_shiny_2505 agent timed out.\n"}
+,{"stream_name":"stderr","time":1209.452035471,"data":"WARNING:swegemma.harness.agent_runner:Task py_shiny_2505 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stderr","time":1209.452062446,"data":"\n"}
+,{"stream_name":"stderr","time":1209.452067072,"data":"WARNING:swegemma.harness.agent_runner:Task py_shiny_2505 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stdout","time":1210.352345688,"data":"[g1 r1 #33] py_shiny_2505: resolved=False agent=60.0s patch=0 err='Agent exceeded session timeout (1.0 min)'\n"}
+,{"stream_name":"stderr","time":1210.487712098,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 80ade5d3-7d6, creating venv without pip: Command '['/tmp/swegemma_sandbox_80ade5d3-7d6__qorwjnq/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1210.487735294,"data":"\n"}
+,{"stream_name":"stderr","time":1210.487738573,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 80ade5d3-7d6, creating venv without pip: Command '['/tmp/swegemma_sandbox_80ade5d3-7d6__qorwjnq/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stdout","time":1217.682104009,"data":"[g1 r1 #32] great_tables_865: resolved=False agent=60.0s patch=1171 err='Agent exceeded session timeout (1.0 min)'\n"}
+,{"stream_name":"stderr","time":1217.814247793,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 0d6e4f15-0a3, creating venv without pip: Command '['/tmp/swegemma_sandbox_0d6e4f15-0a3_puvs2677/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1217.814272934,"data":"\n"}
+,{"stream_name":"stderr","time":1217.814276876,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 0d6e4f15-0a3, creating venv without pip: Command '['/tmp/swegemma_sandbox_0d6e4f15-0a3_puvs2677/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1246.79731176,"data":"WARNING:swegemma.harness.agent_runner:Task pint_2434 agent timed out.\n"}
+,{"stream_name":"stderr","time":1246.797339192,"data":"\n"}
+,{"stream_name":"stderr","time":1246.797342759,"data":"WARNING:swegemma.harness.agent_runner:Task pint_2434 agent timed out.\n"}
+,{"stream_name":"stderr","time":1249.223458509,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 000bb9aa-c37, creating venv without pip: Command '['/tmp/swegemma_sandbox_000bb9aa-c37_yy7f6_qq/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1249.223484491,"data":"\n"}
+,{"stream_name":"stderr","time":1249.223487943,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 000bb9aa-c37, creating venv without pip: Command '['/tmp/swegemma_sandbox_000bb9aa-c37_yy7f6_qq/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1255.011392048,"data":"WARNING:swegemma.harness.agent_runner:Task pyjanitor_1741 agent timed out.\n"}
+,{"stream_name":"stderr","time":1255.011420442,"data":"\n"}
+,{"stream_name":"stderr","time":1255.011425977,"data":"WARNING:swegemma.harness.agent_runner:Task pyjanitor_1741 agent timed out.\n"}
+,{"stream_name":"stderr","time":1255.436491826,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 7399b14d-127, creating venv without pip: Command '['/tmp/swegemma_sandbox_7399b14d-127_g8p_x_o3/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1255.436514864,"data":"\n"}
+,{"stream_name":"stderr","time":1255.436517728,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 7399b14d-127, creating venv without pip: Command '['/tmp/swegemma_sandbox_7399b14d-127_g8p_x_o3/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stdout","time":1259.932511166,"data":"[g1 r1 #34] pint_2434: resolved=False agent=60.0s patch=1148 err='Agent exceeded session timeout (1.0 min)'\n"}
+,{"stream_name":"stderr","time":1260.06260997,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 092a15b2-974, creating venv without pip: Command '['/tmp/swegemma_sandbox_092a15b2-974_d0kldfji/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1260.062628893,"data":"\n"}
+,{"stream_name":"stderr","time":1260.062631663,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 092a15b2-974, creating venv without pip: Command '['/tmp/swegemma_sandbox_092a15b2-974_d0kldfji/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stdout","time":1270.241126959,"data":"[g1 r1 #35] pyjanitor_1741: resolved=True agent=60.01s patch=1024 err=''\n"}
+,{"stream_name":"stderr","time":1270.373029217,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 49f9b07d-6ba, creating venv without pip: Command '['/tmp/swegemma_sandbox_49f9b07d-6ba_cyuion3t/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1270.373049337,"data":"\n"}
+,{"stream_name":"stderr","time":1270.373051832,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 49f9b07d-6ba, creating venv without pip: Command '['/tmp/swegemma_sandbox_49f9b07d-6ba_cyuion3t/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1284.989362926,"data":"WARNING:swegemma.harness.agent_runner:Task great_tables_879 agent timed out.\n"}
+,{"stream_name":"stderr","time":1284.989390548,"data":"\n"}
+,{"stream_name":"stderr","time":1284.98939393,"data":"WARNING:swegemma.harness.agent_runner:Task great_tables_879 agent timed out.\n"}
+,{"stream_name":"stderr","time":1285.005089928,"data":"WARNING:swegemma.harness.agent_runner:Task great_tables_879 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stderr","time":1285.005113184,"data":"\n"}
+,{"stream_name":"stderr","time":1285.005116768,"data":"WARNING:swegemma.harness.agent_runner:Task great_tables_879 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stdout","time":1285.746695012,"data":"[g1 r1 #36] great_tables_879: resolved=False agent=60.0s patch=0 err='Agent exceeded session timeout (1.0 min)'\n"}
+,{"stream_name":"stderr","time":1285.878177159,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 5e6f1aed-129, creating venv without pip: Command '['/tmp/swegemma_sandbox_5e6f1aed-129_nxgh091p/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1285.878206002,"data":"\n"}
+,{"stream_name":"stderr","time":1285.878222438,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 5e6f1aed-129, creating venv without pip: Command '['/tmp/swegemma_sandbox_5e6f1aed-129_nxgh091p/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1286.443050677,"data":"WARNING:swegemma.harness.agent_runner:Task filesystem_spec_2169 agent timed out.\n"}
+,{"stream_name":"stderr","time":1286.443074788,"data":"\n"}
+,{"stream_name":"stderr","time":1286.443077805,"data":"WARNING:swegemma.harness.agent_runner:Task filesystem_spec_2169 agent timed out.\n"}
+,{"stream_name":"stderr","time":1286.45659299,"data":"WARNING:swegemma.harness.agent_runner:Task filesystem_spec_2169 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stderr","time":1286.456610017,"data":"\n"}
+,{"stream_name":"stderr","time":1286.456612801,"data":"WARNING:swegemma.harness.agent_runner:Task filesystem_spec_2169 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stdout","time":1287.122842016,"data":"[g1 r1 #37] filesystem_spec_2169: resolved=False agent=60.0s patch=0 err='Agent exceeded session timeout (1.0 min)'\n"}
+,{"stream_name":"stderr","time":1287.252380451,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 1a388e65-cd3, creating venv without pip: Command '['/tmp/swegemma_sandbox_1a388e65-cd3_bcb38r4b/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1287.252398959,"data":"\n"}
+,{"stream_name":"stderr","time":1287.252401475,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 1a388e65-cd3, creating venv without pip: Command '['/tmp/swegemma_sandbox_1a388e65-cd3_bcb38r4b/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1334.743665655,"data":"WARNING:swegemma.harness.agent_runner:Task tox_4109 agent timed out.\n"}
+,{"stream_name":"stderr","time":1334.743702087,"data":"\n"}
+,{"stream_name":"stderr","time":1334.743705788,"data":"WARNING:swegemma.harness.agent_runner:Task tox_4109 agent timed out.\n"}
+,{"stream_name":"stderr","time":1334.750786044,"data":"WARNING:swegemma.harness.agent_runner:Task tox_4109 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stderr","time":1334.750806007,"data":"\n"}
+,{"stream_name":"stderr","time":1334.750809483,"data":"WARNING:swegemma.harness.agent_runner:Task tox_4109 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stdout","time":1334.841003388,"data":"[g1 r1 #39] tox_4109: resolved=False agent=60.0s patch=0 err='Agent exceeded session timeout (1.0 min)'\n"}
+,{"stream_name":"stderr","time":1334.975114428,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox ae47df02-69f, creating venv without pip: Command '['/tmp/swegemma_sandbox_ae47df02-69f_un95rxv5/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1334.975136634,"data":"\n"}
+,{"stream_name":"stderr","time":1334.975140099,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox ae47df02-69f, creating venv without pip: Command '['/tmp/swegemma_sandbox_ae47df02-69f_un95rxv5/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1337.349243236,"data":"WARNING:swegemma.harness.agent_runner:Task iceberg_python_3995 agent timed out.\n"}
+,{"stream_name":"stderr","time":1337.34927284,"data":"\n"}
+,{"stream_name":"stderr","time":1337.349287942,"data":"WARNING:swegemma.harness.agent_runner:Task iceberg_python_3995 agent timed out.\n"}
+,{"stream_name":"stderr","time":1337.36565553,"data":"WARNING:swegemma.harness.agent_runner:Task iceberg_python_3995 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stderr","time":1337.365677645,"data":"\n"}
+,{"stream_name":"stderr","time":1337.365680825,"data":"WARNING:swegemma.harness.agent_runner:Task iceberg_python_3995 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stdout","time":1338.583258567,"data":"[g1 r1 #38] iceberg_python_3995: resolved=False agent=60.0s patch=0 err='Agent exceeded session timeout (1.0 min)'\n"}
+,{"stream_name":"stderr","time":1338.723201551,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox f6081b04-4ce, creating venv without pip: Command '['/tmp/swegemma_sandbox_f6081b04-4ce_0y3vopuv/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1338.723222263,"data":"\n"}
+,{"stream_name":"stderr","time":1338.723224995,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox f6081b04-4ce, creating venv without pip: Command '['/tmp/swegemma_sandbox_f6081b04-4ce_0y3vopuv/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1366.389803813,"data":"WARNING:swegemma.harness.agent_runner:Task feast_6859 agent timed out.\n"}
+,{"stream_name":"stderr","time":1366.389827561,"data":"\n"}
+,{"stream_name":"stderr","time":1366.389830819,"data":"WARNING:swegemma.harness.agent_runner:Task feast_6859 agent timed out.\n"}
+,{"stream_name":"stderr","time":1366.390651126,"data":"WARNING:swegemma.harness.agent_runner:Task great_tables_867 agent timed out.\n"}
+,{"stream_name":"stderr","time":1366.390671081,"data":"\n"}
+,{"stream_name":"stderr","time":1366.390674733,"data":"WARNING:swegemma.harness.agent_runner:Task great_tables_867 agent timed out.\n"}
+,{"stream_name":"stderr","time":1366.410612163,"data":"WARNING:swegemma.harness.agent_runner:Task great_tables_867 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stderr","time":1366.410627874,"data":"\n"}
+,{"stream_name":"stderr","time":1366.410630606,"data":"WARNING:swegemma.harness.agent_runner:Task great_tables_867 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stdout","time":1367.514216443,"data":"[g1 r1 #40] great_tables_867: resolved=False agent=64.11s patch=0 err='Agent exceeded session timeout (1.0 min)'\n"}
+,{"stream_name":"stderr","time":1367.649223162,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 18f072d5-dc8, creating venv without pip: Command '['/tmp/swegemma_sandbox_18f072d5-dc8_m6v_u22g/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1367.649247541,"data":"\n"}
+,{"stream_name":"stderr","time":1367.649250589,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 18f072d5-dc8, creating venv without pip: Command '['/tmp/swegemma_sandbox_18f072d5-dc8_m6v_u22g/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1367.651511879,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 928f4535-94f, creating venv without pip: Command '['/tmp/swegemma_sandbox_928f4535-94f_28xnfss8/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1367.651538789,"data":"\n"}
+,{"stream_name":"stderr","time":1367.651541856,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 928f4535-94f, creating venv without pip: Command '['/tmp/swegemma_sandbox_928f4535-94f_28xnfss8/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1408.881128822,"data":"WARNING:swegemma.harness.agent_runner:Task kedro_5792 agent timed out.\n"}
+,{"stream_name":"stderr","time":1408.881163,"data":"\n"}
+,{"stream_name":"stderr","time":1408.881168432,"data":"WARNING:swegemma.harness.agent_runner:Task kedro_5792 agent timed out.\n"}
+,{"stream_name":"stdout","time":1409.740239111,"data":"[g1 r1 #41] feast_6859: resolved=False agent=60.17s patch=1173 err='Agent exceeded session timeout (1.0 min)'\n"}
+,{"stream_name":"stderr","time":1409.792643099,"data":"WARNING:swegemma.harness.agent_runner:Task filesystem_spec_2182 agent timed out.\n"}
+,{"stream_name":"stderr","time":1409.792666586,"data":"\n"}
+,{"stream_name":"stderr","time":1409.792669696,"data":"WARNING:swegemma.harness.agent_runner:Task filesystem_spec_2182 agent timed out.\n"}
+,{"stream_name":"stderr","time":1409.812829295,"data":"WARNING:swegemma.harness.agent_runner:Task filesystem_spec_2182 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stderr","time":1409.812854274,"data":"\n"}
+,{"stream_name":"stderr","time":1409.812858244,"data":"WARNING:swegemma.harness.agent_runner:Task filesystem_spec_2182 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stderr","time":1409.887460748,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 10363397-46c, creating venv without pip: Command '['/tmp/swegemma_sandbox_10363397-46c_ww1bzjum/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1409.88748202,"data":"\n"}
+,{"stream_name":"stderr","time":1409.887485337,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 10363397-46c, creating venv without pip: Command '['/tmp/swegemma_sandbox_10363397-46c_ww1bzjum/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stdout","time":1410.4908445,"data":"[g1 r1 #43] filesystem_spec_2182: resolved=False agent=60.0s patch=0 err='Agent exceeded session timeout (1.0 min)'\n"}
+,{"stream_name":"stdout","time":1432.79509277,"data":"[g1 r1 #42] kedro_5792: resolved=False agent=60.0s patch=866 err='Agent exceeded session timeout (1.0 min)'\n"}
+,{"stream_name":"stderr","time":1451.641533754,"data":"WARNING:swegemma.harness.agent_runner:Task great_tables_872 agent timed out.\n"}
+,{"stream_name":"stderr","time":1451.641561635,"data":"\n"}
+,{"stream_name":"stderr","time":1451.64156509,"data":"WARNING:swegemma.harness.agent_runner:Task great_tables_872 agent timed out.\n"}
+,{"stream_name":"stderr","time":1451.65560182,"data":"WARNING:swegemma.harness.agent_runner:Task great_tables_872 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stderr","time":1451.655628129,"data":"\n"}
+,{"stream_name":"stderr","time":1451.655631694,"data":"WARNING:swegemma.harness.agent_runner:Task great_tables_872 completed without explicit submit_patch call and no working tree modifications.\n"}
+,{"stream_name":"stdout","time":1452.384751701,"data":"[g1 r1 #44] great_tables_872: resolved=False agent=60.02s patch=0 err='Agent exceeded session timeout (1.0 min)'\n"}
+,{"stream_name":"stdout","time":1464.398411491,"data":"{\"ts\": 1792363433.3401234, \"since_start_s\": 1455.3, \"event\": \"ood_end\", \"seconds\": 994.8, \"rows\": 44, \"resolved\": {\"g1\": 2}}\n"}
+,{"stream_name":"stdout","time":1470.301775889,"data":"{\"ts\": 1792363439.2520132, \"since_start_s\": 1461.2, \"event\": \"done\", \"total_hours\": 0.41}\n"}
+,{"stream_name":"stderr","time":1475.373561635,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":1475.373585026,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":1475.535332036,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":1475.535349485,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":1476.238372619,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to notebook\n"}
+,{"stream_name":"stderr","time":1476.596520097,"data":"[NbConvertApp] Writing 116944 bytes to __notebook__.ipynb\n"}
+,{"stream_name":"stderr","time":1479.325309972,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to html\n"}
+,{"stream_name":"stderr","time":1480.319627377,"data":"[NbConvertApp] Writing 535429 bytes to __results__.html\n"}
+]
