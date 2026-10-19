@@ -18,3 +18,4 @@ __pycache__/
 *.pyc
 *.zip
 work/
+data_ood/

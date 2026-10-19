@@ -59,15 +59,26 @@ def split_ident(tok):
     return parts
 
 
+SUFFIXES = ("ings", "ing", "edly", "ed", "es", "s", "e")
+
+
+def stem(t):
+    """Crude suffix stripping so 'escaping', 'escape' and 'escapes' meet."""
+    for suf in SUFFIXES:
+        if t.endswith(suf) and len(t) - len(suf) >= 3:
+            return t[: -len(suf)]
+    return t
+
+
 def tokenize(text):
     out = []
     for tok in re.findall(r"[A-Za-z_][A-Za-z0-9_]*", text):
         low = tok.lower()
         if len(low) > 1 and low not in STOP:
-            out.append(low)
+            out.append(stem(low))
         sub = split_ident(tok)
         if len(sub) > 1:
-            out.extend(s for s in sub if len(s) > 1 and s not in STOP)
+            out.extend(stem(s) for s in sub if len(s) > 1 and s not in STOP)
     return out
 
 
@@ -86,7 +97,7 @@ def query_terms(q):
         for t in re.findall(r"[A-Za-z_][A-Za-z0-9_]*", c):
             if len(t) > 2 and t.lower() not in STOP:
                 exact.add(t.lower())
-                w[t.lower()] += 2.0
+                w[stem(t.lower())] += 2.0
     return w, exact
 
 
