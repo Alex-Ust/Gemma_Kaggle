@@ -55,6 +55,8 @@ def main():
     ap.add_argument("--task-ids", nargs="*")
     ap.add_argument("--concurrency", type=int, default=4)
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--mode", default="agent", choices=["agent", "gold", "empty"],
+                    help="gold/empty: CPU-only check with the reference / an empty patch")
     ap.add_argument("--push", action="store_true")
     a = ap.parse_args()
 
@@ -64,7 +66,8 @@ def main():
     text = (bundle / "agent.yaml").read_text()
     model = next(m for m in MODELS if m in text)
     task_ids = a.task_ids or pick_tasks(a.n, a.seed)
-    run = {"task_ids": task_ids, "concurrency": a.concurrency, "bundle": bundle.name, "tag": a.tag}
+    run = {"task_ids": task_ids, "concurrency": a.concurrency, "bundle": bundle.name, "tag": a.tag, "mode": a.mode}
+    gpu = a.mode == "agent"
 
     name = f"{bundle.name}-{a.tag}".replace("_", "-").lower()
     slug = f"gemma-eval-{name}"[:50].rstrip("-")
@@ -81,16 +84,17 @@ def main():
         "language": "python",
         "kernel_type": "script",
         "is_private": True,
-        "enable_gpu": True,
+        "enable_gpu": gpu,
         "enable_tpu": False,
         "enable_internet": False,
         "dataset_sources": ["metric/gemma-4-developer-agent-wheelhouse"],
         "competition_sources": ["gemma-4-developer-agent"],
         "kernel_sources": [],
-        "model_sources": [MODELS[model]],
+        "model_sources": [MODELS[model]] if gpu else [],
         "docker_image": DOCKER_IMAGE,
-        "machine_shape": "NvidiaL4",
     }
+    if gpu:
+        meta["machine_shape"] = "NvidiaL4"
     (kdir / "kernel-metadata.json").write_text(json.dumps(meta, indent=2))
     (kdir.parent / "run.json").write_text(json.dumps({**run, "slug": meta["id"], "model": model}, indent=2))
     print(f"kernel: {kdir}  slug={meta['id']}  model={model}  tasks={len(task_ids) if task_ids else 129}")

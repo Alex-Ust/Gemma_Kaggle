@@ -77,7 +77,6 @@ for rel, b64 in BUNDLE_FILES.items():
 log(f"bundle written: {sorted(BUNDLE_FILES)}  run={RUN}")
 
 import litellm  # noqa: E402
-import torch  # noqa: E402
 import yaml  # noqa: E402
 from adk_submission import VllmConfig, VllmServer, discover_adapters, validate_directory  # noqa: E402
 from adk_submission.discovery import discover_declared_models  # noqa: E402
@@ -93,25 +92,30 @@ validate_directory(AGENT_DIR, limits=limits)
 declared = discover_declared_models(AGENT_DIR)
 assert len(declared) == 1, declared
 model_name = next(iter(declared))
-MODEL_PATH = Path(glob.glob(f'/kaggle/input/**/{model_name}/*/config.json', recursive=True)[0]).parent
-log(f"model {model_name} at {MODEL_PATH}")
-
+MODE = RUN.get('mode', 'agent')  # 'agent' = real model; 'gold' = reference patch, CPU only
 adapters = discover_adapters(str(AGENT_DIR), adapter_extensions=ALLOWED_ADAPTER_EXTENSIONS)
-adapter_map = getattr(adapters, 'adapters', None) or {}
-ranks = [r for info in adapter_map.values() if (r := getattr(info, 'rank', None))]
-extra = {'gemma-4-12b-it-qat-w4a16-ct': ('--hf-overrides',
-                                          '{"architectures": ["Gemma4ForCausalLM"], "model_type": "gemma4"}')}
-server = VllmServer(VllmConfig(
-    model=str(MODEL_PATH), port=8000, host='127.0.0.1', tool_call_parser='gemma4', reasoning_parser='gemma4',
-    max_model_len=32768, dtype='bfloat16', gpu_memory_utilization=0.90, enable_auto_tool_choice=True,
-    enable_lora=bool(adapter_map), max_loras=max(1, len(adapter_map)),
-    max_lora_rank=max(ranks) if ranks else 128, scheduler_reserve_full_isl=False,
-    tensor_parallel_size=min(4, torch.cuda.device_count()), startup_timeout=60 * 20,
-    extra_args=extra.get(model_name, ()),
-), adapter_manifest=adapters)
-server.start()
-models = server.create_model_registry(aliases=[model_name], model_prefix='openai/', api_key='EMPTY')
-log("vLLM up")
+server = None
+if MODE in ('gold', 'empty'):
+    from adk_submission import ModelRegistry  # noqa: E402
+    models = ModelRegistry()
+else:
+    MODEL_PATH = Path(glob.glob(f'/kaggle/input/**/{model_name}/*/config.json', recursive=True)[0]).parent
+    log(f"model {model_name} at {MODEL_PATH}")
+    adapter_map = getattr(adapters, 'adapters', None) or {}
+    ranks = [r for info in adapter_map.values() if (r := getattr(info, 'rank', None))]
+    extra = {'gemma-4-12b-it-qat-w4a16-ct': ('--hf-overrides',
+                                              '{"architectures": ["Gemma4ForCausalLM"], "model_type": "gemma4"}')}
+    server = VllmServer(VllmConfig(
+        model=str(MODEL_PATH), port=8000, host='127.0.0.1', tool_call_parser='gemma4', reasoning_parser='gemma4',
+        max_model_len=32768, dtype='bfloat16', gpu_memory_utilization=0.90, enable_auto_tool_choice=True,
+        enable_lora=bool(adapter_map), max_loras=max(1, len(adapter_map)),
+        max_lora_rank=max(ranks) if ranks else 128, scheduler_reserve_full_isl=False,
+        tensor_parallel_size=min(4, __import__('torch').cuda.device_count()), startup_timeout=60 * 20,
+        extra_args=extra.get(model_name, ()),
+    ), adapter_manifest=adapters)
+    server.start()
+    models = server.create_model_registry(aliases=[model_name], model_prefix='openai/', api_key='EMPTY')
+    log("vLLM up")
 
 # ---------------------------------------------------------------- run eval
 ev_raw = {}
@@ -136,8 +140,17 @@ cfg = EvalConfig(
     display_mode='quiet', verbose=False,
 )
 log(f"running {len(task_ids)} tasks, concurrency={cfg.concurrency}, eval={ev}")
-res = asyncio.run(Evaluator(cfg).run())
+class OracleEvaluator(Evaluator):
+    """Skips the model: the 'agent' returns the task's reference patch."""
+
+    async def _run_agent_sandbox(self, task, *args, **kwargs):
+        from adk_eval_core import SessionTrace
+        return (task.patch if MODE == 'gold' else ''), None, SessionTrace()
+
+
+res = asyncio.run((OracleEvaluator if MODE in ('gold', 'empty') else Evaluator)(cfg).run())
 n = len(res.task_results)
 solved = sum(1 for r in res.task_results if r.resolved)
 log(f"DONE resolved {solved}/{n} = {solved / max(n, 1):.3f}")
-server.stop()
+if server is not None:
+    server.stop()
