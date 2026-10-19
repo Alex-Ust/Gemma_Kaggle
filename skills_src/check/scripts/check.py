@@ -93,6 +93,12 @@ def related_tests(root, modules, limit=3):
                     score += 4
             elif parent and parent not in GENERIC and parent in base:
                 score += 2
+            if base in (f"test_{leaf}", f"{leaf}_test"):
+                # test_<module>.py: strong signal; for generic names require the parent package in the path
+                if leaf not in GENERIC:
+                    score += 6
+                elif set(m.split(".")[:-1]) & set(tf.split("/")[:-1]):
+                    score += 5
         if score:
             scored.append((score, -len(src), tf))
     scored.sort(reverse=True)
