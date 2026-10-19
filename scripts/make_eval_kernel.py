@@ -58,6 +58,7 @@ def main():
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--mode", default="agent", choices=["agent", "gold", "empty", "fake"],
                     help="gold/empty: CPU-only check with the reference / an empty patch")
+    ap.add_argument("--ood", action="store_true", help="run on OOD-45 (rodrigospalma/ood45-bugfix-split)")
     ap.add_argument("--push", action="store_true")
     a = ap.parse_args()
 
@@ -69,7 +70,8 @@ def main():
     if a.task_ids:  # tolerate one space-separated string (zsh does not word-split $VAR)
         a.task_ids = [t for x in a.task_ids for t in x.split()]
     task_ids = a.task_ids or (json.load(open(ROOT / "data/task_sets.json"))[a.set] if a.set else pick_tasks(a.n, a.seed))
-    run = {"task_ids": task_ids, "concurrency": a.concurrency, "bundle": bundle.name, "tag": a.tag, "mode": a.mode}
+    run = {"task_ids": None if a.ood else task_ids, "concurrency": a.concurrency, "bundle": bundle.name,
+           "tag": a.tag, "mode": a.mode, "ood": a.ood, "ood_ids": a.task_ids if a.ood else None}
     gpu = a.mode == "agent"
 
     name = f"{bundle.name}-{a.tag}".replace("_", "-").lower()
@@ -91,7 +93,8 @@ def main():
         "enable_gpu": gpu,
         "enable_tpu": False,
         "enable_internet": False,
-        "dataset_sources": ["metric/gemma-4-developer-agent-wheelhouse"],
+        "dataset_sources": ["metric/gemma-4-developer-agent-wheelhouse"]
+        + (["rodrigospalma/ood45-bugfix-split"] if a.ood else []),
         "competition_sources": ["gemma-4-developer-agent"],
         "kernel_sources": [],
         "model_sources": [MODELS[model]] if gpu else [],

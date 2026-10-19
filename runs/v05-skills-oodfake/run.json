@@ -1,0 +1,11 @@
+{
+  "task_ids": null,
+  "concurrency": 4,
+  "bundle": "v05_skills",
+  "tag": "oodfake",
+  "mode": "fake",
+  "ood": true,
+  "ood_ids": null,
+  "slug": "alexust/gemma-eval-v05-skills-oodfake",
+  "model": "gemma-4-31b-it-qat-w4a16-ct"
+}

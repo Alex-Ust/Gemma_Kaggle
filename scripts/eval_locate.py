@@ -36,8 +36,11 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--query-mode", default="full")
     ap.add_argument("--only", default=None)
+    ap.add_argument("--tasks", default=str(ROOT / "data/tasks.jsonl"))
+    ap.add_argument("--repos", default=str(ROOT / "work/repos"))
+    ap.add_argument("--field", default="problem_statement", help="which statement field to use as the query source")
     a = ap.parse_args()
-    rows = [json.loads(line) for line in open(ROOT / "data/tasks.jsonl")]
+    rows = [json.loads(line) for line in open(a.tasks)]
     if a.only:
         rows = [r for r in rows if r["instance_id"].startswith(a.only)]
     stats = {"n": 0, "r1": 0, "r3": 0, "r5": 0, "sym5": 0, "newfile": 0}
@@ -46,12 +49,12 @@ def main():
     misses = []
     for r in rows:
         g = gold(r["patch"])
-        repo_dir = ROOT / "work/repos" / r["instance_id"]
+        repo_dir = Path(a.repos) / r["instance_id"]
         existing = {f: v for f, v in g.items() if (repo_dir / f).exists()}
         if not existing:
             stats["newfile"] += 1
             continue
-        ps = r["problem_statement"]
+        ps = r.get(a.field) or r["problem_statement"]
         if a.query_mode == "full":
             q = ps
         else:  # what an agent would type: title + identifiers/code spans
@@ -72,7 +75,7 @@ def main():
         hit = any(u.path in existing and any(u.start <= hi and lo <= u.end for lo, hi in existing[u.path])
                   for _, u in top_syms)
         stats["sym5"] += hit
-        repo = r["instance_id"].split("_")[0]
+        repo = r["instance_id"].rsplit("_", 1)[0]
         pr = per_repo.setdefault(repo, [0, 0])
         pr[0] += 1
         pr[1] += pos < 5

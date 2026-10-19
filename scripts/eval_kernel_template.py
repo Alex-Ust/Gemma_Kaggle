@@ -69,6 +69,10 @@ log("wheels installed")
 # ---------------------------------------------------------------- write bundle
 DATA_DIR = Path(glob.glob('/kaggle/input/**/gemma-4-developer-agent/tasks.jsonl', recursive=True)[0]).parent
 WORK = Path('/kaggle/working')
+OOD_DIR = None
+if RUN.get('ood'):
+    OOD_DIR = Path(glob.glob('/kaggle/input/**/tools/ood45_harness.py', recursive=True)[0]).parent.parent
+TASKS_FOR_FAKE = (OOD_DIR / 'tasks.jsonl') if OOD_DIR else (DATA_DIR / 'tasks.jsonl')
 AGENT_DIR = WORK / 'bundle'
 shutil.rmtree(AGENT_DIR, ignore_errors=True)
 for rel, b64 in BUNDLE_FILES.items():
@@ -107,7 +111,7 @@ elif MODE == 'fake':
     srv = WORK / 'fake_llm_server.py'
     srv.write_text(FAKE_SERVER_SRC)
     subprocess.Popen([sys.executable, str(srv), '--patches', RUN.get('patches', 'gold'), '--port', '8011',
-                      '--tasks', str(DATA_DIR / 'tasks.jsonl'), '--log', str(WORK / 'fake_llm.jsonl')])
+                      '--tasks', str(TASKS_FOR_FAKE), '--log', str(WORK / 'fake_llm.jsonl')])
     for _ in range(60):
         try:
             socket.create_connection(('127.0.0.1', 8011), timeout=1).close()
@@ -168,9 +172,53 @@ class OracleEvaluator(Evaluator):
         return (task.patch if MODE == 'gold' else ''), None, SessionTrace()
 
 
-res = asyncio.run((OracleEvaluator if MODE in ('gold', 'empty') else Evaluator)(cfg).run())
-n = len(res.task_results)
-solved = sum(1 for r in res.task_results if r.resolved)
-log(f"DONE resolved {solved}/{n} = {solved / max(n, 1):.3f}")
+if OOD_DIR is None:
+    res = asyncio.run((OracleEvaluator if MODE in ('gold', 'empty') else Evaluator)(cfg).run())
+    n = len(res.task_results)
+    solved = sum(1 for r in res.task_results if r.resolved)
+    log(f"DONE resolved {solved}/{n} = {solved / max(n, 1):.3f}")
+else:
+    # OOD-45 (rodrigospalma/ood45-bugfix-split): per-repo wheel sets via the dataset's own harness helper
+    import dataclasses  # noqa: E402
+    from swegemma.results import append_task_result  # noqa: E402
+    sys.path.insert(0, str(OOD_DIR / 'tools'))
+    import ood45_harness as ood  # noqa: E402
+    orun = ood.setup(OOD_DIR)
+    ids = RUN.get('ood_ids') or sorted(orun.tasks)
+    ids = [i for i in ids if not (i == 'urllib3_5279' and sys.version_info < (3, 13))]
+    cls = OracleEvaluator if MODE in ('gold', 'empty') else Evaluator
+    evs = {}
+
+    def ev_for(repo):
+        if repo not in evs:
+            evs[repo] = cls(dataclasses.replace(cfg, snapshots_dir=orun.snapshots, wheels_dir=orun.wheels_for(repo)))
+        return evs[repo]
+
+    results = []
+
+    async def ood_main():
+        sem, lock = asyncio.Semaphore(cfg.concurrency), asyncio.Lock()
+
+        async def one(k, iid):
+            async with sem:
+                t = orun.tasks[iid]['g1']
+                try:
+                    r = await ev_for(t.repo).evaluate_task(task=t, task_index=k, total_tasks=len(ids))
+                except Exception as e:  # keep going on a broken task
+                    log(f"{iid} crashed: {e!r}")
+                    return
+                async with lock:
+                    results.append(r)
+                    append_task_result(r, RESULTS)
+                    if r.agent_patch:
+                        (RESULTS / 'patches').mkdir(parents=True, exist_ok=True)
+                        (RESULTS / 'patches' / f'{iid}.patch').write_text(r.agent_patch)
+                    log(f"{iid} resolved={r.resolved} err={r.error}")
+
+        await asyncio.gather(*(one(k, i) for k, i in enumerate(ids, 1)))
+
+    asyncio.run(ood_main())
+    solved = sum(1 for r in results if r.resolved)
+    log(f"DONE OOD resolved {solved}/{len(results)}")
 if server is not None:
     server.stop()
