@@ -37,7 +37,6 @@ def clean_query(q):
     q = re.sub(r"</?(details|summary)>", " ", q)
     return q
 
-SHOW_LINES = 60
 CAMEL = re.compile(r"[A-Z]+(?=[A-Z][a-z])|[A-Z]?[a-z]+|[A-Z]+|\d+")
 
 
@@ -226,17 +225,52 @@ def rank(root, query, k1=1.2, b=0.75):
     return sorted(file_scores.items(), key=lambda x: -x[1]), by_file
 
 
+# what to print after the ranking: (file rank, symbols from that file, max lines per symbol)
+PLAN = ((0, 2, 60), (1, 1, 40))
+SHOW_CHARS = 4500
+
+
+def select_shown(root, files, by_file, plan=PLAN, char_budget=None):
+    """Pick the code regions to print: [(path, unit, first_line, last_line, unit_length)]."""
+    budget = SHOW_CHARS if char_budget is None else char_budget
+    out = []
+    for file_rank, n_syms, max_lines in plan:
+        if file_rank >= len(files) or budget <= 200:
+            break
+        path = files[file_rank][0]
+        try:
+            lines = open(os.path.join(root, path), encoding="utf-8", errors="replace").read().splitlines()
+        except OSError:
+            continue
+        picked = []
+        for _, u in by_file[path]:
+            if u.kind == "module" or (u.kind == "class" and u.end - u.start + 1 > 80):
+                continue  # a huge class is replaced by the best function inside it
+            if any(b.start <= u.start and u.end <= b.end for b in picked):
+                continue
+            picked.append(u)
+            hi = min(u.end, u.start + max_lines - 1, len(lines))
+            # trim to the character budget (about 7 chars of line-number prefix per line)
+            while hi > u.start and sum(len(lines[i - 1]) + 7 for i in range(u.start, hi + 1)) > budget:
+                hi -= 1
+            out.append((path, u, u.start, hi, u.end - u.start + 1))
+            budget -= sum(len(lines[i - 1]) + 7 for i in range(u.start, hi + 1))
+            if len(picked) >= n_syms or budget <= 200:
+                break
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--query", "-q", default="")
     ap.add_argument("--k", type=int, default=6)
-    ap.add_argument("--show", type=int, default=1, help="print the source of the N best functions in the top file")
     ap.add_argument("--root", default=None)
     ap.add_argument("rest", nargs="*")
     a, unknown = ap.parse_known_args()
     query = " ".join([a.query] + a.rest + [u for u in unknown if not u.startswith("-")]).strip()
     if not query:
-        print("usage: locate.py --query '<issue text or keywords>'")
+        print("No query received. Call run_skill_script again with skill_name locate, file_path locate.py and "
+              "positional_args set to a list with one string: the issue title followed by its exact identifiers.")
         return
     root = find_root(a.root)
     files, by_file = rank(root, query)
@@ -248,33 +282,14 @@ def main():
         syms = [u for _, u in by_file[path] if u.kind != "module"][:3]
         sym_txt = ", ".join(f"{u.name} L{u.start}-{u.end}" for u in syms) or "(module level)"
         print(f"{fs:6.1f}  {path}: {sym_txt}")
-    if a.show > 0:
-        top_path = files[0][0]
-        ranked = [u for _, u in by_file[top_path] if u.kind != "module"]
-        # show the best symbol; a huge class is replaced by the best function inside the file
-        best = []
-        for u in ranked:
-            if u.kind == "class" and u.end - u.start + 1 > 80:
-                continue
-            if any(b.start <= u.start and u.end <= b.end for b in best):
-                continue
-            best.append(u)
-            if len(best) >= a.show:
-                break
+    for path, u, lo, hi, total in select_shown(root, files, by_file, PLAN):
         try:
-            lines = open(os.path.join(root, top_path), encoding="utf-8", errors="replace").read().splitlines()
+            lines = open(os.path.join(root, path), encoding="utf-8", errors="replace").read().splitlines()
         except OSError:
-            lines = []
-        budget = 2600
-        for u in best:
-            end = min(u.end, u.start + SHOW_LINES - 1)
-            body = "\n".join(f"{i:5d}  {lines[i - 1]}" for i in range(u.start, end + 1) if i <= len(lines))
-            body = body[:budget]
-            budget -= len(body)
-            more = f" (first {SHOW_LINES} of {u.end - u.start + 1} lines)" if end < u.end else ""
-            print(f"\n--- {top_path} {u.name} L{u.start}-{u.end}{more}\n{body}")
-            if budget <= 200:
-                break
+            continue
+        body = "\n".join(f"{i:5d}  {lines[i - 1]}" for i in range(lo, hi + 1) if i <= len(lines))
+        more = f" (first {hi - lo + 1} of {total} lines)" if hi < u.end else ""
+        print(f"\n--- {path} {u.name} L{u.start}-{u.end}{more}\n{body}")
     print("\nConfirm the location against the issue before editing; test files are excluded here.")
 
 

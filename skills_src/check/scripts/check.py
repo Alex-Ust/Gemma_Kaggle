@@ -29,6 +29,7 @@ def left():
 TEST_RE = re.compile(r"(^|/)(tests?|testing)/|(^|/)test_[^/]*\.py$|_test\.py$")
 CONFIG_FILES = {"conftest.py", "pytest.ini", "pyproject.toml", "tox.ini", "setup.cfg", ".pytest.ini"}
 MAX_OUT = 3500
+DIFF_CHARS = 1500
 
 
 def find_root(cli_root):
@@ -244,8 +245,23 @@ def main():
                        "it): keep your fix. Failures from missing fixtures or unrelated imports are pre-existing.")
         else:
             out.append("no related existing tests found; check behaviour with a short python -c instead")
-    text = "\n".join(out)
-    print(text[:MAX_OUT])
+    text = "\n".join(out)[:MAX_OUT]
+    diff = source_diff(root, src)
+    if diff:
+        text += "\n\nyour change (git diff of source files):\n" + diff
+    print(text)
+
+
+def source_diff(root, files, limit=DIFF_CHARS):
+    """Compact diff of the changed source files, so the edit can be reviewed without another call."""
+    tracked = [f for f in files if f.endswith(".py")]
+    if not tracked:
+        return ""
+    code, so, _ = sh(["git", "diff", "-U1", "HEAD", "--", *tracked], root, timeout=20)
+    if code != 0 or not so.strip():
+        return ""
+    body = "\n".join(l for l in so.splitlines() if not l.startswith(("diff --git", "index ")))
+    return body if len(body) <= limit else body[:limit] + "\n... (diff truncated; run git diff for the rest)"
 
 
 if __name__ == "__main__":

@@ -39,11 +39,15 @@ def main():
     ap.add_argument("--tasks", default=str(ROOT / "data/tasks.jsonl"))
     ap.add_argument("--repos", default=str(ROOT / "work/repos"))
     ap.add_argument("--field", default="problem_statement", help="which statement field to use as the query source")
+    ap.add_argument("--plan", default=None, help="show plan, e.g. 0:1:60,1:1:40 (file rank:symbols:max lines)")
+    ap.add_argument("--chars", type=int, default=None, help="character budget for printed source")
     a = ap.parse_args()
     rows = [json.loads(line) for line in open(a.tasks)]
     if a.only:
         rows = [r for r in rows if r["instance_id"].startswith(a.only)]
-    stats = {"n": 0, "r1": 0, "r3": 0, "r5": 0, "sym5": 0, "newfile": 0}
+    stats = {"n": 0, "r1": 0, "r3": 0, "r5": 0, "sym5": 0, "shown": 0, "newfile": 0}
+    plan = tuple(tuple(int(x) for x in p.split(":")) for p in a.plan.split(",")) if a.plan else locate.PLAN
+    shown_chars = []
     per_repo = {}
     times = []
     misses = []
@@ -75,6 +79,10 @@ def main():
         hit = any(u.path in existing and any(u.start <= hi and lo <= u.end for lo, hi in existing[u.path])
                   for _, u in top_syms)
         stats["sym5"] += hit
+        shown = locate.select_shown(str(repo_dir), files, by_file, plan, a.chars)
+        stats["shown"] += any(path in existing and any(lo <= ghi and glo <= hi for glo, ghi in existing[path])
+                              for path, _, lo, hi, _ in shown)
+        shown_chars.append(sum(hi - lo + 1 for _, _, lo, hi, _ in shown))
         repo = r["instance_id"].rsplit("_", 1)[0]
         pr = per_repo.setdefault(repo, [0, 0])
         pr[0] += 1
@@ -83,7 +91,8 @@ def main():
             misses.append((r["instance_id"], sorted(existing), ranked[:3]))
     n = stats["n"]
     print(f"tasks scored {n} (skipped {stats['newfile']} new-file-only)")
-    for k in ("r1", "r3", "r5", "sym5"):
+    print(f"  shown lines per task: mean {sum(shown_chars) / max(len(shown_chars), 1):.0f}")
+    for k in ("r1", "r3", "r5", "sym5", "shown"):
         print(f"  {k}: {stats[k]}/{n} = {stats[k] / n:.2f}")
     print("  per repo recall@5:", {k: f"{v[1]}/{v[0]}" for k, v in per_repo.items()})
     print(f"  time per query: mean {sum(times) / len(times):.2f}s max {max(times):.2f}s")

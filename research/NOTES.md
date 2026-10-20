@@ -83,3 +83,19 @@
   encoding; recorded model turns from a replay model, recorded tool results from a plugin) and samples one more
   turn from the real model under a candidate prompt. Points: first turn, first code-in-thought turn (>=5),
   turn 12 without an edit. Cost: vLLM startup + one turn per point, instead of whole sessions.
+- Probe p1 (161 points from v05 traces; v05 vs v06 vs v06b=thinking 1024), 64 min on 4xL4:
+  - Mid-session decisions do not follow the system prompt: at the plan/late points the edit rate was ~5% for
+    all three variants; "begin every thought with Call N" was followed 0 times; code-in-thought unchanged.
+    Behaviour mid-session is driven by the history, not by rules.
+  - The "Call N of 28" rule broke tool calls: the model wrote "Call 1 of 28:" as visible text and then the
+    call as plain text without the tool-call token (11/71 first turns had no parsed call).
+  - Without backticks, corrupted first calls dropped 7/71 -> 1/71, but "args containing one key, query"
+    led to query being put at top level (29/71 locate calls without a query).
+  - thinking_budget 1024 vs 2048: no clear change in tokens per turn (thoughts are usually shorter).
+- Probe p2first (v07, 142 samples): locate called with positional_args (typed ARRAY of STRING in the declaration,
+  unlike args whose anyOf renders with an empty type) - 124/142 valid, 0 corrupted, 0 unparsed; 18 started with
+  grep/read instead. v05 control: 45/71 valid, 7 corrupted.
+- locate now prints the two best symbols of the top file and the best of the second file (4500 chars):
+  printed source contains a gold hunk in 45% of public tasks (was 34%); OOD unchanged 54%.
+  check appends a compact git diff of the change (1500 chars). Fake-gold v07 on sound: 69/71 (as before).
+- Full v07 sound eval started (v07 = v06 minus counter rule, locate via positional_args, new locate/check).

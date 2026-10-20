@@ -33,7 +33,8 @@ def classify(r):
             return "skill:MISSING_ARG"
         sk = args["skill_name"]
         q = args.get("args")
-        if sk == "locate" and not (isinstance(q, dict) and q.get("query")) and not isinstance(q, list):
+        has_query = (isinstance(q, dict) and q.get("query")) or (isinstance(q, list) and q) or args.get("positional_args")
+        if sk == "locate" and not has_query:
             return "locate:NO_QUERY"
         return f"skill:{sk}"
     return name
@@ -56,9 +57,16 @@ def main():
         counted = sum(bool(re.match(r"\s*Call \d+", t)) for t in thoughts)
         code = sum("```" in t for t in thoughts)
         edit = cls.get("edit_file", 0) + cls.get("write_file", 0)
+        esc = 0
+        for r in rs:
+            c, _ = first_call(r)
+            if c and c["name"] == "edit_file":
+                o = c["args"].get("old_string") or ""
+                esc += isinstance(o, str) and ("\\n" in o or '\\"' in o)
         print(f"== {kind:5s} {var:6s} n={len(rs):3d}  edit {edit:3d} ({edit / len(rs):.0%})  "
               f"tokens med {statistics.median(toks) if toks else 0:.0f} mean {statistics.mean(toks) if toks else 0:.0f}  "
-              f"latency med {statistics.median(lat):.1f}s  'Call N' {counted}  code-in-thought {code}")
+              f"latency med {statistics.median(lat):.1f}s  'Call N' {counted}  code-in-thought {code}  "
+              f"edits with literal escapes {esc}")
         print("   ", dict(cls.most_common()))
     # paired view: same point, two variants
     by_point = collections.defaultdict(dict)
@@ -66,14 +74,15 @@ def main():
         if r["sample"] == 0:
             by_point[(r["iid"], r["kind"], r["cut"])][r["variant"]] = classify(r)
     vs = sorted({r["variant"] for r in rows})
-    if len(vs) == 2:
-        a0, b0 = vs
+    E = ("edit_file", "write_file")
+    for b0 in vs[1:]:
+        a0 = vs[0]
         for kind in ("plan", "late"):
             pairs = [(v[a0], v[b0]) for k, v in by_point.items() if k[1] == kind and a0 in v and b0 in v]
-            ea = sum(x in ("edit_file", "write_file") for x, _ in pairs)
-            eb = sum(y in ("edit_file", "write_file") for _, y in pairs)
-            only_b = sum(x not in ("edit_file", "write_file") and y in ("edit_file", "write_file") for x, y in pairs)
-            only_a = sum(y not in ("edit_file", "write_file") and x in ("edit_file", "write_file") for x, y in pairs)
+            ea = sum(x in E for x, _ in pairs)
+            eb = sum(y in E for _, y in pairs)
+            only_b = sum(x not in E and y in E for x, y in pairs)
+            only_a = sum(y not in E and x in E for x, y in pairs)
             print(f"paired {kind}: {a0} edits {ea}/{len(pairs)}, {b0} edits {eb}/{len(pairs)}  "
                   f"(only {b0}: {only_b}, only {a0}: {only_a})")
     if a.show:
