@@ -50,3 +50,36 @@
 - v05 = v02 + budget_warning edit rule, /tmp heredoc, single reproduction with `timeout 20`, sibling-group fix,
   edit escaping rules, brevity rule, thinking 2048, command timeout 90 s, `locate` (first call, shows code),
   `check` (before submit). GPU eval on sound 71 started 17:35.
+
+## Update 2026-10-20: v05 results and what the model actually sees
+- v05 on sound 71: 26/71 (v02 24/71; paired +6/-4), 23 empty patches, mean 358 s/task (v02 393 s).
+- **Broken skill calls**: 100 of 200 run_skill_script calls (v03: 123) were corrupted the same way:
+  `"file_path": "scripts/locate.py`,skill_name:"` - the model closes the string with a backtick (copied from the
+  prompt's markdown), the parser swallows the rest, skill_name goes missing; the model then repeats the identical
+  call (fastapi_14419: 47 times). Invalid skill calls do not count toward the tool budget but cost ~5-10 s each.
+  read_file/edit_file are hit too, rarely (3/506, 7/137).
+- Gemma 4's chat template renders tool parameters with `dictsort`, so the model writes arguments alphabetically
+  (args, file_path, skill_name): the corruption point sits right before skill_name.
+- **Empty patches = code drafted in thoughts but never applied**: 22/23 v05 empty-patch tasks (v03 25/26) had code
+  blocks in thoughts before any edit (median ~7 times). budget_warning was followed in 3/44 cases.
+  Code blocks in thoughts are ~21% of all completion tokens.
+- **Time is decode**: model time is 98-99% of task wall time; ~4.5 s per 100 completion tokens (22 tok/s at
+  concurrency 4). An 8-minute cap is about 10k output tokens.
+- **Double-encoded tool results**: swegemma tools return a JSON string, ADK wraps it as {"result": str}, LiteLLM
+  json.dumps it again, and the template inserts it raw. The model reads code as `environ.get(\\\"X\\\", \\\"\\\")`
+  with `\\n` line breaks. Skill results (dicts) are encoded once. 25% of v05 edits needed the `unescaped` fallback;
+  34/137 old_strings contained literal \n or \".
+- Thinking is enabled via extra_body.chat_template_kwargs.enable_thinking and extra_body.thinking_token_budget,
+  attached by adk_submission to a clone of the LiteLlm at compile time. Past thoughts are sent back as
+  reasoning_content and rendered (all turns after the single user message).
+- Multi-agent configs (Sequential/Loop/agent_tool) are allowed, but the tool budget is session-wide and the
+  harness stops the session when it is exhausted, so a forced "explore then fix" split is not possible.
+  No user callbacks are registered by swegemma.
+- Hidden set: ~120 tasks run sequentially; over 12 h the whole submission errors. v02 (mean 394 s locally at
+  concurrency 4) scored fine, so a candidate must not be slower than that.
+
+## Next-action probes (scripts/make_probes.py, probe_runner.py, make_probe_kernel.py, probe_report.py)
+- Replays a recorded session with the real ADK stack (compile_submission, real tool declarations, real history
+  encoding; recorded model turns from a replay model, recorded tool results from a plugin) and samples one more
+  turn from the real model under a candidate prompt. Points: first turn, first code-in-thought turn (>=5),
+  turn 12 without an edit. Cost: vLLM startup + one turn per point, instead of whole sessions.
