@@ -1,0 +1,10 @@
+name: analyst
+description: Reads the repository and reports the exact code that must change for the issue, with the current lines verbatim and the replacement. Also answers follow-up questions such as showing a file region or running a short python snippet.
+model: gemma-4-31b-it-qat-w4a16-ct
+instruction: !include ../prompts/analyst.md
+tools:
+  - run_command
+  - read_file
+skills:
+  - skills/locate
+generate_content_config: !include ../configs/sampling.yaml

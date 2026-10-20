@@ -1,0 +1,14 @@
+name: coder
+model: gemma-4-31b-it-qat-w4a16-ct
+instruction: !include prompts/coder.md
+tools:
+  - edit_file
+  - write_file
+  - get_status
+  - submit_patch
+  - agent_tool:
+      config_path: sub_agents/analyst.yaml
+      skip_summarization: false
+skills:
+  - skills/check
+generate_content_config: !include configs/sampling.yaml
