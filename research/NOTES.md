@@ -103,3 +103,7 @@
   (+fastapi_11194 +rich_3777, -fastapi_5077 -rich_3043). The analyst does not stop after ~8 calls (often 20+),
   so it just moves the exploration loop into the sub-agent; mean 407 s, 7/16 time-capped, projected ~13.6 h
   (over the 12 h limit). Not a candidate in this form.
+- **v07 full sound eval: 28/71** (v05 26, v02 24), 20 empty, mean 339 s (v02 393 s), projected <= 11.3 h.
+  Paired: vs v02 +6/-2, vs v05 +4/-2. locate calls clean; check calls still corrupted the old way
+  (file_path "check.py`,skill_name:") 59 times in 3 tasks -> next version: call check with positional_args too.
+  Submitted v07 to the LB on 2026-10-20.
