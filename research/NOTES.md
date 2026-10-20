@@ -99,3 +99,7 @@
   printed source contains a gold hunk in 45% of public tasks (was 34%); OOD unchanged 54%.
   check appends a compact git diff of the change (1500 chars). Fake-gold v07 on sound: 69/71 (as before).
 - Full v07 sound eval started (v07 = v06 minus counter rule, locate via positional_args, new locate/check).
+- v08 two-agent smoke (16 tasks: 8 v05-empty + 8 v05-solved): 8/16 = same as v05 on these tasks
+  (+fastapi_11194 +rich_3777, -fastapi_5077 -rich_3043). The analyst does not stop after ~8 calls (often 20+),
+  so it just moves the exploration loop into the sub-agent; mean 407 s, 7/16 time-capped, projected ~13.6 h
+  (over the 12 h limit). Not a candidate in this form.
