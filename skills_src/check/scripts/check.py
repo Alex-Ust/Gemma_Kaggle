@@ -16,6 +16,7 @@ Stdlib only: runs inside the offline sandbox.
 """
 import argparse
 import ast
+import atexit
 import keyword
 import os
 import re
@@ -53,10 +54,55 @@ def find_root(cli_root):
 def sh(cmd, cwd, timeout=60, env=None):
     try:
         r = subprocess.run(cmd, cwd=cwd, shell=isinstance(cmd, str), capture_output=True, text=True,
-                           timeout=timeout, env=env)
+                           encoding="utf-8", errors="replace", timeout=timeout, env=env)
         return r.returncode, r.stdout, r.stderr
     except subprocess.TimeoutExpired as e:
-        return -9, e.stdout or "", f"timed out after {timeout}s"
+        so = e.stdout or ""
+        if isinstance(so, bytes):
+            so = so.decode("utf-8", "replace")
+        return -9, so, f"timed out after {timeout}s"
+
+
+# Everything check starts is stopped before it exits, also when the harness stops check itself
+# (SIGTERM from its command timeout): no test process may outlive check and keep writing to /workspace.
+LIVE_JOBS = []
+WORKTREES = []
+READ_LIMIT = 200_000  # bytes of each output file kept (the tail: the pytest summary is at the end)
+
+
+def kill_group(p):
+    try:
+        os.killpg(p.pid, signal.SIGKILL)
+    except OSError:
+        try:
+            p.kill()
+        except OSError:
+            pass
+
+
+def cleanup():
+    for job in list(LIVE_JOBS):
+        kill_group(job.p)
+    del LIVE_JOBS[:]
+    for root, wt in list(WORKTREES):
+        try:
+            subprocess.run(["git", "worktree", "remove", "--force", wt], cwd=root, capture_output=True, timeout=3)
+        except Exception:
+            pass
+        shutil.rmtree(wt, ignore_errors=True)
+    del WORKTREES[:]
+
+
+def on_signal(signum, frame):
+    cleanup()
+    os._exit(128 + signum)
+
+
+def read_tail(f):
+    f.flush()
+    size = f.seek(0, 2)
+    f.seek(max(0, size - READ_LIMIT))
+    return f.read().decode("utf-8", "replace")
 
 
 class Job:
@@ -64,10 +110,11 @@ class Job:
 
     def __init__(self, cmd, cwd, env=None):
         self.t0 = time.time()
-        self.out = tempfile.TemporaryFile(mode="w+")
-        self.err = tempfile.TemporaryFile(mode="w+")
-        self.p = subprocess.Popen(cmd, cwd=cwd, stdout=self.out, stderr=self.err, text=True, env=env,
-                                  start_new_session=True)
+        self.out = tempfile.TemporaryFile()
+        self.err = tempfile.TemporaryFile()
+        self.p = subprocess.Popen(cmd, cwd=cwd, stdin=subprocess.DEVNULL, stdout=self.out, stderr=self.err,
+                                  env=env, start_new_session=True)
+        LIVE_JOBS.append(self)
 
     def wait(self, deadline):
         """(returncode or -9 on timeout, stdout, stderr, seconds)."""
@@ -75,15 +122,12 @@ class Job:
             self.p.wait(timeout=max(0.5, deadline - time.time()))
             code = self.p.returncode
         except subprocess.TimeoutExpired:
-            try:
-                os.killpg(self.p.pid, signal.SIGKILL)
-            except OSError:
-                self.p.kill()
-            self.p.wait()
             code = -9
-        self.out.seek(0)
-        self.err.seek(0)
-        return code, self.out.read(), self.err.read(), time.time() - self.t0
+        kill_group(self.p)  # on timeout the whole test run; after a normal exit any leftover children
+        self.p.wait()
+        if self in LIVE_JOBS:
+            LIVE_JOBS.remove(self)
+        return code, read_tail(self.out), read_tail(self.err), time.time() - self.t0
 
 
 def harness_file(root, f):
@@ -233,6 +277,7 @@ def baseline_failures(root, nodeids, bases, timeout):
 
     Returns the set of ids that also fail without the change, or None if the check could not run."""
     wt = tempfile.mkdtemp(prefix="check_base_")
+    WORKTREES.append((root, wt))
     try:
         code, _, _ = sh(["git", "worktree", "add", "--detach", "-f", wt, "HEAD"], root, timeout=max(3, timeout / 2))
         if code != 0:
@@ -249,6 +294,8 @@ def baseline_failures(root, nodeids, bases, timeout):
         sh(["git", "worktree", "remove", "--force", wt], root, timeout=10)
         sh(["git", "worktree", "prune"], root, timeout=10)
         shutil.rmtree(wt, ignore_errors=True)
+        if (root, wt) in WORKTREES:
+            WORKTREES.remove((root, wt))
 
 
 def split_cli_words(root, words):
@@ -273,6 +320,12 @@ SLOW_TESTS = ("the existing tests did not finish within {t:.0f} s: this reposito
 
 
 def main():
+    atexit.register(cleanup)
+    for s in (signal.SIGTERM, signal.SIGINT, signal.SIGHUP):
+        try:
+            signal.signal(s, on_signal)
+        except (ValueError, OSError):
+            pass
     ap = argparse.ArgumentParser()
     ap.add_argument("--tests", default="")
     ap.add_argument("--no-tests", action="store_true")

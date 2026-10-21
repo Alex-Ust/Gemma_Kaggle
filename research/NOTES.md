@@ -131,3 +131,20 @@
   real test result in <= 13 s, the rest get the "slow here" message. Public sound 70/71 (v07: 69/71), check
   median 4.5 s, verdicts identical to v07 per task; rich_4070 now targets the hidden-test file.
 - Submitted v09 to the LB on 2026-10-21 (v07 0.10, v02 0.15). GPU run v09 on OOD half A (22 tasks) started.
+
+## 2026-10-21 evening: v09 scorer exception, v09b
+- v09 on the LB: "Notebook Threw Exception" (no score, the daily slot is used). Not reproducible from our side:
+  the same bundle ran 22 OOD tasks on GPU and 115 fake-gold tasks on CPU in the official harness without a
+  harness error, and every per-task exception in agent_runner is caught (only ContainerSetupError re-raises,
+  which happens before the agent runs). Likely a scorer-side failure, but one v09-only risk existed:
+  check started tests in their own session, so when the harness stopped check at its command timeout
+  (`timeout -k 5s`, near the end of the 8 min budget) the tests kept running in the container during patch
+  extraction.
+- v09b = v09 + check that kills all its test/import processes and removes its temp worktree on SIGTERM / exit,
+  reads outputs as bytes (utf-8 replace, last 200 KB), stdin from /dev/null. Local: SIGTERM after 8 s leaves no
+  processes and no worktree; normal / failing-test / baseline paths unchanged.
+- v09 GPU on OOD half A: **21/22 resolved**, 0 empty, mean 308 s (projected <= 10.3 h). OOD-45 is far easier
+  than the hidden set (v02 local sound 24/71, LB 9/58), so it checks robustness on unseen repos, not ranking.
+  check on real OOD: median 11 s, max 28 s; locate median 0.8 s.
+  Still 10/48 skill calls corrupted by a backtick after the file name (`check.py\`,positional_args:[`), mostly
+  repeated in two tasks (pyjanitor_1741, great_tables_869).
