@@ -148,3 +148,7 @@
   check on real OOD: median 11 s, max 28 s; locate median 0.8 s.
   Still 10/48 skill calls corrupted by a backtick after the file name (`check.py\`,positional_args:[`), mostly
   repeated in two tasks (pyjanitor_1741, great_tables_869).
+- v09b fake-gold (CPU, scorer harness): OOD 44/44 (= v09), sound 69/71: rich_3930 (stand) and rich_4070
+  (Pygments guesses "IPython" instead of "Python" in the hidden test; same gold patch also failed this way in the
+  v05 and v07 fake runs and passed in v09's: environment flake). v09b queued for submission after the daily reset
+  (scripts/submit_when_allowed.py retries every 10 min).
