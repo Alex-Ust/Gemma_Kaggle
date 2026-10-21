@@ -8,6 +8,7 @@ Usage: python scripts/fake_llm_server.py --patches <dir with <instance_id>.patch
 import argparse
 import base64
 import json
+import re
 import time
 import uuid
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -37,14 +38,15 @@ def find_task(messages):
 
 def plan(task, patch):
     q = task["problem_statement"].strip().splitlines()[0][:200]
-    steps = [("run_skill_script", {"skill_name": "locate", "file_path": "scripts/locate.py", "args": {"query": q}})]
+    steps = [("run_skill_script", {"skill_name": "locate", "file_path": "locate.py", "positional_args": [q]})]
     if patch:
         if not patch.endswith("\n"):
             patch += "\n"  # git apply needs the final newline
         b64 = base64.b64encode(patch.encode()).decode()
         cmd = f"echo {b64} | base64 -d > /tmp/agent.diff && (git apply --recount /tmp/agent.diff || git apply -3 /tmp/agent.diff || git apply --ignore-whitespace /tmp/agent.diff || patch -p1 --batch --forward < /tmp/agent.diff) && git status --short"
         steps.append(("run_command", {"command": cmd}))
-    steps.append(("run_skill_script", {"skill_name": "check", "file_path": "scripts/check.py"}))
+    names = " ".join(dict.fromkeys(re.findall(r"^@@[^@]*@@\s*(?:async\s+)?(?:def|class)\s+(\w+)", patch or "", re.M)))
+    steps.append(("run_skill_script", {"skill_name": "check", "file_path": "check.py", "positional_args": [names or "none"]}))
     steps.append(("submit_patch", {}))
     return steps
 

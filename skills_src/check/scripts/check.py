@@ -1,35 +1,45 @@
-"""Check the current working-tree change in one call.
+"""Check the current working-tree change in one call, within a fixed time budget.
 
 1. Lists changed files and flags problems the grader will punish: scratch files left in the repo,
    edited test files or runner config (those edits are discarded before grading).
 2. Compiles every changed .py file (syntax / indentation errors).
-3. Imports every changed module in a fresh interpreter (NameError at import time, broken imports).
-4. Finds existing tests that reference the changed modules and runs them (quick, with a timeout).
+3. Imports every changed library module in a fresh interpreter (NameError at import time, broken imports),
+   in parallel with step 4.
+4. Finds existing tests that reference the changed modules or functions and runs them; when they are quick,
+   each failure is re-run on the untouched HEAD and labelled pre-existing or caused by the edit.
+
+The whole check stays under BUDGET seconds: on heavy repositories (big imports, slow test suites) a timed-out
+step is reported as slow, never as an error, and the agent is told not to retry it.
 
 Stdlib only: runs inside the offline sandbox.
-  check.py [--tests "tests/test_x.py::test_y tests/test_z.py"] [--no-tests] [--timeout 45]
+  check.py [names of changed functions or test files ...] [--tests "tests/test_x.py::test_y"] [--no-tests]
 """
 import argparse
+import ast
+import keyword
 import os
-import py_compile
 import re
 import shutil
+import signal
 import subprocess
 import sys
 import tempfile
 import time
 
 T0 = time.time()
-BUDGET = 75  # seconds; the harness kills a skill script at its command timeout (90 s in our bundle)
-
-
-def left():
-    return BUDGET - (time.time() - T0)
+BUDGET = 45  # seconds for the whole check; the harness kills a skill script at its command timeout (90 s)
+TEST_TIMEOUT = 28
+IMPORT_TIMEOUT = 20
+BASELINE_MAX_FIRST_RUN = 12  # compare with HEAD only when the first test run was this quick
 
 TEST_RE = re.compile(r"(^|/)(tests?|testing)/|(^|/)test_[^/]*\.py$|_test\.py$")
 CONFIG_FILES = {"conftest.py", "pytest.ini", "pyproject.toml", "tox.ini", "setup.cfg", ".pytest.ini"}
 MAX_OUT = 3500
 DIFF_CHARS = 1500
+
+
+def left():
+    return BUDGET - (time.time() - T0)
 
 
 def find_root(cli_root):
@@ -49,11 +59,49 @@ def sh(cmd, cwd, timeout=60, env=None):
         return -9, e.stdout or "", f"timed out after {timeout}s"
 
 
+class Job:
+    """A subprocess in its own session with output in temp files (no pipe dead-locks when several run at once)."""
+
+    def __init__(self, cmd, cwd, env=None):
+        self.t0 = time.time()
+        self.out = tempfile.TemporaryFile(mode="w+")
+        self.err = tempfile.TemporaryFile(mode="w+")
+        self.p = subprocess.Popen(cmd, cwd=cwd, stdout=self.out, stderr=self.err, text=True, env=env,
+                                  start_new_session=True)
+
+    def wait(self, deadline):
+        """(returncode or -9 on timeout, stdout, stderr, seconds)."""
+        try:
+            self.p.wait(timeout=max(0.5, deadline - time.time()))
+            code = self.p.returncode
+        except subprocess.TimeoutExpired:
+            try:
+                os.killpg(self.p.pid, signal.SIGKILL)
+            except OSError:
+                self.p.kill()
+            self.p.wait()
+            code = -9
+        self.out.seek(0)
+        self.err.seek(0)
+        return code, self.out.read(), self.err.read(), time.time() - self.t0
+
+
+def harness_file(root, f):
+    """conftest.py / pytest.ini written by the evaluation harness itself (not an agent edit)."""
+    if f not in ("conftest.py", "pytest.ini"):
+        return False
+    try:
+        txt = open(os.path.join(root, f), encoding="utf-8", errors="replace").read(4000)
+    except OSError:
+        return False
+    return "SWE-gemma" in txt or "Hermetic test discovery" in txt or txt.startswith("[pytest]\naddopts = -p no:anyio")
+
+
 def changed_files(root):
     _, tracked, _ = sh(["git", "diff", "--name-only", "HEAD"], root)
     _, untracked, _ = sh(["git", "ls-files", "--others", "--exclude-standard"], root)
-    t = [f for f in tracked.split("\n") if f]
-    u = [f for f in untracked.split("\n") if f]
+    t = [f for f in tracked.split("\n") if f and not harness_file(root, f)]
+    u = [f for f in untracked.split("\n") if f and not harness_file(root, f)]
     return t, u
 
 
@@ -87,34 +135,57 @@ def with_pythonpath(dirs):
     return env
 
 
-def baseline_failures(root, nodeids, bases, timeout):
-    """Run the given test ids on the untouched HEAD in a temporary git worktree (the workspace is not modified).
-
-    Returns the set of ids that also fail without the change, or None if the check could not run."""
-    wt = tempfile.mkdtemp(prefix="check_base_")
-    try:
-        code, _, _ = sh(["git", "worktree", "add", "--detach", "-f", wt, "HEAD"], root, timeout=60)
-        if code != 0:
-            return None
-        rel_bases = [os.path.join(wt, os.path.relpath(b, os.path.abspath(root))) for b in bases]
-        code, so, se = sh([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", *nodeids], wt,
-                          timeout=timeout, env=with_pythonpath(rel_bases + [wt]))
-        if code == -9:
-            return None
-        bad = set(re.findall(r"^(?:FAILED|ERROR) (\S+)", so, re.M))
-        return {n for n in nodeids if any(b == n or b.startswith(n) for b in bad)} if bad else set()
-    finally:
-        sh(["git", "worktree", "remove", "--force", wt], root)
-        sh(["git", "worktree", "prune"], root)
-        shutil.rmtree(wt, ignore_errors=True)
-
-
 GENERIC = {"utils", "util", "base", "core", "main", "compat", "types", "models", "common", "helpers",
            "exceptions", "errors", "config", "constants", "_compat", "__main__", "v1", "v2", "shared"}
+# function names too common to say anything about which test file covers a change
+GENERIC_NAMES = GENERIC | {"get", "set", "run", "call", "init", "update", "render", "parse", "load", "save", "read",
+                           "write", "close", "open", "apply", "build", "create", "process", "handle", "validate",
+                           "check", "items", "keys", "values", "copy", "name", "value", "data", "self", "cls",
+                           "test", "tests", "none", "true", "false", "all", "the", "and", "function", "functions",
+                           "changed", "method", "class", "file", "py"}
 
 
-def related_tests(root, modules, limit=3):
-    """Test files (test_*.py / *_test.py) that import or mention the changed modules, most specific first."""
+def changed_names(root, files):
+    """Names of the innermost functions/classes whose lines the working-tree change touches."""
+    names = []
+    for f in files:
+        p = os.path.join(root, f)
+        if not f.endswith(".py") or not os.path.exists(p):
+            continue
+        code, so, _ = sh(["git", "diff", "-U0", "HEAD", "--", f], root, timeout=10)
+        lines = set()
+        for m in re.finditer(r"^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@", so, re.M):
+            start, n = int(m.group(1)), int(m.group(2) or 1)
+            lines.update(range(start, start + max(n, 1)))
+        if not lines and code == 0 and not so:
+            continue  # untracked new file: no specific function
+        try:
+            tree = ast.parse(open(p, encoding="utf-8", errors="replace").read())
+        except (SyntaxError, ValueError):
+            continue
+        hits = []
+        for node in ast.walk(tree):
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                end = getattr(node, "end_lineno", node.lineno) or node.lineno
+                if any(node.lineno <= ln <= end for ln in lines):
+                    hits.append((end - node.lineno, node.name))
+        for _, n in sorted(hits):
+            if n not in names:
+                names.append(n)
+    return names
+
+
+def useful_names(names):
+    out = []
+    for n in names:
+        n = n.strip("_")
+        if len(n) >= 4 and n.lower() not in GENERIC_NAMES and not keyword.iskeyword(n) and n not in out:
+            out.append(n)
+    return out[:8]
+
+
+def related_tests(root, modules, names=(), limit=2):
+    """Test files (test_*.py / *_test.py) that import or mention the changed modules/functions, most specific first."""
     test_files = []
     for dirpath, dirnames, filenames in os.walk(root):
         dirnames[:] = [d for d in dirnames if not d.startswith(".") and d not in ("node_modules", "__pycache__")]
@@ -122,6 +193,7 @@ def related_tests(root, modules, limit=3):
         for fn in filenames:
             if fn.endswith(".py") and (fn.startswith("test_") or fn.endswith("_test.py")):
                 test_files.append(os.path.normpath(os.path.join(rel, fn)).replace("\\", "/"))
+    name_res = [re.compile(rf"\b{re.escape(n)}\b") for n in useful_names(names)]
     scored = []
     for tf in test_files:
         try:
@@ -148,33 +220,81 @@ def related_tests(root, modules, limit=3):
                     score += 6
                 elif set(m.split(".")[:-1]) & set(tf.split("/")[:-1]):
                     score += 5
+        if score or not modules:
+            score += sum(2 for r in name_res if r.search(src))
         if score:
             scored.append((score, -len(src), tf))
     scored.sort(reverse=True)
     return [tf for _, _, tf in scored[:limit]]
 
 
-def summarize_pytest(out):
-    lines = out.strip().splitlines()
-    tail = [l for l in lines if re.search(r"\d+ (passed|failed|error)", l)]
-    fails = [l for l in lines if l.startswith(("FAILED", "ERROR"))][:8]
-    errs = [l for l in lines if l.startswith("E ")][:10]
-    return "\n".join((tail[-1:] or ["(no summary line)"]) + fails + errs)
+def baseline_failures(root, nodeids, bases, timeout):
+    """Run the given test ids on the untouched HEAD in a temporary git worktree (the workspace is not modified).
+
+    Returns the set of ids that also fail without the change, or None if the check could not run."""
+    wt = tempfile.mkdtemp(prefix="check_base_")
+    try:
+        code, _, _ = sh(["git", "worktree", "add", "--detach", "-f", wt, "HEAD"], root, timeout=max(3, timeout / 2))
+        if code != 0:
+            return None
+        rel_bases = [os.path.join(wt, os.path.relpath(b, os.path.abspath(root))) for b in bases]
+        job = Job([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", *nodeids], wt,
+                  env=with_pythonpath(rel_bases + [wt]))
+        code, so, _, _ = job.wait(time.time() + max(2, timeout - 2))
+        if code == -9:
+            return None
+        bad = set(re.findall(r"^(?:FAILED|ERROR) (\S+)", so, re.M))
+        return {n for n in nodeids if any(b == n or b.startswith(n) for b in bad)} if bad else set()
+    finally:
+        sh(["git", "worktree", "remove", "--force", wt], root, timeout=10)
+        sh(["git", "worktree", "prune"], root, timeout=10)
+        shutil.rmtree(wt, ignore_errors=True)
+
+
+def split_cli_words(root, words):
+    """Model-supplied words: test files / node ids become pytest targets, identifiers become function names."""
+    targets, names = [], []
+    for w in re.split(r"[\s,;]+", " ".join(words)):
+        w = w.strip("'\"`()[]{}")
+        if not w:
+            continue
+        path = w.split("::")[0]
+        if path.endswith(".py") and TEST_RE.search(path) and os.path.isfile(os.path.join(root, path)):
+            targets.append(w)
+            continue
+        for ident in re.findall(r"[A-Za-z_][A-Za-z0-9_]*", w.split("(")[0]):
+            names.append(ident.split(".")[-1])
+    return targets, names
+
+
+SLOW_TESTS = ("the existing tests did not finish within {t:.0f} s: this repository's tests are slow here. Do not run "
+              "these tests again. Check the changed behaviour once with a short timeout 20 python -c snippet, or "
+              "submit.")
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--tests", default="")
     ap.add_argument("--no-tests", action="store_true")
-    ap.add_argument("--timeout", type=int, default=45)
+    ap.add_argument("--timeout", type=int, default=TEST_TIMEOUT)
     ap.add_argument("--root", default=None)
-    a, _ = ap.parse_known_args()
+    ap.add_argument("words", nargs="*")
+    a, unknown = ap.parse_known_args()
     root = find_root(a.root)
+    root_abs = os.path.abspath(root)
+    cli_targets, cli_names = split_cli_words(root, a.words + [u for u in unknown if not u.startswith("-")])
     out = []
     tracked, untracked = changed_files(root)
     src = [f for f in tracked + untracked if not TEST_RE.search(f) and os.path.basename(f) not in CONFIG_FILES]
     bad_tests = [f for f in tracked + untracked if TEST_RE.search(f) or os.path.basename(f) in CONFIG_FILES]
-    out.append(f"changed source files: {src or 'NONE - nothing will be graded'}")
+    if not src:
+        out.append("changed source files: NONE - nothing will be graded. An unedited tree scores zero: make your "
+                   "edit to the source file now with edit_file.")
+        if bad_tests:
+            out.append(f"test/config files changed (discarded by the grader): {bad_tests}")
+        print("\n".join(out))
+        return
+    out.append(f"changed source files: {src}")
     if bad_tests:
         out.append(f"WARNING test/config files changed (discarded by grader, restore with git checkout -- or rm): {bad_tests}")
     scratch = [f for f in untracked if f in src and not f.startswith(("src/",)) and "/" not in f]
@@ -184,71 +304,98 @@ def main():
     for f in src:
         if f.endswith(".py") and os.path.exists(os.path.join(root, f)):
             try:
-                py_compile.compile(os.path.join(root, f), doraise=True)
-            except py_compile.PyCompileError as e:
+                with open(os.path.join(root, f), "rb") as fh:
+                    compile(fh.read(), f, "exec", dont_inherit=True)
+            except (SyntaxError, ValueError) as e:
                 ok = False
-                out.append(f"SYNTAX ERROR {f}: {str(e).strip()[-400:]}")
+                where = f" line {e.lineno}" if getattr(e, "lineno", None) else ""
+                out.append(f"SYNTAX ERROR {f}{where}: {type(e).__name__}: {getattr(e, 'msg', str(e))}"[:400])
     mb = [module_and_base(root, f) for f in src]
     mods = [m for m, _ in mb if m]
     bases = sorted({b for m, b in mb if m})
-    root_abs = os.path.abspath(root)
     import_roots = {root_abs, os.path.join(root_abs, "src")}
+
+    # start the import checks, then the tests, and let them run side by side
+    imports = []
     for f, (m, b) in zip(src, mb):
         # import only library code: modules inside a package or at the repo/src root.
         # Docs examples and scripts run app code on import, so they get the syntax check only.
-        if not m or f.startswith(("docs_src/", "docs/", "doc/", "scripts/", "examples/", "benchmarks/")):
+        if not ok or not m or f.startswith(("docs_src/", "docs/", "doc/", "scripts/", "examples/", "benchmarks/")):
             continue
         if "." not in m and b not in import_roots:
             continue
-        if left() < 20:
-            out.append(f"import of {m} not checked (time budget)")
-            continue
-        code, so, se = sh([sys.executable, "-c", f"import {m}"], root, timeout=min(25, left() - 15),
-                          env=with_pythonpath(bases))
+        imports.append((m, Job([sys.executable, "-c", f"import {m}"], root, env=with_pythonpath(bases))))
+        if len(imports) >= 3:
+            break
+
+    test_job = None
+    targets = []
+    if ok and not a.no_tests:
+        if a.tests:
+            targets = a.tests.split()
+        elif cli_targets:
+            targets = cli_targets
+        else:
+            names = cli_names + changed_names(root, src)
+            targets = related_tests(root, mods, names)
+        if targets:
+            test_job = Job([sys.executable, "-m", "pytest", "--maxfail=3", "-q", "-p", "no:cacheprovider", *targets],
+                           root, env=with_pythonpath(bases))
+
+    import_deadline = time.time() + min(IMPORT_TIMEOUT, max(3, left() - 12))
+    import_lines = []
+    for m, job in imports:
+        code, _, se, secs = job.wait(import_deadline)
         if code == -9:
-            out.append(f"import of {m} not checked (slow import, not an error)")
+            import_lines.append(f"import of {m} did not finish in {secs:.0f} s (slow import, not an error)")
         elif code != 0:
             ok = False
             last = (se.strip().splitlines() or ["?"])[-1]
-            out.append(f"IMPORT FAILED {m}: {last[:300]}")
+            import_lines.append(f"IMPORT FAILED {m}: {last[:300]}")
+    out.extend(import_lines)
     if ok:
         out.append("compile + import: OK")
-    if not a.no_tests and left() < 15:
-        out.append("tests not run (time budget); run one targeted pytest yourself if needed")
-    elif not a.no_tests:
-        targets = a.tests.split() if a.tests else related_tests(root, mods)
-        if targets:
-            cmd = [sys.executable, "-m", "pytest", "--maxfail=3", "-q", "-p", "no:cacheprovider", *targets]
-            code, so, se = sh(cmd, root, timeout=max(5, min(a.timeout, left() - 10)), env=with_pythonpath(bases))
-            out.append(f"tests run: {' '.join(targets)}")
-            if code == -9:
-                out.append(f"pytest {se}")
-            else:
-                text = so + "\n" + se
-                tail = [l for l in text.splitlines() if re.search(r"\d+ (passed|failed|error)", l)]
-                out.append((tail[-1:] or ["(no pytest summary line)"])[0][:200])
-                failed = re.findall(r"^(?:FAILED|ERROR) (\S+)", so, re.M)[:5]
-                pre = baseline_failures(root, failed, bases, timeout=min(25, left() - 3)) \
-                    if failed and left() > 10 else None
-                for n in failed:
-                    if pre is None:
-                        verdict = "could not compare with the original code"
-                    elif n in pre:
-                        verdict = "also fails WITHOUT your change -> pre-existing, ignore it"
-                    else:
-                        verdict = "passes without your change -> your edit changed this behaviour"
-                    out.append(f"FAILED {n[:150]}: {verdict}")
-                errs = [l[:220] for l in text.splitlines() if l.startswith("E ")][:8]
-                out.extend(errs)
-            out.append("A failure matters only if it checks behaviour the issue did NOT ask to change. A test that "
-                       "asserts the old behaviour the issue asks to change is expected to fail (hidden tests replace "
-                       "it): keep your fix. Failures from missing fixtures or unrelated imports are pre-existing.")
+
+    if a.no_tests:
+        pass
+    elif test_job is None and not ok:
+        out.append("tests not run: fix the error above first")
+    elif test_job is None:
+        out.append("no related existing tests found; check the behaviour once with a short timeout 20 python -c "
+                   "snippet instead")
+    else:
+        code, so, se, secs = test_job.wait(test_job.t0 + max(5, min(a.timeout, left() - 8)))
+        out.append(f"tests run: {' '.join(targets)}")
+        if code == -9:
+            out.append(SLOW_TESTS.format(t=secs))
         else:
-            out.append("no related existing tests found; check behaviour with a short python -c instead")
+            text = so + "\n" + se
+            tail = [l for l in text.splitlines() if re.search(r"\d+ (passed|failed|error|deselected|skipped)", l)]
+            out.append((tail[-1:] or ["(no pytest summary line)"])[0][:200])
+            failed = re.findall(r"^(?:FAILED|ERROR) (\S+)", so, re.M)[:5]
+            pre = None
+            if failed and secs <= BASELINE_MAX_FIRST_RUN and left() > 8:
+                pre = baseline_failures(root, failed, bases, timeout=min(secs * 2 + 6, left() - 2))
+            for n in failed:
+                if pre is None:
+                    verdict = "could not compare with the original code"
+                elif n in pre:
+                    verdict = "also fails WITHOUT your change -> pre-existing, ignore it"
+                else:
+                    verdict = "passes without your change -> your edit changed this behaviour"
+                out.append(f"FAILED {n[:150]}: {verdict}")
+            errs = [l[:220] for l in text.splitlines() if l.startswith("E ")][:8]
+            out.extend(errs)
+            if failed:
+                out.append("A failure matters only if it checks behaviour the issue did NOT ask to change. A test "
+                           "that asserts the old behaviour the issue asks to change is expected to fail (hidden tests "
+                           "replace it): keep your fix. Failures from missing fixtures or unrelated imports are "
+                           "pre-existing.")
     text = "\n".join(out)[:MAX_OUT]
     diff = source_diff(root, src)
     if diff:
         text += "\n\nyour change (git diff of source files):\n" + diff
+    text += f"\n(check took {time.time() - T0:.0f} s)"
     print(text)
 
 

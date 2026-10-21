@@ -107,3 +107,23 @@
   Paired: vs v02 +6/-2, vs v05 +4/-2. locate calls clean; check calls still corrupted the old way
   (file_path "check.py`,skill_name:") 59 times in 3 tasks -> next version: call check with positional_args too.
   Submitted v07 to the LB on 2026-10-20.
+
+## 2026-10-21: v07 on the LB = 0.10 (6/58), v02 = 0.15 (9/58)
+- Re-submitted bundles vary by ~1.4-1.8 tasks per draw (community), so -3 is ~1.3 SD: not conclusive, but the
+  local sound-71 set is only fastapi + rich, while the hidden set is ~120 tasks most likely from other repos.
+  The local +4 (28 vs 24) does not transfer automatically.
+- Found an OOD-only cost: `check` on OOD-45 (fake-gold replay, v05 check) took median 29 s, max 76 s
+  (public: median 5 s). 20/44 tasks > 30 s; pytest timed out at 45 s in many (plotnine image tests, feast/kedro
+  heavy imports, pyjanitor spark tests); one false "IMPORT FAILED ... timed out" (fixed in v07). v07 calls
+  check ~1.5 times per task, so on unseen repos check eats 1-2 of the 8 minutes and often returns nothing useful.
+- The harness writes conftest.py / pytest.ini (hermetic discovery hook) before the baseline commit; when they show
+  up as changed, check used to warn "test/config files changed" -> now recognised as harness files and ignored.
+- check v2 (v09): 45 s total budget; import checks run in parallel with pytest (temp-file output, own process
+  group, killed on deadline); tests get <= 28 s; HEAD comparison only when the first run took <= 12 s; a timeout
+  says "tests are slow here, do not run them again"; test targeting also uses the names of the changed functions
+  (from the diff + names passed by the model): hidden-test file among the targets 41 -> 42/52 public,
+  22 -> 23/26 OOD (limit 2 files = limit 3). Called with positional_args (names of changed functions) like locate,
+  to avoid the file_path backtick corruption.
+- OOD-44 split into two repo-stratified halves (data/task_sets.json: ood, ood_a, ood_b) so GPU runs can be spread
+  over quota weeks and still be paired.
+- GPU quota left this week: 2.16 h (refresh 2026-10-24 00:00).
