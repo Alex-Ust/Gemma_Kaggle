@@ -169,3 +169,4 @@
 - v10 = v09b + max_tool_calls 40 + thinking_budget 1024 (+ prompt says 40 calls). Queued for the 00:00 UTC slot
   instead of v09b; fake-gold sound run on CPU pushed for mechanics. Needs a paired GPU run (OOD-B, sound) after
   the quota refresh on 2026-10-24 before trusting it.
+- v10 fake-gold sound: 69/71, identical to v09b per task. Queued for the 00:00 UTC slot.
