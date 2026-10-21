@@ -152,3 +152,20 @@
   (Pygments guesses "IPython" instead of "Python" in the hidden test; same gold patch also failed this way in the
   v05 and v07 fake runs and passed in v09's: environment flake). v09b queued for submission after the daily reset
   (scripts/submit_when_allowed.py retries every 10 min).
+
+## 2026-10-22 night: offline analysis of v07 traces -> v10
+- Time = tokens: 4.8 s per 100 completion tokens at concurrency 4; time-capped tasks produce ~9200 tokens, others
+  ~5600. Steps above 1024 tokens are 7% of steps but 15% of all tokens (~48 s per task); thinking_budget is a hard
+  cap on the thought (probe v06b: thoughts max ~4000 chars at 1024 vs 6500 at 2048), and truncated thoughts still
+  ended in a tool call (4/4), edit rates unchanged -> thinking_budget 1024.
+- **7 tasks of v07 sound made their first edit_file at call 29 and got "Tool call budget exhausted"**: 6 of them are
+  exactly the 6 call-capped empty patches (fastapi_14306/14873/15800, rich_3470/4075/4076). v02 had 21 rejected
+  edits. -> max_tool_calls 40. Time: if the 13 call-capped tasks ran to 8 min, mean 339 -> 365 s; with 15% fewer
+  tokens ~310 s (v02 was 393 s and fit the 12 h).
+- locate re-ranking experiments (path-mention boost, docs_src penalty, __init__ penalty, dotted-path boost):
+  no change on the model-style query (public r1 72/128, r5 98/128; OOD r1 23/28, r5 27/28). Not pursued.
+- Failed edits in v07: 13 "old_string not found" (literal \n from double-encoded reads), 8 budget-rejected,
+  5 "identical old/new", 3 "occurs N times".
+- v10 = v09b + max_tool_calls 40 + thinking_budget 1024 (+ prompt says 40 calls). Queued for the 00:00 UTC slot
+  instead of v09b; fake-gold sound run on CPU pushed for mechanics. Needs a paired GPU run (OOD-B, sound) after
+  the quota refresh on 2026-10-24 before trusting it.
