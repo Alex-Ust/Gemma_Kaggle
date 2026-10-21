@@ -127,3 +127,7 @@
 - OOD-44 split into two repo-stratified halves (data/task_sets.json: ood, ood_a, ood_b) so GPU runs can be spread
   over quota weeks and still be paired.
 - GPU quota left this week: 2.16 h (refresh 2026-10-24 00:00).
+- v09 fake-gold: OOD 44/44, check median 22 s / max 30 s (v05 check: 29 / 76 s); about 26/44 OOD tasks get a
+  real test result in <= 13 s, the rest get the "slow here" message. Public sound 70/71 (v07: 69/71), check
+  median 4.5 s, verdicts identical to v07 per task; rich_4070 now targets the hidden-test file.
+- Submitted v09 to the LB on 2026-10-21 (v07 0.10, v02 0.15). GPU run v09 on OOD half A (22 tasks) started.
