@@ -170,3 +170,4 @@
   instead of v09b; fake-gold sound run on CPU pushed for mechanics. Needs a paired GPU run (OOD-B, sound) after
   the quota refresh on 2026-10-24 before trusting it.
 - v10 fake-gold sound: 69/71, identical to v09b per task. Queued for the 00:00 UTC slot.
+- Submitted v10 at 2026-10-22 11:48 UTC (ref 57523322); the overnight auto-submit never got a slot (gave up after 8 h).
