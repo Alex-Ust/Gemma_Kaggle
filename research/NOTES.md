@@ -171,3 +171,18 @@
   the quota refresh on 2026-10-24 before trusting it.
 - v10 fake-gold sound: 69/71, identical to v09b per task. Queued for the 00:00 UTC slot.
 - Submitted v10 at 2026-10-22 11:48 UTC (ref 57523322); the overnight auto-submit never got a slot (gave up after 8 h).
+
+## 2026-10-24: v10 exceeded the 12 h scoring limit -> v11 (6-minute cap)
+- v10 (ref 57523322) finished COMPLETE with no score: "Your submission notebook exceeded the allowed runtime".
+  Different failure from v09 (unhandled error). The rule (overview/code-requirements): 12 h for all patches,
+  inclusive of sandbox setup, excluding patch validation. The user saw v07 take ~29 h end to end, so validation
+  is roughly half of the wall time; v07 inference fit, v10 (40 calls, 8 min) did not. My own projection for
+  v10 was 12.2 h at 365 s/task; the 15% token saving from thinking 1024 did not materialise.
+- Cap simulation on recorded GPU runs (scratch cap_sim.py; a resolved task survives if its last edit_file
+  was before the cap; duration = min(dur, cap + 25 s)):
+  v07 sound-71 (28 resolved, mean 339 s): cap 360 s keeps 27/28, mean 301 s -> 10.0 h / 120 tasks;
+  cap 300 s keeps 22/28, 272 s. v09 OOD-A (21): cap 360 keeps 19/21, mean 291 s. v05 sound: 24/26 at 360.
+  v07 call-capped tasks reached call 28 at 175-374 s, so with a 360 s cap the extra calls (40) cost ~+8 s mean.
+- v11_cap6 = v09b + max_time_minutes 6, max_tool_calls 40, thinking 2048 (v09b), prompt line "40 tool calls and
+  6 minutes". Projected ~10.3 h on the hardest public set vs v07's 11.2 h projection that fit.
+  GPU eval on sound-71 pushed (alexust/gemma-eval-v11-cap6-sound) to confirm duration and resolution before submitting.
