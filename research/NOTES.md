@@ -197,3 +197,8 @@
   of tokens (= time) if the model does not compensate. Mean 6570 completion tokens/task = 328 s at 5 s/100 tok.
   GPU eval alexust/gemma-eval-v12-think1024-sound (sound-71) started 2026-10-24 15:05 UTC alongside v11.
   get_status (has time_seconds_remaining) was called once in 71 tasks; the harness budget_warning is call-based only.
+- **v11 sound-71: 25/71, mean 311 s** (v07 28/71, 339 s; paired vs v07 +2/-5). 37 tasks hit the 6-min cap.
+- **v12 sound-71: 31/71, mean 301 s** (paired vs v07 +4/-1, vs v11 +8/-2), projected 10.0 h on 120 tasks
+  (v07 11.3 h fit the limit). Only 1 task ran past 380 s (664 s, a hung step). thinking 1024 did not hurt.
+- Submitted v12 on 2026-10-24 19:09 UTC. Kaggle output download hung for 3 h on the full archive; use
+  `kernels output --file-pattern ".*task_results\.jsonl"` first.
