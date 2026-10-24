@@ -192,3 +192,8 @@
   v10-equivalent mean 435 s (+10% vs v02) -> over 12 h. v11-equivalent (40 calls, 6-min cap): v02 full 352 s,
   v03 full 358 s (-10% vs v02), v07 sound 310 s. Note: the user saw v02 also take > 12 h wall time; that wall
   time includes patch validation, which is excluded from the 12 h rule.
+- v12 = v11 + thinking_budget 1024. v07 sound traces: 1582 agent steps, p50 125 / p90 749 / p95 1310 / p99 2101
+  completion tokens; the 7% of steps above 1024 tokens hold 39% of all tokens, capping them at 1024 saves ~15%
+  of tokens (= time) if the model does not compensate. Mean 6570 completion tokens/task = 328 s at 5 s/100 tok.
+  GPU eval alexust/gemma-eval-v12-think1024-sound (sound-71) started 2026-10-24 15:05 UTC alongside v11.
+  get_status (has time_seconds_remaining) was called once in 71 tasks; the harness budget_warning is call-based only.
