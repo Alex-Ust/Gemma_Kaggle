@@ -186,3 +186,9 @@
 - v11_cap6 = v09b + max_time_minutes 6, max_tool_calls 40, thinking 2048 (v09b), prompt line "40 tool calls and
   6 minutes". Projected ~10.3 h on the hardest public set vs v07's 11.2 h projection that fit.
   GPU eval on sound-71 pushed (alexust/gemma-eval-v11-cap6-sound) to confirm duration and resolution before submitting.
+- Full-129 composition (closest to the hidden set) explains v10: v02 full mean 394 s (projected 12.9 h at
+  concurrency 4) scored, so the hidden run is a bit faster than the local projection. On the full set 33/129
+  tasks were call-capped (28 calls) before the time cap; with 40 calls they run to the 8-min cap instead:
+  v10-equivalent mean 435 s (+10% vs v02) -> over 12 h. v11-equivalent (40 calls, 6-min cap): v02 full 352 s,
+  v03 full 358 s (-10% vs v02), v07 sound 310 s. Note: the user saw v02 also take > 12 h wall time; that wall
+  time includes patch validation, which is excluded from the 12 h rule.
