@@ -233,3 +233,13 @@
   <workspace>/.git/scout_budget.json keyed by HEAD commit + .git ctime. fake4 re-check: 4/4, budget fresh in
   every task. GPU run alexust/gemma-eval-v13-scouts-sound (sound-71, concurrency 2 so that 3 scouts x 2 tasks
   = 6 streams stay close to the usual 4) started 2026-10-25 17:00 UTC.
+- **v13 sound-71: 16/71 (v12 31), 43 empty, 50 time-capped.** The scouts phase took mean 214 s / median 205 s
+  (min 43, max 353) in the 41 tasks where it returned at all; in 29 tasks the 6-min cap fired inside the scouts
+  tool (no agent steps in the trace). Scouts ignored "6 calls": ~20 view calls per task, and the final report
+  step alone costs ~60 s (1024 thinking + 500-token report). Where the scouts did return, the fixer resolved
+  16/42 = 38%, no better than v12's 44%. Parallel exploration is dead: Gemma's ~10 s per step makes any
+  multi-step sub-agent cost minutes, and the slowest scout gates the fixer. Not a candidate.
+- **Ceiling finding:** over 7 sound runs (v02..v13) the union of resolved tasks is 35/71; 36 sound tasks were
+  never resolved by any version, 29 were resolved 3+ times, 11 in all runs. v12 (31) is already near the
+  pass@7 union (35), so prompt/budget work cannot add more than ~3 tasks locally; the hidden-set gap is the
+  model, not the harness. LB 0.20 = 12/58 needs a different model behaviour, i.e. a LoRA.
