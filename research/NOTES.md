@@ -269,3 +269,30 @@
   reworded it and the hidden test asserts the new wording), rich_3471 / rich_3944 ("Fixes #NNNN" only),
   fastapi_14258 (gold uses assert, agent raised FastAPIError; issue text does not say), fastapi_13920 (helper
   added but not wired into analyze_param). The sound-71 "never resolved" set is dominated by such tasks.
+
+## v14 nocompact: 27/71 (v12 31/71) — thoughts dropped from history cause loops
+
+sound-71, concurrency 4, 2026-10-25 20:30–22:40 UTC. Paired vs v12: +1 / -5 (net -4).
+mean dur 292 s (v12 301), timeouts 30 (31), empty patches 26 (23), no-edit tasks 24 (22).
+
+Compaction did fall: 0.54/task vs 0.92, tasks with a compaction 27 vs 55, prompt growth per
+step 539 vs 753 tokens. But resolution fell with it. Cause found in the traces: with
+include_thoughts: false the model repeats identical failed calls.
+
+| run | tasks with >=3 identical consecutive calls | repeated calls / all calls |
+|---|---|---|
+| v12 | 8  | 60 / 1437 |
+| v14 | 15 | 239 / 1507 |
+
+Examples: rich_3067 ran the same broken python -c command (a backtick inside double quotes,
+bash "unexpected EOF") 27 times in a row; rich_3676 the same repro heredoc 12 times;
+fastapi_14258 19 times; rich_4070 24 times. 4 of the 5 lost tasks never edited at all.
+Without its own thoughts in history the model has no record of "this failed, try differently":
+the history is bare function calls with identical error results, and at temperature 0.2 the
+next sample is the same call again. The prompt's "after a second failure use a different tool"
+is not enough on its own.
+
+Next (launched 2026-10-26 ~00:20 UTC, both on sound-71):
+- v15_thoughts = v14 with include_thoughts: true (isolates the other v14 changes: issue text in
+  the system prompt, compact prompt, locate SHOW_CHARS 3000).
+- v16_temp07 = v14 with temperature 0.7 (loop-breaking without re-sending thoughts).
