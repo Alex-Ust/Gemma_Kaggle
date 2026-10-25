@@ -62,7 +62,8 @@ def _sub_path(base, root, rel):
 
 def check_agent(cfg, base, models, seen, root=None):
     root = root or base
-    models.add(cfg.get("model"))
+    if cfg.get("model") is not None or cfg.get("agent_class", "LlmAgent") == "LlmAgent":
+        models.add(cfg.get("model"))
     for t in cfg.get("tools", []) or []:
         if isinstance(t, str):
             if t not in TOOLS:
