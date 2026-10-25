@@ -205,3 +205,25 @@
 - **v12 on the LB = 0.12 (7/58)**, scored 2026-10-25 15:54 UTC (~21 h after submission, so inference fit the
   12 h limit). v02 0.15 (9/58), v07 0.10 (6/58): all three within the +-2-task noise band; local sound-71
   differences (24 / 28 / 31) do not show on the 58 public tasks.
+
+## 2026-10-25: v12 LB 0.12 -> target 0.20; v13 = parallel scouts
+- v12 sound-71 endings: 31 resolved (all submitted, median 14 calls, mean 244 s), 22 empty (ALL by the 6-min
+  time cap, median 21 calls, no edit at all), 8 wrong submitted, 9 wrong time-capped, 1 call-capped. So a
+  third of the tasks spend the whole 6 minutes reading and never edit; on the harder hidden set that share is
+  probably larger. The scorer runs tasks sequentially, so vLLM serves one stream at a time: parallel
+  sub-agents get extra tokens per wall-second almost for free.
+- v13 design: root fixer (= v12 agent) whose first call is the AgentTool `scouts`, a ParallelAgent of three
+  LlmAgents (issue-driven, test-driven, data-flow/siblings). Scouts have only run_skill_script with `locate`
+  and a new `view` skill (file region / def name / grep) that keeps a shared budget in /tmp/.scout_budget.json
+  (18 calls or 150 s, then every call returns a stop message). Each scout writes its report to state via
+  output_key; the fixer's instruction ends with `{scout_a?}` `{scout_b?}` `{scout_c?}` (ADK templating,
+  optional placeholders), re-rendered on every LLM call, so the reports appear in its system prompt after the
+  tool returns. AgentTool (skip_summarization) returns only the last scout's text. ADK branch filtering keeps
+  scout events out of the fixer's context; scouts see `{problem_description}` from session state.
+  Budget: 60 calls, 6 min, 150 turns. v08 lesson (analyst ran 20+ calls): here the tools themselves refuse after
+  the budget, which is the only hard bound available (no per-agent call limit exists in ADK/adk-submission).
+- Harness facts: budget_warning is call-based only (fires at <=10 calls left when max_tool_calls >= 20);
+  get_status exposes time_seconds_remaining but was called once in 71 tasks; the runner nudges a root agent
+  up to 3 times when it stops without submit_patch; session state has problem_description and hints.
+- Fake-mode CPU kernel alexust/gemma-eval-v13-scouts-fake8 checks the plumbing (compile, AgentTool over
+  ParallelAgent, view skill inside sub-agents, output_key -> templating, patch extraction).
