@@ -227,3 +227,9 @@
   up to 3 times when it stops without submit_patch; session state has problem_description and hints.
 - Fake-mode CPU kernel alexust/gemma-eval-v13-scouts-fake8 checks the plumbing (compile, AgentTool over
   ParallelAgent, view skill inside sub-agents, output_key -> templating, patch extraction).
+- Fake-mode results: fake8 8/8 gold patches applied through the new tree (scouts ran in parallel, view
+  worked, output_key reports returned), but the view budget leaked across tasks: on Kaggle tasks run in a
+  SubprocessSandbox on the shared host filesystem, so /tmp is NOT per task. Fixed: budget file lives in
+  <workspace>/.git/scout_budget.json keyed by HEAD commit + .git ctime. fake4 re-check: 4/4, budget fresh in
+  every task. GPU run alexust/gemma-eval-v13-scouts-sound (sound-71, concurrency 2 so that 3 scouts x 2 tasks
+  = 6 streams stay close to the usual 4) started 2026-10-25 17:00 UTC.
