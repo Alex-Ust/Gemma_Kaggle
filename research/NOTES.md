@@ -264,3 +264,8 @@
   survives compaction, (b) include_thoughts false (~440 tokens/step -> compaction only after ~22 steps),
   (c) locate SHOW_CHARS 4500 -> 3000, (d) compact prompt (6.5k chars) with "edit within 8 calls, context is
   summarized after ~12". GPU run alexust/gemma-eval-v14-nocompact-sound started 2026-10-25 ~22:10 UTC.
+- v12 wrong patches (17): 14 touch a gold file. Near misses (gold +1..+4 lines) are underspecified by the issue
+  text, not fixable by rules: fastapi_14479 (agent copied the old message from the issue traceback, the gold
+  reworded it and the hidden test asserts the new wording), rich_3471 / rich_3944 ("Fixes #NNNN" only),
+  fastapi_14258 (gold uses assert, agent raised FastAPIError; issue text does not say), fastapi_13920 (helper
+  added but not wired into analyze_param). The sound-71 "never resolved" set is dominated by such tasks.
