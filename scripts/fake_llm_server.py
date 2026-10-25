@@ -71,8 +71,26 @@ class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
         req = json.loads(self.rfile.read(int(self.headers.get("Content-Length", 0))))
         msgs = req.get("messages", [])
-        task = find_task(msgs)
+        sysmsg = "\n".join(text_of(m.get("content")) for m in msgs if m.get("role") in ("system", "developer"))
         n_done = sum(1 for m in msgs if m.get("role") == "assistant")
+        if "You are scout" in sysmsg:
+            # scout sub-agent: one bounded view call, then a fixed report (tests the skill + output_key plumbing)
+            msg = {"role": "assistant", "content": None}
+            if n_done == 0:
+                msg["tool_calls"] = [{"id": f"call_{uuid.uuid4().hex[:8]}", "type": "function",
+                                      "function": {"name": "run_skill_script", "arguments": json.dumps(
+                                          {"skill_name": "view", "file_path": "view.py", "positional_args": ["grep", "def "]})}}]
+                finish = "tool_calls"
+            else:
+                last_tool = next((text_of(m.get("content")) for m in reversed(msgs) if m.get("role") == "tool"), "")
+                msg["content"] = "VERDICT: fake scout report.\nFILE: none\nCONFIDENCE: low\nVIEW_OK: " + ("yes" if "view budget" in last_tool else "no")
+                finish = "stop"
+            self._send({"id": f"chatcmpl-{uuid.uuid4().hex[:10]}", "object": "chat.completion",
+                        "created": int(time.time()), "model": req.get("model", "fake"),
+                        "choices": [{"index": 0, "message": msg, "finish_reason": finish}],
+                        "usage": {"prompt_tokens": 1, "completion_tokens": 1, "total_tokens": 2}})
+            return
+        task = find_task(msgs)
         patch = None
         if task:
             if self.patches == "gold":
@@ -81,6 +99,8 @@ class Handler(BaseHTTPRequestHandler):
                 p = Path(self.patches) / f"{task['instance_id']}.patch"
                 patch = p.read_text() if p.exists() else None
         steps = plan(task, patch) if task else []
+        if "SCOUT REPORTS" in sysmsg:
+            steps = [("scouts", {"request": "report"})] + steps
         # record the last tool result so we can inspect skill output later
         last_tool = next((text_of(m.get("content")) for m in reversed(msgs) if m.get("role") == "tool"), None)
         with open(LOG, "a") as f:

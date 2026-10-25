@@ -35,7 +35,7 @@ def _include(loader, node):
         return load_yaml(path)
     text = path.read_text(encoding="utf-8")
     # ADK interpolates {name} placeholders from session state; stray braces break the prompt
-    bad = set(re.findall(r"\{([^{}]*)\}", text)) - {"problem_description", "hints"}
+    bad = {b for b in re.findall(r"\{([^{}]*)\}", text) if not b.endswith("?")} - {"problem_description", "hints"}
     if bad:
         raise SystemExit(f"FAIL: {rel} has template placeholders {sorted(bad)[:5]} (ADK would try to fill them)")
     return text
@@ -54,18 +54,25 @@ def load_yaml(path):
             loader.dispose()
 
 
-def check_agent(cfg, base, models, seen):
+def _sub_path(base, root, rel):
+    # mirrors adk_submission.context.resolve_sub_config_path: next to the referencing file first, else root-relative
+    cand = base / rel
+    return cand if cand.exists() else root / rel
+
+
+def check_agent(cfg, base, models, seen, root=None):
+    root = root or base
     models.add(cfg.get("model"))
     for t in cfg.get("tools", []) or []:
         if isinstance(t, str):
             if t not in TOOLS:
                 raise SystemExit(f"FAIL: unknown tool {t}")
         elif isinstance(t, dict) and "agent_tool" in t:
-            sub = base / t["agent_tool"]["config_path"]
-            check_agent(load_yaml(sub), sub.parent, models, seen)
+            sub = _sub_path(base, root, t["agent_tool"]["config_path"])
+            check_agent(load_yaml(sub), sub.parent, models, seen, root)
     for s in cfg.get("sub_agents", []) or []:
-        sub = base / s["config_path"]
-        check_agent(load_yaml(sub), sub.parent, models, seen)
+        sub = _sub_path(base, root, s["config_path"])
+        check_agent(load_yaml(sub), sub.parent, models, seen, root)
     gc = cfg.get("generate_content_config") or {}
     if gc.get("max_output_tokens", 0) > 32768:
         raise SystemExit("FAIL: max_output_tokens > 32768")

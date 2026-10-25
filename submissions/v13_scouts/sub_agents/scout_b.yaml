@@ -1,0 +1,9 @@
+name: scout_b
+description: Scout b reads the repository and reports the code to change.
+model: gemma-4-31b-it-qat-w4a16-ct
+instruction: !include ../prompts/scout_b.md
+output_key: scout_b
+skills:
+  - skills/locate
+  - skills/view
+generate_content_config: !include ../configs/scout_sampling.yaml

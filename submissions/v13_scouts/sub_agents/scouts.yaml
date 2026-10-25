@@ -1,0 +1,7 @@
+agent_class: ParallelAgent
+name: scouts
+description: Three scouts read the repository in parallel for about two minutes and report the exact code that must change for the issue. Call it once, first, with request set to report.
+sub_agents:
+  - config_path: sub_agents/scout_a.yaml
+  - config_path: sub_agents/scout_b.yaml
+  - config_path: sub_agents/scout_c.yaml
