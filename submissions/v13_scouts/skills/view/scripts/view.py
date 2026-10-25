@@ -32,17 +32,30 @@ def find_root():
     return "/workspace" if os.path.isdir("/workspace") else os.getcwd()
 
 
-def charge():
-    """Return (ok, used, seconds) after charging one call to the shared budget."""
-    now = time.time()
+def task_key(root):
+    """Identify the current task: HEAD commit plus the creation time of .git (fresh per task)."""
     try:
-        d = json.load(open(BUDGET))
+        head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=root, capture_output=True, text=True).stdout.strip()[:12]
+        return f"{head}-{int(os.stat(os.path.join(root, '.git')).st_ctime)}"
     except Exception:
-        d = {"n": 0, "t0": now}
+        return "unknown"
+
+
+def charge(root):
+    """Return (ok, used, seconds) after charging one call to the shared per-task budget."""
+    now = time.time()
+    key = task_key(root)
+    budget = os.path.join(root, ".git", "scout_budget.json") if os.path.isdir(os.path.join(root, ".git")) else BUDGET
+    try:
+        d = json.load(open(budget))
+        if d.get("key") != key:
+            raise ValueError("other task")
+    except Exception:
+        d = {"key": key, "n": 0, "t0": now}
     d["n"] = int(d.get("n", 0)) + 1
     d.setdefault("t0", now)
     try:
-        with open(BUDGET, "w") as f:
+        with open(budget, "w") as f:
             json.dump(d, f)
     except Exception:
         pass
@@ -130,11 +143,11 @@ def main():
     argv = sys.argv[1:]
     if "--" in argv:
         argv = argv[argv.index("--") + 1:]
-    ok, used, secs = charge()
+    root = find_root()
+    ok, used, secs = charge(root)
     if not ok:
         print(STOP.format(MAX_CALLS, MAX_SECS))
         return
-    root = find_root()
     if not argv:
         print("usage: view <path> [start [end]] | view def <name> | view grep <text>")
     elif argv[0] == "def" and len(argv) >= 2:
