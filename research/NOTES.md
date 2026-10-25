@@ -202,3 +202,6 @@
   (v07 11.3 h fit the limit). Only 1 task ran past 380 s (664 s, a hung step). thinking 1024 did not hurt.
 - Submitted v12 on 2026-10-24 19:09 UTC. Kaggle output download hung for 3 h on the full archive; use
   `kernels output --file-pattern ".*task_results\.jsonl"` first.
+- **v12 on the LB = 0.12 (7/58)**, scored 2026-10-25 15:54 UTC (~21 h after submission, so inference fit the
+  12 h limit). v02 0.15 (9/58), v07 0.10 (6/58): all three within the +-2-task noise band; local sound-71
+  differences (24 / 28 / 31) do not show on the 58 public tasks.
