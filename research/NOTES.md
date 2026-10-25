@@ -243,3 +243,24 @@
   never resolved by any version, 29 were resolved 3+ times, 11 in all runs. v12 (31) is already near the
   pass@7 union (35), so prompt/budget work cannot add more than ~3 tasks locally; the hidden-set gap is the
   model, not the harness. LB 0.20 = 12/58 needs a different model behaviour, i.e. a LoRA.
+
+## 2026-10-25 evening: trace study of public runs -> context compaction is the hidden tax (v14)
+- The scorer (and our eval kernel, same EventsCompactionConfig) compacts the ADK session when the prompt
+  reaches 14,336 tokens: all but the last 5 events are replaced by a Gemma-written generic summary
+  ("summarize the conversation...", LlmEventSummarizer default prompt), including the task prompt with the
+  issue text. Detected in traces as a prompt_tokens drop > 2000 between consecutive steps.
+- Frequency: v07 70/71 tasks, v12 69/71; 1.4 compactions per task. Cost: the step after a compaction takes
+  a median 40 s instead of 5.5 s (the summarizer is an extra full-context LLM call) -> ~57 s per task, 16%
+  of the 6-min budget. v07: when the first compaction came before the first edit, 2/17 resolved; after the
+  first edit, 25/39. Median first edit at step 9, median first compaction at step 12 (p25 step 9).
+- Token accounting (806 steps): prompt growth per step = tool output + previous completion tokens
+  (corr 0.95): thoughts are re-sent every turn (include_thoughts true). Baseline prompt 4.8k tokens
+  (system 2k + harness task prompt + tool schemas). Mean completion 277-305 tokens/step, tool output ~340,
+  so ~750 tokens/step -> threshold at ~12 steps. locate output median 4.1k chars, read_file 1.9k.
+- adk-submission supports include_thoughts: false explicitly (install_litellm_reasoning_patch: thinking stays
+  on, thought parts are dropped from history and reasoning_content stripped from outgoing messages). The
+  "include_thoughts essential" note was community hearsay, never measured by us.
+- v14 = v12 + (a) issue text inside the system instruction via {problem_description} / {hints?} so the spec
+  survives compaction, (b) include_thoughts false (~440 tokens/step -> compaction only after ~22 steps),
+  (c) locate SHOW_CHARS 4500 -> 3000, (d) compact prompt (6.5k chars) with "edit within 8 calls, context is
+  summarized after ~12". GPU run alexust/gemma-eval-v14-nocompact-sound started 2026-10-25 ~22:10 UTC.
