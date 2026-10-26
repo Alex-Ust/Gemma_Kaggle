@@ -430,3 +430,25 @@ not trained yet.
 - First LoRA arm on pod A failed silently: every model call raised `cannot import name 'CacheableResult' from mcp.types`
   (litellm 1.106.4 vs mcp 1.30.0 pinned by google-adk). Gold mode never calls the model, so the earlier 2/2 gold check did
   not cover this. Fix: `pip install -U mcp` (2.3.0) in evalenv; harness imports still fine. Arm restarted 22:27 UTC.
+
+### 2026-10-26 late: adapter v1 is broken by a rendering bug (root cause found)
+
+- The pod LoRA arm (restarted 22:27 UTC) resolved 0/63 before I killed it: every task timed out with 0 tool calls.
+  Traces show the adapter's tool calls arrive with quotes inside keys and values, e.g.
+  `{"\"file_path\"": "\"locate.py\""}` — the tools then reject the arguments ("Argument 'skill_name' is required"),
+  the model retries until the 6-minute timeout, and swegemma counts none of it as tool calls.
+- Raw probe via /v1/completions (skip_special_tokens=false), same prompt, three models:
+  base emits `call:run_skill_script{file_path:<|"|>locate.py<|"|>,positional_args:[<|"|>...<|"|>],skill_name:<|"|>locate<|"|>}`;
+  v1 and ep1 emit `call:run_skill_script{"file_path": "locate.py", "positional_args": [...], "skill_name": "locate"}` (JSON).
+  Thoughts, tool choice and timing of the adapters look healthy otherwise.
+- Cause: sft_extract stores `function.arguments` as an OpenAI JSON string; the Gemma 4 chat template renders a *mapping*
+  in the native DSL but passes a *string* through verbatim (template comment: "Prefer passing arguments as a mapping").
+  So all 133 training trajectories taught JSON-quoted arguments. Fix in sft_render.prepare_messages: json.loads the
+  string into a dict. Re-rendered calls now match the base model's format byte for byte, and all 15 calls of the first
+  trajectory round-trip through vLLM's `_parse_gemma4_args` (vllm 0.19.1) to the original dicts.
+- Kaggle submission 57680204 (v19 with the broken v1) will score ~0; nothing to do about it (slot used on 10-26).
+- Training run 2 started ~23:55 UTC on pod A (same hyper-parameters, OUT=/workspace/adapter2, log train2.log).
+  Balance $11.3 at start, $2.51/h: training ~$6.3, leaving ~$5 (~2 h) for the eval of v2; a $10 top-up would fund
+  the full 71-task eval plus a pod baseline.
+- Side finding: vLLM's chat endpoint returns empty `reasoning_content` for the base model too (reasoning parser), so
+  ADK sees thoughts only via the content/thought channel it already uses; unchanged from Kaggle behaviour.
