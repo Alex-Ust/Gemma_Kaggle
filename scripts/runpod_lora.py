@@ -86,6 +86,9 @@ def main():
         body = {"name": "gemma-lora", "imageName": IMAGE, "gpuTypeIds": [gpu], "gpuCount": 1, "cloudType": cloud,
                 "containerDiskInGb": disk, "volumeInGb": 0, "ports": ["22/tcp"], "supportPublicIp": True,
                 "env": {"SSH_PUBLIC_KEY": PUB}, "minRAMPerGPU": 32}
+        if "--dc" in sys.argv:  # comma-separated data center ids in priority order
+            body["dataCenterIds"] = sys.argv[sys.argv.index("--dc") + 1].split(",")
+            body["dataCenterPriority"] = "custom"
         p = api("POST", f"{V1}/pods", body)
         print("created pod", p.get("id"), "cost/h", p.get("costPerHr"), "gpu", (p.get("machine") or {}).get("gpuTypeId"))
     elif cmd == "status":

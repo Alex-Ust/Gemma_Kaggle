@@ -385,3 +385,12 @@ Plus torch.autograd.graph.save_on_cpu for the checkpointed activations. Result o
 8k 26.5 GB / 36 s, 20k 39.8 GB / 116 s per example.
 User then allowed pricier GPUs: moved to RTX PRO 6000 Blackwell 96 GB ($2.49/h, Secure) to train
 in bf16 (QUANT=0), no nf4-vs-QAT mismatch and faster. L40 pod deleted (~$1.3 spent).
+
+## Training run 1 started (2026-10-26 19:40 UTC), pod sy7dbb0o0g5l77 (RTX PRO 6000 Blackwell 96 GB, EUR-IS-2, $2.49/h)
+
+Second pod (zz6zvlh22nqcf7) had broken egress (pypi.org and every mirror unreachable, HF flaky) and was
+deleted; the third pod with dataCenterIds preference EUR-IS-2 has a clean network (pypi 0.25 s).
+Config: bf16 base, LoRA r16 a32 on q/k/v/o/gate/up/down of the 60 text layers (122M params),
+lr 1e-4 cosine, 2 epochs over 133 trajectories (think-on, <= 20,480 tokens), accum 4, chunked
+attention + CPU-offloaded checkpoints. Speed: 11k tokens 26 s, 16.5k 43 s -> ~2.5 h, ~$6.5.
+First losses 0.30, 0.26 (the model already likes its own successful trajectories; SFT sharpens them).
