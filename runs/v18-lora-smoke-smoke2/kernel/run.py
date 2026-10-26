@@ -82,9 +82,12 @@ for rel, b64 in BUNDLE_FILES.items():
 log(f"bundle written: {sorted(BUNDLE_FILES)}  run={RUN}")
 # LoRA adapters are too big for the kernel source: they come from a Kaggle dataset (adapters/<name>/...)
 for name in RUN.get('adapters') or []:
-    src = next(Path(p) for p in glob.glob(f'/kaggle/input/**/adapters/{name}/adapter_config.json', recursive=True)).parent
+    # dataset layout is flat: <name>.adapter_config.json and <name>.adapter_model.safetensors
     dst = AGENT_DIR / 'adapters' / name
-    shutil.copytree(src, dst)
+    dst.mkdir(parents=True, exist_ok=True)
+    for fn in ('adapter_config.json', 'adapter_model.safetensors'):
+        src = next(Path(p) for p in glob.glob(f'/kaggle/input/**/{name}.{fn}', recursive=True))
+        shutil.copy(src, dst / fn)
     log(f"adapter {name} copied from {src}: {sorted(os.listdir(dst))}")
 
 import litellm  # noqa: E402
