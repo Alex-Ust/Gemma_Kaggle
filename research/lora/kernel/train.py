@@ -4,6 +4,7 @@ Env knobs: THINK (1 keep thoughts, 0 strip), MAX_LEN, RANK, ALPHA, LR, EPOCHS, A
 Output: /kaggle/working/adapter/{adapter_config.json, adapter_model.safetensors}
 """
 import os, sys, json, glob, math, time, random, subprocess, re
+os.environ.setdefault("PYTORCH_CUDA_ALLOC_CONF", "expandable_segments:True")
 
 THINK = int(os.environ.get("THINK", "1"))
 MAX_LEN = int(os.environ.get("MAX_LEN", "16384"))
@@ -14,7 +15,9 @@ EPOCHS = float(os.environ.get("EPOCHS", "2"))
 ACCUM = int(os.environ.get("ACCUM", "4"))
 DRY = int(os.environ.get("DRY", "0"))
 KEY_STYLE = os.environ.get("KEY_STYLE", "hf")
-QUANT = int(os.environ.get("QUANT", "0"))  # 1: QLoRA, base in 4-bit nf4 (48 GB cards)  # hf: keep PEFT names; causal: drop 'language_model.' from keys
+QUANT = int(os.environ.get("QUANT", "0"))  # 1: QLoRA, base in 4-bit nf4 (48 GB cards)
+ATTN = os.environ.get("ATTN", "chunked")  # chunked: query-chunked recomputed attention (see chunked_attn.py); or sdpa
+SAVE_ON_CPU = int(os.environ.get("SAVE_ON_CPU", "1"))  # offload checkpointed activations to pinned CPU memory  # hf: keep PEFT names; causal: drop 'language_model.' from keys
 OUT = os.environ.get("OUT", "/kaggle/working/adapter")
 T0 = time.time()
 
@@ -40,7 +43,7 @@ def find_data():
 MODEL = find_model(); DATA = find_data()
 sys.path.insert(0, DATA)
 from sft_render import render  # noqa: E402
-log("model", MODEL, "data", DATA, "think", THINK)
+log("model", MODEL, "data", DATA, "think", THINK, "attn", ATTN, "save_on_cpu", SAVE_ON_CPU, "quant", QUANT, "max_len", MAX_LEN)
 
 from transformers import AutoTokenizer  # noqa: E402
 tok = AutoTokenizer.from_pretrained(MODEL)
@@ -68,20 +71,21 @@ except ImportError:
 import torch  # noqa: E402
 from torch.utils.checkpoint import checkpoint  # noqa: E402
 from transformers import AutoConfig, AutoModelForCausalLM, AutoModelForImageTextToText  # noqa: E402
-from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training  # noqa: E402
+from peft import LoraConfig, get_peft_model  # noqa: E402
+if ATTN == "chunked":
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import chunked_attn  # noqa: E402,F401  registers the "chunked" attention implementation
 
 cfg = AutoConfig.from_pretrained(MODEL)
 arch = (cfg.architectures or [""])[0]
 cls = AutoModelForImageTextToText if "ConditionalGeneration" in arch else AutoModelForCausalLM
 log("loading", arch, "via", cls.__name__, "gpus", torch.cuda.device_count())
-load_kw = dict(torch_dtype=torch.bfloat16, device_map="auto", attn_implementation="sdpa", low_cpu_mem_usage=True)
+load_kw = dict(dtype=torch.bfloat16, device_map="auto", attn_implementation=ATTN, low_cpu_mem_usage=True)
 if QUANT:
     from transformers import BitsAndBytesConfig
     load_kw["quantization_config"] = BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_quant_type="nf4", bnb_4bit_use_double_quant=True,
                                                         bnb_4bit_compute_dtype=torch.bfloat16, llm_int8_skip_modules=["lm_head", "embed_tokens", "vision_tower", "embed_vision", "embed_audio", "audio_tower"])
 model = cls.from_pretrained(MODEL, **load_kw)
-if QUANT:
-    model = prepare_model_for_kbit_training(model, use_gradient_checkpointing=True, gradient_checkpointing_kwargs={"use_reentrant": False})
 model.config.use_cache = False
 model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={"use_reentrant": False})
 model.enable_input_require_grads()
@@ -113,7 +117,10 @@ def chunk_loss(h, lab):
 def example_loss(ids, mask):
     x = torch.tensor([ids], device=first_dev)
     labels = torch.tensor([[t if m else -100 for t, m in zip(ids, mask)]], device=head_dev)
-    h = backbone(input_ids=x).last_hidden_state.to(head_dev)  # [1, T, H]
+    import contextlib
+    ctx = torch.autograd.graph.save_on_cpu(pin_memory=True) if SAVE_ON_CPU else contextlib.nullcontext()
+    with ctx:
+        h = backbone(input_ids=x).last_hidden_state.to(head_dev)  # [1, T, H]
     h = h[:, :-1]; lab = labels[:, 1:]
     n = (lab != -100).sum().clamp(min=1)
     total = 0.0
@@ -133,8 +140,13 @@ while ex_i < n_examples_total:
         random.shuffle(order); ep += 1; log(f"epoch {ep}")
     iid, run, ids, mask = examples[order[ex_i % len(examples)]]
     t1 = time.time()
-    loss, n = example_loss(ids, mask)
-    (loss / ACCUM).backward()
+    try:
+        loss, n = example_loss(ids, mask)
+        (loss / ACCUM).backward()
+    except torch.OutOfMemoryError:
+        log(f"OOM on {iid} ({run}) tokens {len(ids)}: skipped")
+        opt.zero_grad(set_to_none=True); torch.cuda.empty_cache(); ex_i += 1
+        continue
     seen += 1; ex_i += 1
     log(f"ex {ex_i}/{n_examples_total} {iid} ({run}) tokens {len(ids)} trained {n} loss {loss.item():.3f} {time.time()-t1:.0f}s")
     if seen % ACCUM == 0 or ex_i == n_examples_total:

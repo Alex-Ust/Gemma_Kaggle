@@ -21,11 +21,22 @@ IMAGE = "runpod/pytorch:1.4.1-cu1281-torch280-ubuntu2404"
 CARDS = ["NVIDIA A40", "NVIDIA L40S", "NVIDIA RTX A6000", "NVIDIA RTX 6000 Ada Generation", "NVIDIA L40", "NVIDIA A100 80GB PCIe"]
 
 
-def api(method, url, body=None):
-    req = urllib.request.Request(url, method=method, data=json.dumps(body).encode() if body is not None else None,
-                                 headers={"Authorization": f"Bearer {KEY}", "Content-Type": "application/json"})
+def _ctx():
+    import ssl
     try:
-        with urllib.request.urlopen(req, timeout=60) as r:
+        import certifi
+        return ssl.create_default_context(cafile=certifi.where())
+    except ImportError:
+        return ssl.create_default_context()
+
+
+def api(method, url, body=None, auth=True):
+    headers = {"Content-Type": "application/json", "User-Agent": "curl/8.7.1", "Accept": "application/json"}
+    if auth:
+        headers["Authorization"] = f"Bearer {KEY}"
+    req = urllib.request.Request(url, method=method, data=json.dumps(body).encode() if body is not None else None, headers=headers)
+    try:
+        with urllib.request.urlopen(req, timeout=60, context=_ctx()) as r:
             raw = r.read()
             return json.loads(raw) if raw else {}
     except urllib.error.HTTPError as e:
@@ -84,7 +95,7 @@ def main():
     elif cmd == "upload":
         pid = sys.argv[2]
         ssh(pid, "mkdir -p /workspace/lora/data")
-        for f in ("research/lora/kernel/train.py", "research/lora/runpod/bootstrap.sh"):
+        for f in ("research/lora/kernel/train.py", "research/lora/kernel/chunked_attn.py", "research/lora/runpod/bootstrap.sh"):
             scp(pid, str(ROOT / f), "/workspace/lora/")
         for f in ("research/lora/sft_messages.jsonl", "research/lora/tools.json", "research/lora/sft_render.py"):
             scp(pid, str(ROOT / f), "/workspace/lora/data/")

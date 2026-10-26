@@ -368,3 +368,20 @@ compressed-tensors base. Adapter weights travel to the eval kernel via the datas
 alexust/gemma-lora-adapters as flat <name>.adapter_config.json / <name>.adapter_model.safetensors
 (make_eval_kernel --adapters-dataset). For the real submission they go into submission.zip under
 adapters/<name>/ (size budget 3 GiB; rank 16 on all 7 projections ~ 250 MB).
+
+## RunPod training, day 1 (2026-10-26 evening UTC): memory on 48 GB, chunked attention
+
+L40 48 GB, QLoRA: every example OOMed. Diagnosis with memtests (research/lora/kernel scratch):
+4-bit base is 17 GB, but attention on Gemma 4 goes through the sdpa *math* path (global layers
+have head_dim 512 with 4 KV heads, sliding layers head_dim 256 with bool masks), materializing
+32 x T x T scores in fp32 per layer: ~16 GB at 8k, 100 GB at 20k. flash-attn 2.8.3 refuses
+head_dim 512; flex_attention fails on L40 (triton resource limit). A bigger GPU alone would not fix 20k.
+Fix: research/lora/kernel/chunked_attn.py registers attn_implementation "chunked": queries in
+chunks of 1024, each chunk's sdpa recomputed in backward (torch checkpoint), keys sliced to the
+causal/sliding range. Verified: identical to transformers' sdpa_attention_forward on synthetic
+masks (max diff 1e-3 bf16), layer-0 divergence on a real trajectory 0.0003 growing only by bf16
+accumulation (two sdpa runs are bit-identical, sdpa vs sdpa-math differ as much as chunked).
+Plus torch.autograd.graph.save_on_cpu for the checkpointed activations. Result on L40 QLoRA:
+8k 26.5 GB / 36 s, 20k 39.8 GB / 116 s per example.
+User then allowed pricier GPUs: moved to RTX PRO 6000 Blackwell 96 GB ($2.49/h, Secure) to train
+in bf16 (QUANT=0), no nf4-vs-QAT mismatch and faster. L40 pod deleted (~$1.3 spent).
