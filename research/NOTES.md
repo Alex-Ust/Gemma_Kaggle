@@ -343,3 +343,16 @@ Data on Kaggle: dataset alexust/gemma-sft-traj. Serving check first: v18_lora_sm
 zero-effect rank-8 q_proj adapter named with HF PEFT keys (base_model.model.model.language_model.
 layers.N...), 2 tasks, to verify vLLM loads a LoRA onto the qat-w4a16 base. Quota: train on
 Saturday after the weekly reset (training est. 3-4 h wall = 6-8 h quota, then OOD-45 + sound-71 evals).
+
+## v17 nothink: 18/71 — thinking off is dead
+
+v12 with thinking_budget 0 and "write one or two sentences before each call" as memory. Fast (mean
+191 s, median 28 calls, 12 tasks hit the 80-turn budget) but 1633 of 2758 calls repeat the previous
+call verbatim; the visible notes were mostly empty. Paired vs v12: +1/-14. Thoughts are the model's
+working memory; neither hiding them (v14) nor removing them (v17) works. Final config stays v12
+(thinking on, thoughts in history) and the LoRA data is rendered in that mode.
+
+LoRA data v2: thinking-on runs only (v02, v03, v05, v07, v11, v12, v15), up to 6 trajectories per
+task: 170 trajectories over 38 tasks; 133 fit in 20,480 tokens (median 14.3k). Dataset
+alexust/gemma-sft-traj updated. Training moves to RunPod (user budget $20/week): QLoRA (nf4 base,
+QUANT=1) on a 48 GB card, est. $2-4 per run; research/lora/runpod/bootstrap.sh.
