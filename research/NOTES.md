@@ -394,3 +394,11 @@ Config: bf16 base, LoRA r16 a32 on q/k/v/o/gate/up/down of the 60 text layers (1
 lr 1e-4 cosine, 2 epochs over 133 trajectories (think-on, <= 20,480 tokens), accum 4, chunked
 attention + CPU-offloaded checkpoints. Speed: 11k tokens 26 s, 16.5k 43 s -> ~2.5 h, ~$6.5.
 First losses 0.30, 0.26 (the model already likes its own successful trajectories; SFT sharpens them).
+
+## Scorer stack (from the Kaggle wheelhouse, 2026-10-26): vllm 0.19.1, transformers 5.13.1, torch 2.10 (cu128), google-adk 1.36.1, swegemma 0.2.11, adk-submission 0.2.13
+RunPod eval env mirrors it: /workspace/evalenv (venv) with those wheels force-installed by run.py, plus
+litellm, pytest, pytest-timeout==2.1.0, typer and build backends (the Kaggle image has them; the task
+sandbox venvs inherit the host python, so gold mode failed with "No module named pytest" until added).
+Gold mode on the pod: 2/2 resolved, tests run in 4 s. Eval scripts: /workspace/run_v12.py and
+/workspace/run_lora.py (sound-71, concurrency 6); the adapter is staged as
+/kaggle/input/datasets/alexust/gemma-lora-adapters/v1.* by /workspace/after_train.sh.
