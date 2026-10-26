@@ -59,19 +59,23 @@ def main():
     ap.add_argument("--mode", default="agent", choices=["agent", "gold", "empty", "fake"],
                     help="gold/empty: CPU-only check with the reference / an empty patch")
     ap.add_argument("--ood", action="store_true", help="run on OOD-45 (rodrigospalma/ood45-bugfix-split)")
+    ap.add_argument("--adapters-dataset", help="Kaggle dataset holding adapters/<name>/ (adapter weights are not embedded in the kernel)")
     ap.add_argument("--push", action="store_true")
     a = ap.parse_args()
 
     bundle = (ROOT / a.bundle).resolve()
     files = {str(p.relative_to(bundle)): base64.b64encode(p.read_bytes()).decode()
-             for p in sorted(bundle.rglob("*")) if p.is_file() and p.name != ".DS_Store"}
+             for p in sorted(bundle.rglob("*")) if p.is_file() and p.name != ".DS_Store"
+             and not (a.adapters_dataset and p.relative_to(bundle).parts[0] == "adapters")}
+    adapter_names = sorted(p.name for p in (bundle / "adapters").iterdir() if p.is_dir()) if (bundle / "adapters").is_dir() else []
     text = (bundle / "agent.yaml").read_text()
     model = next(m for m in MODELS if m in text)
     if a.task_ids:  # tolerate one space-separated string (zsh does not word-split $VAR)
         a.task_ids = [t for x in a.task_ids for t in x.split()]
     task_ids = a.task_ids or (json.load(open(ROOT / "data/task_sets.json"))[a.set] if a.set else pick_tasks(a.n, a.seed))
     run = {"task_ids": None if a.ood else task_ids, "concurrency": a.concurrency, "bundle": bundle.name,
-           "tag": a.tag, "mode": a.mode, "ood": a.ood, "ood_ids": a.task_ids if a.ood else None}
+           "tag": a.tag, "mode": a.mode, "ood": a.ood, "ood_ids": a.task_ids if a.ood else None,
+           "adapters": adapter_names if a.adapters_dataset else []}
     gpu = a.mode == "agent"
 
     name = f"{bundle.name}-{a.tag}".replace("_", "-").lower()
@@ -94,7 +98,8 @@ def main():
         "enable_tpu": False,
         "enable_internet": False,
         "dataset_sources": ["metric/gemma-4-developer-agent-wheelhouse"]
-        + (["rodrigospalma/ood45-bugfix-split"] if a.ood else []),
+        + (["rodrigospalma/ood45-bugfix-split"] if a.ood else [])
+        + ([a.adapters_dataset] if a.adapters_dataset else []),
         "competition_sources": ["gemma-4-developer-agent"],
         "kernel_sources": [],
         "model_sources": [MODELS[model]] if gpu else [],
