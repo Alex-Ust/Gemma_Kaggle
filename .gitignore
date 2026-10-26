@@ -26,3 +26,4 @@ research/lora/kdata/tools.json
 research/lora/kdata/sft_render.py
 submissions/*/adapters/*/adapter_model.safetensors
 /runpod/
+submissions/*/adapters/v1/adapter_model.safetensors
