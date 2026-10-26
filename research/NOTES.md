@@ -356,3 +356,15 @@ LoRA data v2: thinking-on runs only (v02, v03, v05, v07, v11, v12, v15), up to 6
 task: 170 trajectories over 38 tasks; 133 fit in 20,480 tokens (median 14.3k). Dataset
 alexust/gemma-sft-traj updated. Training moves to RunPod (user budget $20/week): QLoRA (nf4 base,
 QUANT=1) on a 48 GB card, est. $2-4 per run; research/lora/runpod/bootstrap.sh.
+
+## LoRA serving smoke (v18_lora_smoke, 2026-10-26 12:21 UTC): vLLM loads a PEFT adapter on the qat-w4a16 base
+
+v12 + zero-effect rank-8 q_proj adapter `zero` (HF PEFT key names
+base_model.model.model.language_model.layers.N.self_attn.q_proj.lora_{A,B}.weight, bf16), 2 tasks.
+vLLM started (adapter discovered, max_lora_rank 8), traces show model_name "zero" for every step,
+14 + 25 tool calls served without an error. Both tasks timed out at 6 min as they usually do.
+So: the harness routes the agent to the adapter, and vLLM accepts the HF-style key names on the
+compressed-tensors base. Adapter weights travel to the eval kernel via the dataset
+alexust/gemma-lora-adapters as flat <name>.adapter_config.json / <name>.adapter_model.safetensors
+(make_eval_kernel --adapters-dataset). For the real submission they go into submission.zip under
+adapters/<name>/ (size budget 3 GiB; rank 16 on all 7 projections ~ 250 MB).
