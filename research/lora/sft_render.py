@@ -2,6 +2,7 @@
 Shared by the local check and the Kaggle training kernel.
 mask = 1 on tokens the model generates inside the model turn; 0 on system/user prefix and tool responses.
 """
+import json
 import re
 
 TOOL_RESP = re.compile(r"<\|tool_response>.*?<tool_response\|>", re.S)
@@ -9,11 +10,23 @@ MODEL_TURN = "<|turn>model\n"
 
 
 def prepare_messages(messages, think):
+    """Copy messages for the template. Tool-call arguments must be dicts: the Gemma 4 template renders a mapping
+    in the native DSL (key:<|"|>str<|"|>), but passes a pre-serialized JSON string through verbatim, which taught
+    adapter v1 to emit JSON quotes that the vLLM gemma4 parser then keeps inside the keys and values."""
     out = []
     for m in messages:
         m = dict(m)
         if not think:
             m.pop("reasoning_content", None)
+        if m.get("tool_calls"):
+            calls = []
+            for tc in m["tool_calls"]:
+                tc = dict(tc); fn = dict(tc["function"])
+                if isinstance(fn.get("arguments"), str):
+                    fn["arguments"] = json.loads(fn["arguments"])
+                tc["function"] = fn
+                calls.append(tc)
+            m["tool_calls"] = calls
         out.append(m)
     return out
 
