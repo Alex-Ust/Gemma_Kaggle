@@ -413,3 +413,15 @@ v12 public draws: 0.12, 0.10. v02's 0.15 stays the best public. v12's true publi
 All three on RTX PRO 6000 Blackwell 96 GB, concurrency 6, so timing conditions match across arms.
 Per-task-10 data variant prepared (research/lora/sft_messages_c10.jsonl: 142 usable examples vs 133),
 not trained yet.
+
+### 2026-10-26 evening: three-pod plan collapsed to one pod
+
+- Pods B/C (RTX PRO 6000, same DC as A) could not be fed from pod A: RunPod pods cannot reach each other's
+  public IP:port (TCP connect times out in both directions, no shared private network between pods), so the
+  58 GB environment copy never started. Copying through the Mac would take hours; a fresh bootstrap on each pod
+  needs the Kaggle token (user-only) and ~1 h of paid time per pod. Deleted B and C (~15 min idle each, ~$1.3).
+  Also: zsh does not word-split an unquoted `$SSH` variable, so driver loops must be bash scripts, not inline zsh.
+- Balance after deletion: $19.30, burn $2.51/h (pod A only). Pod A: training ex ~110/266 at 20:45 UTC,
+  loss 0.09-0.15, 81 GB, finish ~22:15 UTC, then `after_train.sh` runs the epoch-2 LoRA arm on sound-71
+  (concurrency 6, ~2.5-3 h, ~$7). Baseline reference = Kaggle v12 draws (31/71 sound, 25-31 band) unless budget
+  allows a pod baseline afterwards (~$7). v12 resubmission scored 0.10 (LB: v02 0.15, v12 0.12/0.10).
