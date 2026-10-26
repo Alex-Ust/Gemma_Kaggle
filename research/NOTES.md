@@ -402,3 +402,14 @@ sandbox venvs inherit the host python, so gold mode failed with "No module named
 Gold mode on the pod: 2/2 resolved, tests run in 4 s. Eval scripts: /workspace/run_v12.py and
 /workspace/run_lora.py (sound-71, concurrency 6); the adapter is staged as
 /kaggle/input/datasets/alexust/gemma-lora-adapters/v1.* by /workspace/after_train.sh.
+
+## v12 redraw scored 0.10 (2026-10-26 ~17:30 UTC)
+v12 public draws: 0.12, 0.10. v02's 0.15 stays the best public. v12's true public rate is ~6-7/58.
+
+## Night of 2026-10-26: three pods in parallel (user topped up the balance)
+- pod A sy7dbb0o0g5l77: training run 1 (2 epochs) -> then LoRA epoch-2 arm on sound-71 (run_lora.py)
+- pod B coezet1g2dhgfb: baseline v12 on sound-71, same GPU (run_v12.py); env copied pod-to-pod
+- pod C hebvtfqk06rjyz: LoRA epoch-1 checkpoint arm on sound-71 (adapter_ep1 copied from pod A)
+All three on RTX PRO 6000 Blackwell 96 GB, concurrency 6, so timing conditions match across arms.
+Per-task-10 data variant prepared (research/lora/sft_messages_c10.jsonl: 142 usable examples vs 133),
+not trained yet.
