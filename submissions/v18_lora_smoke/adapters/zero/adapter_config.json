@@ -1,0 +1,17 @@
+{
+ "peft_type": "LORA",
+ "task_type": "CAUSAL_LM",
+ "base_model_name_or_path": "google/gemma-4-31b-it",
+ "r": 8,
+ "lora_alpha": 16,
+ "lora_dropout": 0.0,
+ "bias": "none",
+ "target_modules": [
+  "q_proj"
+ ],
+ "fan_in_fan_out": false,
+ "inference_mode": true,
+ "init_lora_weights": true,
+ "use_rslora": false,
+ "use_dora": false
+}

@@ -1,0 +1,223 @@
+[
+ {
+  "type": "function",
+  "function": {
+   "name": "run_command",
+   "description": "Execute a shell command inside the repository sandbox.\n\nYou can run any shell command (Python scripts, tests, git commands, etc.).\nThe command runs in the repository workspace. No network access.\n\nArgs:\n    command: Shell command to execute (e.g., \"pytest tests/\", \"python3 script.py\").\n",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "command": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "command"
+    ]
+   }
+  }
+ },
+ {
+  "type": "function",
+  "function": {
+   "name": "read_file",
+   "description": "Read the contents of a file from the repository workspace.\n\nSupports reading specific line ranges using start_line and end_line (1-indexed).\nTo avoid overwhelming the context window, large files are automatically truncated\nto a maximum number of lines (default: 150 lines).\n\nArgs:\n    filepath: Relative path within the workspace directory (e.g., \"fastapi/main.py\", \"pyproject.toml\").\n    start_line: Optional starting line number (1-indexed, inclusive).\n    end_line: Optional ending line number (1-indexed, inclusive).\n\nReturns:\n    Dictionary containing file content, line range, and truncation status.\n",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "filepath": {
+      "type": "string"
+     },
+     "start_line": {
+      "nullable": true,
+      "type": "integer"
+     },
+     "end_line": {
+      "nullable": true,
+      "type": "integer"
+     }
+    },
+    "required": [
+     "filepath"
+    ]
+   }
+  }
+ },
+ {
+  "type": "function",
+  "function": {
+   "name": "edit_file",
+   "description": "Replace a contiguous block of text in an existing file.\n\nMore token-efficient than write_file for targeted changes. Provide 2-4 lines of unique\nsurrounding context in old_string to ensure an unambiguous match.\n\nArgs:\n    filepath: Relative path to the target file.\n    old_string: Text block to replace.\n    new_string: Replacement text block.\n    allow_multiple: Replace all occurrences of old_string if True.\n\nReturns:\n    Dictionary containing file status, occurrences count, match strategy, and unified diff.\n",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "filepath": {
+      "type": "string"
+     },
+     "old_string": {
+      "type": "string"
+     },
+     "new_string": {
+      "type": "string"
+     },
+     "allow_multiple": {
+      "default": false,
+      "type": "boolean"
+     }
+    },
+    "required": [
+     "filepath",
+     "old_string",
+     "new_string"
+    ]
+   }
+  }
+ },
+ {
+  "type": "function",
+  "function": {
+   "name": "write_file",
+   "description": "Create or overwrite a file in the workspace.\n\nArgs:\n    filepath: Relative path to the file to create or overwrite.\n    content: Full content of the file.\n",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "filepath": {
+      "type": "string"
+     },
+     "content": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "filepath",
+     "content"
+    ]
+   }
+  }
+ },
+ {
+  "type": "function",
+  "function": {
+   "name": "get_status",
+   "description": "Check active budget details (time, tool calls) and active patch details.",
+   "parameters": {
+    "type": "object",
+    "properties": {}
+   }
+  }
+ },
+ {
+  "type": "function",
+  "function": {
+   "name": "submit_patch",
+   "description": "Capture the current working tree modifications as the agent's submission.\n\nThis generates a unified git diff against the baseline commit. The agent\ncan submit multiple times; only the final submission is evaluated.\n",
+   "parameters": {
+    "type": "object",
+    "properties": {}
+   }
+  }
+ },
+ {
+  "type": "function",
+  "function": {
+   "name": "list_skills",
+   "description": "Lists all available skills with their names and descriptions.",
+   "parameters": {
+    "type": "object",
+    "properties": {}
+   }
+  }
+ },
+ {
+  "type": "function",
+  "function": {
+   "name": "load_skill",
+   "description": "Loads the SKILL.md instructions for a given skill.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "skill_name": {
+      "type": "string",
+      "description": "The name of the skill to load."
+     }
+    },
+    "required": [
+     "skill_name"
+    ]
+   }
+  }
+ },
+ {
+  "type": "function",
+  "function": {
+   "name": "load_skill_resource",
+   "description": "Loads a resource file (from references/, assets/, or scripts/) from within a skill.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "skill_name": {
+      "type": "string",
+      "description": "The name of the skill."
+     },
+     "file_path": {
+      "type": "string",
+      "description": "The relative path to the resource (e.g., 'references/my_doc.md', 'assets/template.txt', or 'scripts/setup.sh')."
+     }
+    },
+    "required": [
+     "skill_name",
+     "file_path"
+    ]
+   }
+  }
+ },
+ {
+  "type": "function",
+  "function": {
+   "name": "run_skill_script",
+   "description": "Executes a script from a skill's scripts/ directory.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "skill_name": {
+      "type": "string",
+      "description": "The name of the skill."
+     },
+     "file_path": {
+      "type": "string",
+      "description": "The relative path to the script (e.g., 'scripts/setup.py')."
+     },
+     "args": {
+      "anyOf": [
+       {
+        "type": "object"
+       },
+       {
+        "type": "array",
+        "items": {
+         "type": "string"
+        }
+       }
+      ],
+      "description": "Optional arguments to pass to the script as key-value pairs (long options) or as a list of strings. If specified as a list, it is treated as the complete list of arguments, and 'short_options' and 'positional_args' must not be provided."
+     },
+     "short_options": {
+      "type": "object",
+      "description": "Optional short options (single hyphen) to pass to the script as key-value pairs. Must not be provided if 'args' is a list."
+     },
+     "positional_args": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      },
+      "description": "Optional positional arguments to pass to the script. Must not be provided if 'args' is a list."
+     }
+    },
+    "required": [
+     "skill_name",
+     "file_path"
+    ]
+   }
+  }
+ }
+]

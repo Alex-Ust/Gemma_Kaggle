@@ -321,3 +321,25 @@ Findings:
 Decision: v12 stays the best validated bundle (31/71, LB 0.12 / pending redraw). The
 "less context" direction is closed. GPU quota after tonight ~26.5 h of 30 (resets Saturday
 00:00 UTC), not enough for another sound-71 run this week.
+
+## LoRA plan (2026-10-26, user go-ahead received)
+
+Data: successful trajectories from our own runs (rejection-sampling SFT). scripts/sft_extract.py turns
+ATIF traces into OpenAI-style messages (reasoning_content = thought parts, tool_calls, role tool
+results); 95 trajectories over 37 tasks after keeping the 3 shortest per task. Rendering with the
+real Gemma 4 chat template (research/lora/hf_tokenizer, from the unsloth mirror) and the exact tool
+declarations the harness sends (scripts/dump_tools.py -> research/lora/tools.json, 10 tools incl.
+the SkillToolset's list_skills/load_skill/load_skill_resource/run_skill_script):
+- one model turn per trajectory: <|channel>thought ... <channel|><|tool_call>call:NAME{json}<tool_call|>
+  <|tool_response>response:NAME{value:<|"|>...<|"|>}<tool_response|> ... <turn|>
+- loss mask: 1 inside the model turn except tool_response spans (research/lora/sft_render.py)
+- tokens median 11.3k, 82/95 <= 16k
+- THINK=1 (thoughts kept, enable_thinking on): 41 examples (v14/v16 rows have no thoughts; 17 too long)
+- THINK=0 (thoughts stripped, enable_thinking off): 91 examples. Choice depends on v17 (no-think) result.
+Training: research/lora/kernel/train.py, HF Transformers + PEFT on the bf16 google/gemma-4-31b-it
+(Kaggle Transformers/gemma-4-31b-it/1), 4x L4 device_map=auto, gradient checkpointing, chunked
+CE (262k vocab), rank 16 alpha 32 lr 1e-4 cosine, 2 epochs, accum 4, max_len 16384.
+Data on Kaggle: dataset alexust/gemma-sft-traj. Serving check first: v18_lora_smoke = v12 + a
+zero-effect rank-8 q_proj adapter named with HF PEFT keys (base_model.model.model.language_model.
+layers.N...), 2 tasks, to verify vLLM loads a LoRA onto the qat-w4a16 base. Quota: train on
+Saturday after the weekly reset (training est. 3-4 h wall = 6-8 h quota, then OOD-45 + sound-71 evals).

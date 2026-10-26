@@ -19,3 +19,9 @@ __pycache__/
 *.zip
 work/
 data_ood/
+research/lora/hf_tokenizer/
+research/lora/sft_messages.jsonl
+research/lora/kdata/sft_messages.jsonl
+research/lora/kdata/tools.json
+research/lora/kdata/sft_render.py
+submissions/*/adapters/*/adapter_model.safetensors
