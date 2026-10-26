@@ -296,3 +296,28 @@ Next (launched 2026-10-26 ~00:20 UTC, both on sound-71):
 - v15_thoughts = v14 with include_thoughts: true (isolates the other v14 changes: issue text in
   the system prompt, compact prompt, locate SHOW_CHARS 3000).
 - v16_temp07 = v14 with temperature 0.7 (loop-breaking without re-sending thoughts).
+
+## v15 / v16 results (2026-10-26 ~01:30 UTC): the v14 family is worse than v12 on every axis
+
+| run | change vs v14 | resolved | timeouts | no-edit | loop tasks | repeats | compactions/task | locate used |
+|---|---|---|---|---|---|---|---|---|
+| v12 | (baseline) | 31/71 | 31 | 22 | 8 | 60/1437 | 0.92 | 71/71 |
+| v14 | issue in system prompt, compact prompt, locate 3000, thoughts dropped | 27/71 | 30 | 24 | 15 | 239/1507 | 0.54 | - |
+| v15 | v14 + include_thoughts: true | 25/71 | 36 | 26 | 5 | 36/1438 | 0.86 | 48/71 |
+| v16 | v14 + temperature 0.7 | 22/71 | 35 | 22 | 14 | 274/1624 | 0.45 | - |
+
+Paired vs v12: v15 +1/-7, v16 +2/-7.
+
+Findings:
+1. Loops are caused by dropping thoughts from history, confirmed both ways: thoughts back (v15)
+   -> 5 loop tasks / 36 repeats, the fewest of any run; temperature 0.7 without thoughts (v16)
+   does not break the loops (14 tasks / 274 repeats). include_thoughts: false is dead.
+2. The v14 prompt rewrite itself costs ~6 tasks (v15 vs v12, 7 losses / 1 win). The visible
+   mechanism: locate was called in only 48/71 tasks (v12: 71/71). The compact PROCEDURE
+   ("First call: locate") is weaker than v12's wording, and the model wanders instead; the lost
+   tasks mostly never edited (5 of 7) while making fewer, slower steps.
+3. Compaction is a cost, not the bottleneck: v14/v16 halved it and lost tasks anyway.
+
+Decision: v12 stays the best validated bundle (31/71, LB 0.12 / pending redraw). The
+"less context" direction is closed. GPU quota after tonight ~26.5 h of 30 (resets Saturday
+00:00 UTC), not enough for another sound-71 run this week.
