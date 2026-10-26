@@ -1,29 +1,28 @@
-# secrets
-kaggle/
-*.json.key
-access_token
 
 # big / downloaded / generated
-data/
-vendor/
-.venv/
-logs/
-submissions/out/
-research/notebooks/
-results/
-
 # misc
-.DS_Store
-__pycache__/
+# secrets
+*.json.key
 *.pyc
 *.zip
-work/
-data_ood/
-research/lora/hf_tokenizer/
-research/lora/sft_messages.jsonl
-research/lora/kdata/sft_messages.jsonl
-research/lora/kdata/tools.json
-research/lora/kdata/sft_render.py
-submissions/*/adapters/*/adapter_model.safetensors
+.DS_Store
+.venv/
 /runpod/
+__pycache__/
+access_token
+data/
+data_ood/
+kaggle/
+logs/
+research/lora/hf_tokenizer/
+research/lora/kdata/sft_messages.jsonl
+research/lora/kdata/sft_render.py
+research/lora/kdata/tools.json
+research/lora/sft_messages.jsonl
+research/notebooks/
+results/
+submissions/*/adapters/*/adapter_model.safetensors
 submissions/*/adapters/v1/adapter_model.safetensors
+submissions/out/
+vendor/
+work/
