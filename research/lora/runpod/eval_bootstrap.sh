@@ -26,3 +26,8 @@ if [ ! -f $M/config.json ]; then
 fi
 echo "--- layout"; du -sh /kaggle/input/* /kaggle/input/datasets/metric/* 2>/dev/null; ls /kaggle/input/competitions/gemma-4-developer-agent | head; ls $M | head
 echo "EVAL_PREP_DONE"
+
+# --- extras added by hand on pod A (2026-10-26), needed for real (non-gold) runs ---
+# /workspace/evalenv/bin/pip install torch==2.10.0 torchvision==0.25.0 torchaudio==2.10.0   # match wheelhouse vllm 0.19.1
+# /workspace/evalenv/bin/pip install litellm google-adk==1.36.1 pytest pytest-timeout==2.1.0 typer pdm-backend setuptools wheel poetry-core hatchling flit-core editables
+# /workspace/evalenv/bin/pip install -U mcp   # litellm 1.106 imports mcp.types.CacheableResult (mcp>=2); gold mode never calls the model, so this only shows in real runs

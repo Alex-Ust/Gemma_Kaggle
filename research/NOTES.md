@@ -425,3 +425,8 @@ not trained yet.
   loss 0.09-0.15, 81 GB, finish ~22:15 UTC, then `after_train.sh` runs the epoch-2 LoRA arm on sound-71
   (concurrency 6, ~2.5-3 h, ~$7). Baseline reference = Kaggle v12 draws (31/71 sound, 25-31 band) unless budget
   allows a pod baseline afterwards (~$7). v12 resubmission scored 0.10 (LB: v02 0.15, v12 0.12/0.10).
+- 22:11 UTC training done (266 examples, 2 epochs, final losses 0.05-0.15; adapter 467 MB, 820 tensors, sha256 2ebf6780...).
+  Fetched to research/lora/adapters/v1/adapter and copied into submissions/v19_lora_v1/adapters/v1; packed zip 452 MB.
+- First LoRA arm on pod A failed silently: every model call raised `cannot import name 'CacheableResult' from mcp.types`
+  (litellm 1.106.4 vs mcp 1.30.0 pinned by google-adk). Gold mode never calls the model, so the earlier 2/2 gold check did
+  not cover this. Fix: `pip install -U mcp` (2.3.0) in evalenv; harness imports still fine. Arm restarted 22:27 UTC.
