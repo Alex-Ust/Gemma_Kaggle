@@ -476,7 +476,7 @@ not trained yet.
 - First-turn behaviour of v2 is clean (DSL call, finish=stop, 159 tokens); with the prior thought removed from the
   history both base and adapter answer with an empty thought, so the harness-side history rendering is not the
   difference.
-- Pod A deleted 04:10 UTC after fetching results and probing; RunPod balance $1.53, no pods. Kaggle 57680204
+- Pod A deleted 03:46 UTC after fetching results and probing; RunPod balance $1.53, no pods. Kaggle 57680204
   (v19, broken v1) still pending; it blocks the next submission until it scores (~19:30 UTC). v2 (12/71) is not
   worth a submission slot; v12 remains the best validated bundle.
 - Cost of a v3 cycle on one RTX PRO 6000 ($2.51/h): fresh bootstrap ~0.7 h, training ~2.6 h, LoRA arm ~1.1 h,
