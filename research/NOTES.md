@@ -482,3 +482,7 @@ not trained yet.
 - Cost of a v3 cycle on one RTX PRO 6000 ($2.51/h): fresh bootstrap ~0.7 h, training ~2.6 h, LoRA arm ~1.1 h,
   optional v12 baseline arm ~1.1 h (fair comparison on the same hardware; v12 Kaggle = 31/71) → ~$14-17;
   without the baseline ~$11-12.
+- Ready for the v3 cycle: bundle skeleton submissions/v21_lora_v3 (v12 + `adapter: v3`), pod eval script
+  runs/v21-lora-v3-pod/kernel/run.py (sound-71, concurrency 6, adapter staged as v3.*), driver
+  research/lora/runpod/run3_chain.sh <ip> <port> (training bootstrap + eval bootstrap in parallel, then train → fetch →
+  LoRA arm → results in runs/v21-lora-v3-pod/results). Needs: pod create, `runpod_lora.py upload`, user-copied Kaggle token.
