@@ -539,3 +539,27 @@ history is: v02 0.15 (8 min / 28 calls / thinking 4096, no skills), v07 0.10 (8 
 timeout 90 s, locate+check skills, first-call prompt), v12 0.12 / 0.10 (6 min / 40 calls / thinking 1024).
 Every modification we made scored below v02 on the LB, while the local sound-71 numbers went up (24 → 28 → 31).
 The public bundle equal to v01 (v02 + the three graph tools listed) reports 0.22-0.24.
+
+## 2026-10-27 — audits (two passes) of the whole pipeline: what misled us
+
+1. **Concurrency.** Local kernels ran 4-8 tasks in parallel on one GPU; the scorer (starter notebook, inference.py)
+   runs tasks one at a time. The per-task time budget is agent wall-clock, so vLLM queueing inflated local
+   timeouts (31-37/71 time-capped). The 6-min cap, thinking 1024 and "edit early" prompts were tuned to that
+   artefact. Benchmarks must run at low concurrency, or with a measured inflation factor (12-task calibration).
+2. **LB noise.** Identical bundles draw 7-13/58 (NOTES "Community evidence"); our 0.10/0.12/0.15 draws and the
+   public 0.22/0.24 are within noise of one config family. Never rank on a single draw.
+3. **12 h limit** is all-or-nothing (v10 died). pull_eval.py projects from duration_seconds (includes setup and
+   Phase 2 verification, measured under concurrency) — wrong quantity twice. Project agent-only time + capped share.
+4. **Oracle labels** (sound 71) came from a subprocess stand on Kaggle host python 3.12; Stage 2 on the scorer is
+   docker python 3.13-slim, 2 vCPU / 4 GiB, 300 s. Membership may differ by a few tasks (unverifiable without docker).
+5. **sound105 fix**: in the subprocess backend the sandbox venv inherits the harness env (`_host_env.pth`), so
+   installing inline_snapshot + dirty_equals into evalenv made 30 fastapi tasks sound (gold 30/34, empty 0/30).
+   On the official scorer those tasks stay unsolvable (the wheelhouse lacks the packages).
+6. **Prompt facts wrong in the anchor v23**: "scratch files in /tmp" (write_file rejects /tmp: path traversal;
+   v12 fixed it, v23 did not), "automatic failure" for touching tests (actually stripped silently), graph tools
+   declared but forbidden. Candidate small change for v24: scratch via run_command heredoc under /tmp.
+7. **v12/v07 prompt claim "tool results are JSON-encoded twice" is false** (one layer; trace JSON added the second).
+8. **check.py orphans**: under the subprocess backend a SIGKILLed check leaves its start_new_session jobs alive
+   (CPU for the next sequential task). Drop start_new_session if skills return.
+9. **SFT**: trained on uncompacted contexts while serving compacts at 14,336 tokens (46/170 rows); nudge user
+   turns trained as model output (3/170). Fix before any further LoRA.
