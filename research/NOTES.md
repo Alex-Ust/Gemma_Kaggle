@@ -582,3 +582,7 @@ The public bundle equal to v01 (v02 + the three graph tools listed) reports 0.22
 - Protected files are broader than the prompt says (pyproject.toml, setup.cfg, tox.ini, test/ and testing/ dirs) and stripped silently. Rare; noted.
 - Clean: v25 kernels embed the bundle byte-identical; EvalConfig (compaction 15/2/14336/5, cache 2048/1800/10, budgets from eval_config.yaml, subprocess sandbox, verification 300 s) matches the scorer README; all prompt claims about read_file/write_file/edit_file/submit_patch/budget exhaustion verified against vendor code; concurrency 3 is safe for sandbox isolation.
 - Pod check 22:45: vLLM healthy, GPU 89/98 GB, disk 18 GB free (model + copy), no orphan sandboxes, uploaded kernels md5 = local.
+
+## 2026-10-27 23:06 UTC — concurrency calibration (v23, same 12 tasks, c1 vs c3)
+- Resolved 6/12 in both. Seconds per tool call (median): c3 9.0, c1 6.4 -> c3 inflates per-call latency ~1.4x. Session timeouts: c3 3/12, c1 1/12 (rich_3506 timed out at c3 and was resolved at c1).
+- So the c3 numbers understate the sequential scorer slightly via extra timeouts (13/101 at c3, probably ~5 sequentially). Arms compared at the same c3 stay comparable. 12 h check: c1 median 179 s/task -> ~6-8 h for 120 tasks, inside the limit.
