@@ -21,6 +21,8 @@ def pull(run_dir):
     out = run_dir / "output"
     if (out / "results" / "task_results.jsonl").exists():
         return out
+    if (run_dir / "results" / "task_results.jsonl").exists():  # pod layout runs/<run>/results/
+        return run_dir
     slug = json.loads((run_dir / "run.json").read_text())["slug"]
     out.mkdir(parents=True, exist_ok=True)
     env = {**os.environ, "KAGGLE_API_TOKEN": str(ROOT / "kaggle/access_token")}
@@ -63,10 +65,15 @@ def summary(name, rows, concurrency):
     print("   per repo:", {k: f"{by_repo[k]}/{v}" for k, v in tot_repo.items()})
     print(f"   duration s: median {st.median(dur):.0f}  mean {st.mean(dur):.0f}  max {max(dur):.0f}"
           f"   tool calls: median {st.median(calls)}  max {max(calls)}")
-    # Rough projection: concurrent runs slow each LLM call, so this over-estimates sequential time.
+    # Projection caveats (audit 2026-10-27): duration_seconds includes container setup and Phase-2 verification
+    # (the 12 h rule excludes validation), and runs at concurrency > 1 inflate per-task time because the agent
+    # budget is wall-clock while vLLM queues requests. So report the time-capped share separately and show the
+    # worst case where every hidden task is capped; the scorer runs tasks one at a time.
+    capped = sum(1 for r in rows.values() if "timeout" in (r["error"] or "").lower())
     proj = N_HIDDEN * st.mean(dur) / 3600
-    print(f"   projected scorer time for {N_HIDDEN} tasks ~{proj:.1f} h (limit {LIMIT_H} h; "
-          f"measured at concurrency {concurrency}, so an upper bound)")
+    print(f"   time-capped tasks {capped}/{n} = {capped / n:.0%}; projected {N_HIDDEN} sequential tasks "
+          f"~{proj:.1f} h from the mean (limit {LIMIT_H} h; measured at concurrency {concurrency}, includes "
+          f"setup+verification, so biased upward unless concurrency is 1)")
     if errs:
         print("   errors:", dict(errs.most_common(5)))
 
@@ -75,7 +82,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("run")
     ap.add_argument("--vs")
-    ap.add_argument("--set", choices=["sound"], help="restrict both runs to a task set from data/task_sets.json")
+    ap.add_argument("--set", help="restrict both runs to a task set from data/task_sets.json (sound, sound105, ood, ...)")
     a = ap.parse_args()
     run_dir = ROOT / a.run
     rows = load(run_dir)

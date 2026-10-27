@@ -1,0 +1,25 @@
+{
+  "task_ids": [
+    "fastapi_13920",
+    "fastapi_14301",
+    "fastapi_14306",
+    "fastapi_14458",
+    "fastapi_14487",
+    "fastapi_14786",
+    "fastapi_14873",
+    "rich_3067",
+    "rich_3506",
+    "rich_3777",
+    "rich_3905",
+    "rich_3944"
+  ],
+  "concurrency": 1,
+  "bundle": "v23_public_lb024",
+  "tag": "podcal1",
+  "mode": "agent",
+  "ood": false,
+  "ood_ids": null,
+  "adapters": [],
+  "slug": "alexust/gemma-eval-v23-public-lb024-podcal1",
+  "model": "gemma-4-31b-it-qat-w4a16-ct"
+}
