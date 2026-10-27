@@ -29,6 +29,10 @@ if ! $A 'test -f /workspace/adapter/adapter_model.safetensors'; then echo "NO AD
 mkdir -p research/lora/adapters/$TAG && scp $OPTS -r -P $PORT root@$IP:/workspace/adapter research/lora/adapters/$TAG/adapter && echo "adapter fetched: $(ls -la research/lora/adapters/$TAG/adapter | tail -2)"
 while [ $EVALB = 0 ]; do echo "$(date -u +%H:%M) waiting for /workspace/kaggle_token (user: ! scp -i runpod/id_ed25519 -P $PORT kaggle/access_token root@$IP:/workspace/kaggle_token)"; if $A 'test -f /workspace/kaggle_token'; then start_eval_bootstrap; fi; sleep 300; done
 while ! $A 'grep -q EVAL_ENV_DONE /workspace/eval_bootstrap.log 2>/dev/null'; do echo "$(date -u +%H:%M) eval env: $($A 'tail -1 /workspace/eval_bootstrap.log 2>/dev/null | cut -c1-80')"; sleep 180; done
+scp $OPTS -P $PORT research/lora/runpod/precheck.sh research/lora/runpod/vllm_start.sh research/lora/runpod/probe/rawprobe3.py research/lora/runpod/probe/probe2_msgs.json research/lora/tools.json root@$IP:/workspace/
+echo "$(date -u +%H:%M) adapter pre-check (wheelhouse install, vLLM, 6 samples on a second-turn prompt)"
+$A "bash /workspace/precheck.sh /workspace/adapter $TAG" 2>&1 | tail -6 | tee $RUNDIR/precheck.txt
+grep -q PRECHECK_OK $RUNDIR/precheck.txt || { echo "=== PRECHECK FAILED: not starting the 71-task arm (pod still running, decide manually)"; exit 2; }
 $A 'D=/kaggle/input/datasets/alexust/gemma-lora-adapters; mkdir -p $D; cp /workspace/adapter/adapter_config.json $D/v3.adapter_config.json; cp /workspace/adapter/adapter_model.safetensors $D/v3.adapter_model.safetensors; rm -rf /kaggle/working/*; mkdir -p /kaggle/working; cd /kaggle/working && (setsid nohup /workspace/evalenv/bin/python /workspace/run_lora.py > /workspace/run_lora.log 2>&1 < /dev/null &); echo "LoRA arm started $(date -u +%H:%M)"'
 mkdir -p $RUNDIR/results
 while true; do
