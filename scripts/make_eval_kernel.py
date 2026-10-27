@@ -53,7 +53,7 @@ def main():
     ap.add_argument("--tag", required=True)
     ap.add_argument("--n", type=int, default=None, help="number of tasks (default: all 129)")
     ap.add_argument("--task-ids", nargs="*")
-    ap.add_argument("--set", choices=["sound"], help="use a named task set from data/task_sets.json")
+    ap.add_argument("--set", help="use a named task set from data/task_sets.json (sound, sound105, ...)")
     ap.add_argument("--concurrency", type=int, default=4)
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--mode", default="agent", choices=["agent", "gold", "empty", "fake"],
