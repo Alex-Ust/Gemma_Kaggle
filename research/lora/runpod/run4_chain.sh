@@ -13,7 +13,18 @@ A="ssh $OPTS -p $PORT root@$IP"
 RUNDIR=runs/v22-lora-$TAG-pod
 OUT=/workspace/adapter_$TAG
 scp $OPTS -P $PORT $RUNDIR/kernel/run.py root@$IP:/workspace/run_lora4.py || exit 1
-$A "pgrep -f '[p]ython -u train.py' >/dev/null && { echo 'train.py already running'; exit 0; }; pkill -f '[a]pi_server' 2>/dev/null; cd /workspace/lora && export MODEL_DIR=/workspace/model DATA_DIR=/workspace/lora/data OUT=$OUT THINK=1 MAX_LEN=20480 QUANT=0 ATTN=chunked SAVE_ON_CPU=1 ATTN_CHUNK=1024 EPOCHS=2 RANK=16 ALPHA=32 LR=1e-4 && (setsid nohup python -u train.py > /workspace/train_$TAG.log 2>&1 < /dev/null &); echo \"training started \$(date -u +%H:%M) -> $OUT\"" || exit 1
+# The launch goes through a pod-side script: an inline ssh command would itself contain "python -u train.py" and the
+# pgrep guard would match the launching shell (that is exactly what happened on the first v4 start).
+TMPL=$(mktemp -t train_launch); cat > $TMPL <<EOS
+#!/bin/bash
+pgrep -f '[p]ython -u train.py' >/dev/null && { echo 'train.py already running'; exit 0; }
+pkill -f '[a]pi_server' 2>/dev/null
+cd /workspace/lora && export MODEL_DIR=/workspace/model DATA_DIR=/workspace/lora/data OUT=$OUT THINK=1 MAX_LEN=20480 QUANT=0 ATTN=chunked SAVE_ON_CPU=1 ATTN_CHUNK=1024 EPOCHS=2 RANK=16 ALPHA=32 LR=1e-4
+setsid nohup python -u train.py > /workspace/train_$TAG.log 2>&1 < /dev/null &
+echo "training started \$(date -u +%H:%M) -> $OUT"
+EOS
+scp $OPTS -P $PORT $TMPL root@$IP:/workspace/train_$TAG.sh && $A "bash /workspace/train_$TAG.sh" || exit 1
+sleep 20
 while true; do
   out=$($A "grep -E '^\[' /workspace/train_$TAG.log 2>/dev/null | tail -1 | cut -c1-150; grep -c -E 'OOM|Traceback' /workspace/train_$TAG.log 2>/dev/null; pgrep -f '[p]ython -u train.py' >/dev/null && echo ALIVE || echo NOTRAIN; nvidia-smi --query-gpu=utilization.gpu,memory.used --format=csv,noheader" 2>&1 | tr '\n' ' ')
   echo "$(date -u +%H:%M) TRAIN $out"
