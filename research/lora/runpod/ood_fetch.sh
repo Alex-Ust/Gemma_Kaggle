@@ -11,7 +11,9 @@ rm -rf $D.new; mkdir -p $D.new
 rm -f /workspace/kaggle_token
 cd $D.new || exit 1
 ls; echo "snapshots $(ls snapshots | wc -l) wheels/house $(ls wheels/house 2>/dev/null | wc -l)"
-if sha256sum -c --quiet SHA256SUMS 2>&1 | tail -3; [ ${PIPESTATUS[0]} -eq 0 ]; then
+# Kaggle strips dataset-metadata.json from downloads; it is listed in SHA256SUMS, so skip it.
+grep -v dataset-metadata.json SHA256SUMS > /tmp/ood_sums
+if sha256sum -c --quiet /tmp/ood_sums 2>&1 | tail -3; [ ${PIPESTATUS[0]} -eq 0 ]; then
   rm -rf $D.partial; mv $D $D.partial; mv $D.new $D; rm -rf $D.partial; du -sh $D; echo OOD_FULL_OK
 else
   echo "OOD_SHA_FAIL"
