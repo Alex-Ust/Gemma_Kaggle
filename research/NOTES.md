@@ -567,3 +567,10 @@ The public bundle equal to v01 (v02 + the three graph tools listed) reports 0.22
 - 2026-10-27 20:54 UTC: submitted **v24_tmpfix** (57712978) = public 0.24 config with the /tmp write_file
   instruction corrected; scoring ≈ 21 h. v19 (adapter v1) scored 0.00 as expected. Local: v23 baseline on
   sound105 running on the pod (concurrency 3), then a 12-task concurrency-1 calibration, then v24 on sound105.
+
+## 2026-10-27 22:40 UTC — v23 (public 0.24 config) on sound105, concurrency 3: 33/101
+- fastapi 21/59, rich 12/42; sound-71 subset 25/71 (v12/v4 had 31/30 on the same 71 but with a 6-min cap and higher concurrency, so not comparable); fixed-30 subset 8/30.
+- 160 min wall at c3; median task 242 s; 13 timeouts (0 resolved), 54 tasks hit the 28-call cap (11 resolved, 16 with no patch), 36 finished within budget (22 resolved = 61 %).
+- Where the calls go in the capped group (per task): run_command 15.6, read_file 11.0, edit_file 3.5; first edit at call 22 (median) vs 10.5 in the normal group; 420 repeated read_file calls on the same path over 54 tasks (read_file returns 150 lines, so the model pages through whole files, and after context compaction at 14336 tokens re-reads them); 25 `grep -r X .` whole-repo searches (fastapi docs/ has dozens of translations).
+- => v25_callsaver: v24 prompt + (a) never read_file without start_line/end_line, grep -n first, ~60 lines around the hit, never page or re-read; (b) search only the package dir, never `grep -r . `; (c) "count your calls" line. Config/sampling unchanged.
+- Pre-flight for v25 (user rule): pack+validate OK (4 files, 4417 B); harness-loaded instruction identical to prompts/system.md (8060 chars); kernels embed the bundle byte-identical; kernel code identical to the v23 kernel except RUN; smoke on 2 capped tasks (fastapi_15589, rich_4070) at c1 before the full run. Cost plan: calibration tail ~$1, smoke ~$0.6, full 101 @ c3 ~165 min ~$7; balance $15.81 at 22:38 UTC -> ~$7 left.
