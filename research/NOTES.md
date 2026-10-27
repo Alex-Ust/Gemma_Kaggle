@@ -486,3 +486,14 @@ not trained yet.
   runs/v21-lora-v3-pod/kernel/run.py (sound-71, concurrency 6, adapter staged as v3.*), driver
   research/lora/runpod/run3_chain.sh <ip> <port> (training bootstrap + eval bootstrap in parallel, then train → fetch →
   LoRA arm → results in runs/v21-lora-v3-pod/results). Needs: pod create, `runpod_lora.py upload`, user-copied Kaggle token.
+
+## 2026-10-27 — adapter v3 (stop-token fix) on the pod: 31/71, equal to v12
+
+`runs/v21-lora-v3-pod`: 31/71 = 0.437, exactly v12's 31/71 on Kaggle (28 tasks in common, 3 each way: v3-only
+fastapi_5077, rich_3278, rich_4075; v12-only fastapi_14616, rich_3454, rich_3676). The stop-token fix works: no runaway
+(tool_calls median 19; the six 40-call tasks have ≤4 repeats of any call) and no ContextWindowExceeded. v3 is more
+efficient than v12 on the same budget: 23 six-minute timeouts vs 31, 16 empty patches vs 23, mean task duration
+261 s vs 301 s, 55.7 min wall for 71 tasks at concurrency 6. Pre-check (`runs/v21-lora-v3-pod/precheck.txt`): 6/6
+clean stops. Conclusion: self-distillation on 38 unique tasks reproduces v12 but does not beat it; more unique
+tasks are needed (harvest: OOD-45 at t0.2 + the 36 unsolved sound tasks ×3 at t0.7 → `h01-harvest-t07-podhard`).
+Submission `submissions/v21_lora_v3` packed (453 MB zip) for the LB after 57680204 scores.

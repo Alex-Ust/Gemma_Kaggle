@@ -1,0 +1,12 @@
+{
+  "task_ids": null,
+  "concurrency": 6,
+  "bundle": "v12_think1024",
+  "tag": "podood",
+  "mode": "agent",
+  "ood": true,
+  "ood_ids": null,
+  "adapters": [],
+  "slug": "alexust/gemma-eval-v12-think1024-podood",
+  "model": "gemma-4-31b-it-qat-w4a16-ct"
+}
