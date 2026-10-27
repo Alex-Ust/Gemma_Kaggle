@@ -1,6 +1,7 @@
 """Render SFT rows with the Gemma 4 chat template and build loss masks.
 Shared by the local check and the Kaggle training kernel.
-mask = 1 on tokens the model generates inside the model turn; 0 on system/user prefix and tool responses.
+mask = 1 on tokens the model generates inside the model turn (including the <|tool_response> stop token after each
+tool call); 0 on system/user prefix and tool response bodies.
 """
 import json
 import re
@@ -44,7 +45,10 @@ def render(tok, messages, tools, think):
     for (a, b) in offs:
         if a < gen_start:
             mask.append(0); continue
-        if any(a >= s and b <= e for s, e in dead):
+        if any(a > s and b <= e for s, e in dead):
+            # inside a tool response. The opening <|tool_response> token (a == s) stays trained: it is the EOS
+            # the server stops on after <tool_call|> (generation_config eos_token_id [1, 106, 50]); adapter v2
+            # had it masked and kept emitting the same call hundreds of times instead of yielding.
             mask.append(0); continue
         mask.append(1)
     return text, ids, mask

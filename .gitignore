@@ -26,3 +26,4 @@ submissions/*/adapters/v1/adapter_model.safetensors
 submissions/out/
 vendor/
 work/
+research/lora/adapters/*/adapter/adapter_model.safetensors

@@ -452,3 +452,33 @@ not trained yet.
   the full 71-task eval plus a pod baseline.
 - Side finding: vLLM's chat endpoint returns empty `reasoning_content` for the base model too (reasoning parser), so
   ADK sees thoughts only via the content/thought channel it already uses; unchanged from Kaggle behaviour.
+
+### 2026-10-27 night: adapter v2 (run 2, DSL arguments fixed) — 12/71 on the pod, second rendering bug found
+
+- Training run 2 finished 02:34 UTC (135 examples ≤20480 tokens, 2 epochs, 68 optimizer steps, losses 0.06-0.13,
+  2 h 36 min). Adapter fetched to research/lora/adapters/v2/adapter (489,840,816 bytes). LoRA arm on sound-71
+  (concurrency 6, RTX PRO 6000) ran 02:36-03:37 UTC: **12/71 resolved (0.169)**. Results in
+  runs/v20-lora-v2-pod/results (task_results.jsonl + 71 traces).
+- Tool-call format is fixed: calls arrive as proper dicts, 23/71 tasks produced a patch, 12 resolved
+  (fastapi_14794, 14786, 14492, 14372, 5077, rich_3718, 3882, 3894, 3676, 3454, 3067, 3006).
+- Failure split: 30 tasks `litellm.ContextWindowExceededError` with tool_calls=40 after only 2-4 LLM calls,
+  20 session timeouts, 4 tool-call budget, 17 clean finishes.
+- **Root cause 2: the `<|tool_response>` stop token was masked out of the loss.** generation_config.eos_token_id is
+  [1, 106, 50]; after `<tool_call|>` the model must emit `<|tool_response>` (id 50) and the server stops there.
+  sft_render masked the whole `<|tool_response>…<tool_response|>` span including the opening token, so the adapter got
+  no supervision on the one token that ends a tool-call turn. Symptom in traces: one response with 283 identical
+  `read_file` calls, completion_tokens 8192 (max_output_tokens), 258 s. Raw probe on a real second-turn prompt
+  (fastapi_15661 after the first grep, n=6 samples, temperature 0.2): adapter v2 → 2/6 run away (68 and 15 calls,
+  finish=length), 3/6 emit an empty thought; base → 6/6 stop after one call with a 440-620-char thought.
+  The runaway generations also hog the GPU, which explains many of the 20 timeouts in the concurrent tasks.
+- Fix: sft_render.render now keeps mask=1 on the opening `<|tool_response>` token (verified on 40 rows: 744/744
+  stop tokens trained, previous token `<tool_call|>` trained, following token masked). Needs training run 3.
+- First-turn behaviour of v2 is clean (DSL call, finish=stop, 159 tokens); with the prior thought removed from the
+  history both base and adapter answer with an empty thought, so the harness-side history rendering is not the
+  difference.
+- Pod A deleted 04:10 UTC after fetching results and probing; RunPod balance $1.53, no pods. Kaggle 57680204
+  (v19, broken v1) still pending; it blocks the next submission until it scores (~19:30 UTC). v2 (12/71) is not
+  worth a submission slot; v12 remains the best validated bundle.
+- Cost of a v3 cycle on one RTX PRO 6000 ($2.51/h): fresh bootstrap ~0.7 h, training ~2.6 h, LoRA arm ~1.1 h,
+  optional v12 baseline arm ~1.1 h (fair comparison on the same hardware; v12 Kaggle = 31/71) → ~$14-17;
+  without the baseline ~$11-12.
