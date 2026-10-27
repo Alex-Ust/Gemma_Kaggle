@@ -497,3 +497,14 @@ efficient than v12 on the same budget: 23 six-minute timeouts vs 31, 16 empty pa
 clean stops. Conclusion: self-distillation on 38 unique tasks reproduces v12 but does not beat it; more unique
 tasks are needed (harvest: OOD-45 at t0.2 + the 36 unsolved sound tasks ×3 at t0.7 → `h01-harvest-t07-podhard`).
 Submission `submissions/v21_lora_v3` packed (453 MB zip) for the LB after 57680204 scores.
+
+## 2026-10-27 — harvest for v4: OOD-45 38/44 with v12, unsolved-36 at t0.7 gives 1+2
+
+- `runs/v12-think1024-podood` (OOD-45, v12, t0.2, pod): **38/44** (urllib3_5279 skipped on py3.12), 1 timeout. The
+  OOD tasks are much easier than sound-71 (small repos, short patches: median 9 calls). First attempt died because the
+  copy staged from the Mac lacked `wheels/` (2 GB) and 15 snapshots; `ood_fetch.sh` downloads the full 5.3 GB dataset
+  on the pod (needs the user's token) and checks SHA256SUMS minus dataset-metadata.json.
+- `runs/h01-harvest-t07-podhard` (36 never-solved sound tasks, t0.7): s1 1/36 (rich_4075, already solved by v3),
+  s2 2/36 (rich_3180, rich_3506). s3 cancelled: ~1 new task per $1.5 pass is not worth it.
+- Dataset v4 = sft_extract over all real-agent runs (incl. v09 OOD-A, v13-v17, v20, v21, s1, s2, OOD pass) with
+  `scripts/sft_filter.py` (thought-only rows, then the N shortest per task). v3's set had 38 unique tasks / 135 usable.

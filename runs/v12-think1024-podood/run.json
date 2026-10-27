@@ -1,12 +1,19 @@
 {
-  "task_ids": null,
-  "concurrency": 6,
-  "bundle": "v12_think1024",
-  "tag": "podood",
-  "mode": "agent",
-  "ood": true,
-  "ood_ids": null,
-  "adapters": [],
-  "slug": "alexust/gemma-eval-v12-think1024-podood",
-  "model": "gemma-4-31b-it-qat-w4a16-ct"
+ "task_ids": null,
+ "concurrency": 6,
+ "bundle": "v12_think1024",
+ "tag": "podood",
+ "mode": "agent",
+ "ood": true,
+ "ood_ids": null,
+ "adapters": [],
+ "slug": "alexust/gemma-eval-v12-think1024-podood",
+ "model": "gemma-4-31b-it-qat-w4a16-ct",
+ "result": {
+  "resolved": 38,
+  "n": 44,
+  "rate": 0.864,
+  "note": "OOD-45 (urllib3_5279 skipped on py3.12), v12 bundle t0.2, pod concurrency 6, 1 timeout; harvest source for adapter v4"
+ },
+ "finished_utc": "2026-10-27T14:40"
 }
