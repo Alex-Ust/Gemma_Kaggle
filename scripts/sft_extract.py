@@ -65,11 +65,14 @@ def main():
     a = ap.parse_args()
     rows = []
     for run in a.runs:
-        res_path = os.path.join(run, "output/results/task_results.jsonl")
-        if not os.path.exists(res_path):
+        # Kaggle layout runs/<run>/output/results/, pod layout runs/<run>/results/ or a results dir passed directly
+        res_dir = next((d for d in (os.path.join(run, "output/results"), os.path.join(run, "results"), run)
+                        if os.path.exists(os.path.join(d, "task_results.jsonl"))), None)
+        if res_dir is None:
             print("skip (no results):", run); continue
+        res_path = os.path.join(res_dir, "task_results.jsonl")
         resolved = {json.loads(l)["instance_id"] for l in open(res_path) if json.loads(l)["resolved"]}
-        for f in sorted(glob.glob(os.path.join(run, "output/results/traces/*.json"))):
+        for f in sorted(glob.glob(os.path.join(res_dir, "traces/*.json"))):
             iid = os.path.basename(f)[6:-5]
             if iid not in resolved:
                 continue
