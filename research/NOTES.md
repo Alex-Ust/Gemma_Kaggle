@@ -532,3 +532,10 @@ reports that lowering the budgets scored 0.13, matching our v12 draws (0.12/0.10
 graph tools in agent.yaml) scored 0.15 on 2026-10-18. Conclusion: keep the 8-min/28-call/thinking-4096 budgets;
 the 6-min cap we adopted to fit 12 h cost ~5 tasks on the hidden set. Bundle copied as submissions/v23_public_lb024
 (submit after 57680204 scores).
+
+**LB submission errors found via the API (2026-10-27):** 57487659 (v09, 2026-10-21) "unhandled error while
+rerunning" (never scored); 57523322 (v10, 2026-10-22) "exceeded the allowed runtime" (12 h). So the scored
+history is: v02 0.15 (8 min / 28 calls / thinking 4096, no skills), v07 0.10 (8 min / 28 calls, thinking 2048,
+timeout 90 s, locate+check skills, first-call prompt), v12 0.12 / 0.10 (6 min / 40 calls / thinking 1024).
+Every modification we made scored below v02 on the LB, while the local sound-71 numbers went up (24 → 28 → 31).
+The public bundle equal to v01 (v02 + the three graph tools listed) reports 0.22-0.24.
