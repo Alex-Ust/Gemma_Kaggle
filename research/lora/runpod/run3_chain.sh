@@ -12,14 +12,14 @@ OPTS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ER
 A="ssh $OPTS -p $PORT root@$IP"
 RUNDIR=runs/v21-lora-$TAG-pod
 scp $OPTS -P $PORT research/lora/runpod/eval_bootstrap.sh runs/v21-lora-v3-pod/kernel/run.py root@$IP:/workspace/ || exit 1
-$A 'cp /workspace/run.py /workspace/run_lora.py; cd /workspace/lora && (setsid nohup bash bootstrap.sh > /workspace/bootstrap.log 2>&1 < /dev/null &); echo "training bootstrap started $(date -u +%H:%M)"'
+for i in 1 2 3 4 5; do $A 'cp /workspace/run.py /workspace/run_lora.py; if [ ! -f /workspace/bootstrap.log ]; then cd /workspace/lora && (setsid nohup bash bootstrap.sh > /workspace/bootstrap.log 2>&1 < /dev/null &); echo "training bootstrap started $(date -u +%H:%M)"; else echo "bootstrap already running"; fi' && break; echo "ssh attempt $i failed"; sleep 15; done
 EVALB=0
 start_eval_bootstrap() {
-  $A 'export KAGGLE_API_TOKEN=/workspace/kaggle_token; (setsid nohup bash -c "bash /workspace/eval_bootstrap.sh; /workspace/evalenv/bin/pip install -q torch==2.10.0 torchvision==0.25.0 torchaudio==2.10.0; /workspace/evalenv/bin/pip install -q litellm google-adk==1.36.1 pytest pytest-timeout==2.1.0 typer pdm-backend setuptools wheel poetry-core hatchling flit-core editables; /workspace/evalenv/bin/pip install -q -U mcp; echo EVAL_ENV_DONE; rm -f /workspace/kaggle_token" > /workspace/eval_bootstrap.log 2>&1 < /dev/null &); echo "eval bootstrap started $(date -u +%H:%M)"'
+  $A 'export KAGGLE_API_TOKEN=/workspace/kaggle_token; if [ -f /workspace/eval_bootstrap.log ]; then echo "eval bootstrap already running"; exit 0; fi; (setsid nohup bash -c "bash /workspace/eval_bootstrap.sh; /workspace/evalenv/bin/pip install -q torch==2.10.0 torchvision==0.25.0 torchaudio==2.10.0; /workspace/evalenv/bin/pip install -q litellm google-adk==1.36.1 pytest pytest-timeout==2.1.0 typer pdm-backend setuptools wheel poetry-core hatchling flit-core editables; /workspace/evalenv/bin/pip install -q -U mcp; echo EVAL_ENV_DONE; rm -f /workspace/kaggle_token" > /workspace/eval_bootstrap.log 2>&1 < /dev/null &); echo "eval bootstrap started $(date -u +%H:%M)"'
   EVALB=1
 }
 while true; do
-  out=$($A 'tail -c 300 /workspace/bootstrap.log | tr "\n" " " | cut -c1-120; grep -E "^\[" /workspace/train.log 2>/dev/null | tail -1 | cut -c1-150; grep -c OOM /workspace/train.log 2>/dev/null; tail -1 /workspace/eval_bootstrap.log 2>/dev/null | cut -c1-80; pgrep -f "python -u train.py" >/dev/null && echo ALIVE || echo NOTRAIN; nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader' 2>&1 | tr '\n' ' ')
+  out=$($A 'tail -c 300 /workspace/bootstrap.log | tr "\n" " " | cut -c1-120; grep -E "^\[" /workspace/train.log 2>/dev/null | tail -1 | cut -c1-150; grep -c OOM /workspace/train.log 2>/dev/null; tail -1 /workspace/eval_bootstrap.log 2>/dev/null | cut -c1-80; pgrep -f "[p]ython -u train.py" >/dev/null && echo ALIVE || echo NOTRAIN; nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader' 2>&1 | tr '\n' ' ')
   echo "$(date -u +%H:%M) TRAIN $out"
   case "$out" in *"] done"*) break;; esac
   if [ $EVALB = 0 ] && $A 'test -f /workspace/kaggle_token' 2>/dev/null; then start_eval_bootstrap; fi
