@@ -508,3 +508,17 @@ Submission `submissions/v21_lora_v3` packed (453 MB zip) for the LB after 576802
   s2 2/36 (rich_3180, rich_3506). s3 cancelled: ~1 new task per $1.5 pass is not worth it.
 - Dataset v4 = sft_extract over all real-agent runs (incl. v09 OOD-A, v13-v17, v20, v21, s1, s2, OOD pass) with
   `scripts/sft_filter.py` (thought-only rows, then the N shortest per task). v3's set had 38 unique tasks / 135 usable.
+
+## 2026-10-27 — adapter v4 (70-task dataset): 30/71. LoRA self-distillation is at its ceiling
+
+`runs/v22-lora-v4-pod`: 30/71 (v3 31, v12 31; 28 in common with v3; union of the three = 35). Pre-check 6/6 clean.
+The adapters change behaviour (empty patches 9 vs 16 vs 23, mean duration 250 vs 261 vs 301 s) but not the number
+of correct patches. Adding 32 OOD-45 tasks (16 unseen repos) did not help on the sound-71 set. Conclusion: training
+on the model's own successful trajectories (rejection-sampling SFT) reproduces v12's level and no more; stop here.
+
+**Public LB distribution (2026-10-27, 3941 teams):** 0.24 x5, 0.22 x47, 0.20 x209, 0.18 x551, 0.17 x669,
+0.15 x568, 0.13 x395, 0.12 x323. The 1220-team mass at 0.17-0.18 is almost certainly the unmodified public
+baseline. We never submitted it (v01_public_baseline: graph tools, 8 min / 28 calls / thinking 4096); all our
+submissions were modified bundles and scored 0.10-0.15. The local sound-71 ranking (v12 31 vs v02 24) does not
+transfer to the hidden set. Next: submit v01 unchanged as the anchor, then small changes on top of it with its
+budgets kept.

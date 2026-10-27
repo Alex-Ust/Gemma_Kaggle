@@ -1,0 +1,5 @@
+wheels installed, vllm 0.19.1
+with_thought tokens 5906 v4 ['stop/calls1/thought624', 'stop/calls1/thought578', 'stop/calls1/thought684', 'stop/calls1/thought483', 'stop/calls1/thought651', 'stop/calls1/thought527']
+no_thought tokens 5134 v4 ['stop/calls1/thought18', 'stop/calls1/thought18', 'stop/calls1/thought18', 'stop/calls1/thought18', 'stop/calls1/thought18', 'stop/calls1/thought18']
+adapter second-turn samples: clean stops 6/6, runaway 0, empty thoughts 0
+PRECHECK_OK
