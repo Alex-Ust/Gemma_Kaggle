@@ -586,3 +586,8 @@ The public bundle equal to v01 (v02 + the three graph tools listed) reports 0.22
 ## 2026-10-27 23:06 UTC — concurrency calibration (v23, same 12 tasks, c1 vs c3)
 - Resolved 6/12 in both. Seconds per tool call (median): c3 9.0, c1 6.4 -> c3 inflates per-call latency ~1.4x. Session timeouts: c3 3/12, c1 1/12 (rich_3506 timed out at c3 and was resolved at c1).
 - So the c3 numbers understate the sequential scorer slightly via extra timeouts (13/101 at c3, probably ~5 sequentially). Arms compared at the same c3 stay comparable. 12 h check: c1 median 179 s/task -> ~6-8 h for 120 tasks, inside the limit.
+
+## 2026-10-27 23:35 UTC — v25 smoke + final v25 change, full run launched
+- Smoke (2 tasks, c1): fastapi_15589 resolved (v23: not, 28 calls) in 22 calls, all 8 read_file calls ranged, first edit at call 18; rich_4070 not resolved (as v23).
+- rich_4070 showed a separate failure: 18 edit_file calls answered "mandatory input parameters are not present: old_string" — the model garbles the Gemma tool-call string delimiters when new_string contains triple quotes/backticks, then resends the same call. In v23 on 101 tasks: 96 such failures in 13 tasks (84 edit_file, 9 write_file, 3 read_file). These do not count toward the 28 calls but cost generation time and context. The heredoc Python fallback works (succeeded first try in the same trace).
+- Added to v25 (step 3): on that error do not resend, switch immediately to the Python heredoc replacement. Final v25 prompt 8397 chars; pack/validate OK; loaded instruction identical; kernel bundle byte-identical; kernel code identical to v23 kernel; md5 pod = local. Balance $13.51 before launch, run ~2.7 h ~$7.
