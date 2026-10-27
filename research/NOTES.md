@@ -522,3 +522,13 @@ baseline. We never submitted it (v01_public_baseline: graph tools, 8 min / 28 ca
 submissions were modified bundles and scored 0.10-0.15. The local sound-71 ranking (v12 31 vs v02 24) does not
 transfer to the hidden set. Next: submit v01 unchanged as the anchor, then small changes on top of it with its
 budgets kept.
+
+**Correction (2026-10-27 evening):** v01_public_baseline is NOT the organizers' baseline; it is the public
+"budget-fit" bundle (flexonafft v2 / verracodeguacas, 8 min / 28 calls / thinking 4096). The organizers' sample
+submission (data/sample_submission) is a 1-minute / 10-call dummy with sample LoRA adapters. The public notebook
+honghanhhh/gemma-4-baseline-lb-0-24 ("v6, prompt-only edits on the 0.22 config", LB 0.24) ships a bundle that is
+byte-identical to our v01 except one prompt line (`git status --short && git diff` before submit_patch); its author
+reports that lowering the budgets scored 0.13, matching our v12 draws (0.12/0.10 at 6 min). Our v02 (v01 minus the
+graph tools in agent.yaml) scored 0.15 on 2026-10-18. Conclusion: keep the 8-min/28-call/thinking-4096 budgets;
+the 6-min cap we adopted to fit 12 h cost ~5 tasks on the hidden set. Bundle copied as submissions/v23_public_lb024
+(submit after 57680204 scores).
