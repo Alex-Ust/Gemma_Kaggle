@@ -563,3 +563,7 @@ The public bundle equal to v01 (v02 + the three graph tools listed) reports 0.22
    (CPU for the next sequential task). Drop start_new_session if skills return.
 9. **SFT**: trained on uncompacted contexts while serving compacts at 14,336 tokens (46/170 rows); nudge user
    turns trained as model output (3/170). Fix before any further LoRA.
+
+- 2026-10-27 20:54 UTC: submitted **v24_tmpfix** (57712978) = public 0.24 config with the /tmp write_file
+  instruction corrected; scoring ≈ 21 h. v19 (adapter v1) scored 0.00 as expected. Local: v23 baseline on
+  sound105 running on the pod (concurrency 3), then a 12-task concurrency-1 calibration, then v24 on sound105.
