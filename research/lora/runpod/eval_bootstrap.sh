@@ -31,3 +31,4 @@ echo "EVAL_PREP_DONE"
 # /workspace/evalenv/bin/pip install torch==2.10.0 torchvision==0.25.0 torchaudio==2.10.0   # match wheelhouse vllm 0.19.1
 # /workspace/evalenv/bin/pip install litellm google-adk==1.36.1 pytest pytest-timeout==2.1.0 typer pdm-backend setuptools wheel poetry-core hatchling flit-core editables
 # /workspace/evalenv/bin/pip install -U mcp   # litellm 1.106 imports mcp.types.CacheableResult (mcp>=2); gold mode never calls the model, so this only shows in real runs
+# /workspace/evalenv/bin/pip install docker accelerate "pandas>=2.0.0"   # adk_eval_core.sandbox imports docker; swegemma requires accelerate+pandas (found 2026-10-27 on the second pod)
