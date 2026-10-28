@@ -113,6 +113,9 @@ def main():
         Path(sys.argv[3]).mkdir(parents=True, exist_ok=True)
         scp(sys.argv[2], "/workspace/adapter", sys.argv[3], to_pod=False)
         subprocess.run(["ls", "-la", sys.argv[3] + "/adapter"])
+    elif cmd == "stop":  # container disk is wiped on stop; only a volume survives
+        api("POST", f"{V1}/pods/{sys.argv[2]}/stop")
+        print("stopped", sys.argv[2])
     elif cmd == "delete":
         api("DELETE", f"{V1}/pods/{sys.argv[2]}")
         print("deleted", sys.argv[2])
