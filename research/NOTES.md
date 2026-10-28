@@ -591,3 +591,18 @@ The public bundle equal to v01 (v02 + the three graph tools listed) reports 0.22
 - Smoke (2 tasks, c1): fastapi_15589 resolved (v23: not, 28 calls) in 22 calls, all 8 read_file calls ranged, first edit at call 18; rich_4070 not resolved (as v23).
 - rich_4070 showed a separate failure: 18 edit_file calls answered "mandatory input parameters are not present: old_string" — the model garbles the Gemma tool-call string delimiters when new_string contains triple quotes/backticks, then resends the same call. In v23 on 101 tasks: 96 such failures in 13 tasks (84 edit_file, 9 write_file, 3 read_file). These do not count toward the 28 calls but cost generation time and context. The heredoc Python fallback works (succeeded first try in the same trace).
 - Added to v25 (step 3): on that error do not resend, switch immediately to the Python heredoc replacement. Final v25 prompt 8397 chars; pack/validate OK; loaded instruction identical; kernel bundle byte-identical; kernel code identical to v23 kernel; md5 pod = local. Balance $13.51 before launch, run ~2.7 h ~$7.
+
+## 2026-10-28 02:03 UTC — v25 on sound105 (c3): 36/101 vs v23 33/101
+| | v23 | v25 |
+|---|---|---|
+| resolved | 33 | 36 |
+| fastapi / rich | 21 / 12 | 24 / 12 |
+| sound-71 subset / fixed-30 | 25 / 8 | 27 / 9 |
+| 28-call cap / timeouts | 54 / 13 | 46 / 8 |
+| empty patch | 21 | 26 |
+| median / mean duration s | 242 / 277 | 212 / 252 |
+| wall | 160 min | 145 min |
+- Discordant pairs: v25-only 9, v23-only 6 -> +3 is ~0.8 sigma, not significant on its own, but every efficiency metric moved the right way.
+- Cost of the change: 26 empty patches, all never-edited and all capped/timed out; in that group 11.3 read_file per task (10.5 ranged) and ~3 submit_patch calls on an empty tree. Small ranged reads make some tasks read in more pieces and never reach an edit. Next lever: a hard "edit by call 12" enforcement for this group (e.g. a get_status-style check, or wider ranges ~100 lines).
+- Garbled edit_file calls: v23 96 in 13 tasks -> v25 61 in 14 tasks (rule helps partially).
+- Pod lqsm5j31no532w stopped 02:10 UTC after results fetched (container disk wiped; user will use a network volume next time). v25 zip verified byte-identical to the tested kernel bundle; auto-submit queued for when v24 (57712978) finishes scoring.
