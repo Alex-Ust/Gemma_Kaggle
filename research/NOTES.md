@@ -606,3 +606,7 @@ The public bundle equal to v01 (v02 + the three graph tools listed) reports 0.22
 - Cost of the change: 26 empty patches, all never-edited and all capped/timed out; in that group 11.3 read_file per task (10.5 ranged) and ~3 submit_patch calls on an empty tree. Small ranged reads make some tasks read in more pieces and never reach an edit. Next lever: a hard "edit by call 12" enforcement for this group (e.g. a get_status-style check, or wider ranges ~100 lines).
 - Garbled edit_file calls: v23 96 in 13 tasks -> v25 61 in 14 tasks (rule helps partially).
 - Pod lqsm5j31no532w stopped 02:10 UTC after results fetched (container disk wiped; user will use a network volume next time). v25 zip verified byte-identical to the tested kernel bundle; auto-submit queued for when v24 (57712978) finishes scoring.
+
+## 2026-10-29 00:03 UTC — v24 scored 0.17; v25 submitted
+- v24 (57712978, public 0.24 config + /tmp line) = 0.17 public (~10/58); scoring took ~27 h. Same config family scored 0.24 for the notebook author -> LB draw noise, as predicted (typical 0.17-0.22).
+- v25 submitted automatically at 00:02 UTC 2026-10-29 (57752068); the 2026-10-28 slot was blocked by the pending v24.
