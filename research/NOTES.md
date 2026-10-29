@@ -610,3 +610,9 @@ The public bundle equal to v01 (v02 + the three graph tools listed) reports 0.22
 ## 2026-10-29 00:03 UTC — v24 scored 0.17; v25 submitted
 - v24 (57712978, public 0.24 config + /tmp line) = 0.17 public (~10/58); scoring took ~27 h. Same config family scored 0.24 for the notebook author -> LB draw noise, as predicted (typical 0.17-0.22).
 - v25 submitted automatically at 00:02 UTC 2026-10-29 (57752068); the 2026-10-28 slot was blocked by the pending v24.
+
+## 2026-10-29 — v26_editearly prepared (not run yet, waiting for a balance top-up)
+- Diagnosis of v25's 26 never-edited tasks: median read span 31 lines (prompt asked ~60); example fastapi_15280 spent ~10 calls finding where a huge docstring-heavy function ends, then a Python edit script failed silently; repeated submit_patch calls happen only after the budget is gone (they do not count).
+- v26 = v25 + hard rule "14 calls without an edit -> next call is an edit"; read ~120 lines per read_file; one-call file outline `grep -n -E "^\s*(async def|def|class) " path`; Python heredoc edits end with `&& git diff --stat`; graph tools removed from agent.yaml (verified in agent_runner: the "Code Intelligence Tools" section is only appended for declared tools) and the prompt line forbidding them removed.
+- Pre-flight done without GPU: pack/validate OK (4718 B), loaded instruction identical, kernels embed the bundle byte-identical, kernel code identical to v25's. Smoke = fastapi_15280 + rich_4079 (both never-edited in v25), then sound105 at c3 vs v25 36/101.
+- Cost: pod data was wiped by the stop -> bootstrap ~0.7 h + smoke 0.3 h + full 2.4 h ≈ 3.4 h ≈ $8.5 at $2.51/h (+ network volume if created). Balance $6.82 -> needs a top-up.
