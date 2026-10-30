@@ -616,3 +616,8 @@ The public bundle equal to v01 (v02 + the three graph tools listed) reports 0.22
 - v26 = v25 + hard rule "14 calls without an edit -> next call is an edit"; read ~120 lines per read_file; one-call file outline `grep -n -E "^\s*(async def|def|class) " path`; Python heredoc edits end with `&& git diff --stat`; graph tools removed from agent.yaml (verified in agent_runner: the "Code Intelligence Tools" section is only appended for declared tools) and the prompt line forbidding them removed.
 - Pre-flight done without GPU: pack/validate OK (4718 B), loaded instruction identical, kernels embed the bundle byte-identical, kernel code identical to v25's. Smoke = fastapi_15280 + rich_4079 (both never-edited in v25), then sound105 at c3 vs v25 36/101.
 - Cost: pod data was wiped by the stop -> bootstrap ~0.7 h + smoke 0.3 h + full 2.4 h ≈ 3.4 h ≈ $8.5 at $2.51/h (+ network volume if created). Balance $6.82 -> needs a top-up.
+
+## 2026-10-30 — v25 = 0.12 on the public LB
+- v25 (57752068) 0.12 vs v24 0.17. LB history: near-public config v02 0.15, v24 0.17; more-modified bundles v07 0.10, v12 0.12/0.10, v25 0.12.
+- The local sound105 gain (36 vs 33) did not transfer, same as every earlier local gain. The training tasks are fastapi/rich/requests only; the hidden ~120 are most likely other repos. Candidates for harm on unseen repos in v25: "search only the package dir", "never grep the whole repo", small ranged reads (median 31 lines) that make the model myopic in unfamiliar code.
+- Process: v25 Kaggle watcher hung 13 h in `sleep 1800` while the Mac slept; killed on the user's request. Watchers on a sleeping laptop are not reliable.
