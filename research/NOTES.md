@@ -622,3 +622,12 @@ The public bundle equal to v01 (v02 + the three graph tools listed) reports 0.22
 - The local sound105 gain (36 vs 33) did not transfer, same as every earlier local gain. The training tasks are fastapi/rich/requests only; the hidden ~120 are most likely other repos. Candidates for harm on unseen repos in v25: "search only the package dir", "never grep the whole repo", small ranged reads (median 31 lines) that make the model myopic in unfamiliar code.
 - Process: v25 Kaggle watcher hung 13 h in `sleep 1800` while the Mac slept; killed on the user's request. Watchers on a sleeping laptop are not reliable.
 - 2026-10-30 19:49 UTC: on the user's request submitted the public LB-0.24 bundle byte for byte (v23, frozen zip sha256 205a677f) as 57815818, to get our own draw of the anchor. Kaggle rejects any upload not named exactly `submission.zip` (400 FAILED_PRECONDITION), so frozen zips must be copied to `submissions/out/<name>/submission.zip` first.
+
+## 2026-11-01 — v23 draw exceeded the 12 h limit -> v27_cap7
+- 57815818 (v23, byte copy of the public 0.24 bundle) came back COMPLETE with no score: "exceeded the allowed runtime". Same failure as v10. The identical bundle scored 0.24 (author) and 0.17 (our v24), so the 8-minute config runs close to 12 h and the scorer's speed varies between draws.
+- The bundle has only a per-task limit (max_time_minutes); swegemma has no global deadline a bundle could set.
+- Cap simulation on v23 sound105 traces (scratch cap_sim2.py: agent time from tool-call timestamps, a resolved task survives if its last edit came before the cap, +10 s sandbox setup per task, validation excluded):
+  - Our pod at c3: agent mean 240 s, deciles 118..416 s, 9 tasks above 7 min; caps barely matter locally (28 calls bind first).
+  - Scaled to a scorer 1.45x / 1.6x slower: 8 min 11.1 / 11.8 h per 120 tasks (keeps 31 / 30 of 33 resolved), 7 min 10.6 / 11.1 h (30 / 30), 6 min 9.8 / 10.3 h (30 / 27). v25 is ~0.9 h faster than v23 at every cap, which fits it finishing on the scorer.
+- v27_cap7 = v23 + max_time_minutes 7 + prompt line "28 tool calls and 7 minutes". Pre-flight: diff vs v23 = 2 lines; pack.py OK (3991 B); harness loader (adk_submission.load_yaml) reads max_time_minutes 7 from the zip and an instruction identical to the file, differing from v23 only in line 4.
+- New notebook leoprovorov/score-to-gemma-4 (2026-11-01) is the census budget-fit file set again; the leaderboard top is unchanged (Yurnero 0.29, nine teams at 0.24).
