@@ -1,0 +1,15 @@
+{
+  "id": "alexust/one-bundle-three-outcomes-0-24-0-17-and-no-score",
+  "title": "One Bundle, Three Outcomes: 0.24, 0.17 and No Score",
+  "code_file": "one-bundle-three-outcomes.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": false,
+  "enable_tpu": false,
+  "enable_internet": false,
+  "dataset_sources": [],
+  "competition_sources": ["gemma-4-developer-agent"],
+  "kernel_sources": [],
+  "model_sources": []
+}
