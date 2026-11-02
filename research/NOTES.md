@@ -631,3 +631,4 @@ The public bundle equal to v01 (v02 + the three graph tools listed) reports 0.22
   - Scaled to a scorer 1.45x / 1.6x slower: 8 min 11.1 / 11.8 h per 120 tasks (keeps 31 / 30 of 33 resolved), 7 min 10.6 / 11.1 h (30 / 30), 6 min 9.8 / 10.3 h (30 / 27). v25 is ~0.9 h faster than v23 at every cap, which fits it finishing on the scorer.
 - v27_cap7 = v23 + max_time_minutes 7 + prompt line "28 tool calls and 7 minutes". Pre-flight: diff vs v23 = 2 lines; pack.py OK (3991 B); harness loader (adk_submission.load_yaml) reads max_time_minutes 7 from the zip and an instruction identical to the file, differing from v23 only in line 4.
 - New notebook leoprovorov/score-to-gemma-4 (2026-11-01) is the census budget-fit file set again; the leaderboard top is unchanged (Yurnero 0.29, nine teams at 0.24).
+- 2026-11-02 07:28 UTC: v27_cap7 submitted as 57899784 on the user's go-ahead (zip sha256 9913a75e, no other pending submission).
