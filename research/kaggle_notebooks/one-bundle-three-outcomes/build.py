@@ -7,7 +7,7 @@ V27_NOTE = sys.argv[2] if len(sys.argv) > 2 else "pending"
 md, code = nbf.v4.new_markdown_cell, nbf.v4.new_code_cell
 cells = []
 
-cells.append(md(f"""# One Bundle, Three Outcomes: 0.24, 0.17 and No Score
+cells.append(md(f"""# One Bundle, Three Outcomes: 0.24, 0.17, No Score
 
 The public notebook [Gemma 4 Baseline | LB 0.24](https://www.kaggle.com/code/honghanhhh/gemma-4-baseline-lb-0-24) scored 0.24 for its author. We submitted its bundle **byte for byte** and got no score at all:
 
@@ -19,7 +19,7 @@ Score noise between identical submissions is already well documented (see [Same 
 - The 12-hour limit covers all ~120 hidden tasks, sandbox setup included, patch validation excluded. A bundle can only cap each task (`max_time_minutes`, `max_tool_calls`); there is no global deadline.
 - We timed 101 local runs of this exact bundle. Scaled to a scorer that runs 1.6-1.7x slower than our setup, the 8-minute cap lands at about **12 h for 120 tasks**: right at the limit, so some draws finish and some do not.
 - A **7-minute cap** buys about 40 minutes of margin there and costs at most one solved task in 30. A 6-minute cap buys about 1.5 h but costs three to five.
-- Our 7-minute submission: **{V27_NOTE}**.
+- Our 7-minute submission: {V27_NOTE}
 """))
 
 cells.append(md("""## What happened
@@ -30,6 +30,7 @@ All rows are our own submissions unless marked. "28 / 8" means `max_tool_calls: 
 |---|---|---|
 | honghanhhh, *Gemma 4 Baseline \\| LB 0.24* (author's draw) | 28 / 8 | 0.24 |
 | The same bundle byte for byte (zip sha256 `205a677f…`), 2026-10-30 | 28 / 8 | **no score: exceeded the allowed runtime** |
+| The same bundle with `max_time_minutes: 7` and the prompt line changed to match, 2026-11-02 | 28 / 7 | **0.15, finished in time** |
 | The same bundle + one prompt line about scratch files, 2026-10-27 | 28 / 8 | 0.17 |
 | Same caps, a prompt that saves tool calls, 2026-10-29 | 28 / 8 | 0.12 |
 | 40 tool calls, 8 minutes, 2026-10-22 | 40 / 8 | **no score: exceeded the allowed runtime** |
