@@ -1,0 +1,12 @@
+# Konwinski Prize write-ups (Kaggle, JS-rendered pages; need a browser or a logged-in session)
+- 1st: https://www.kaggle.com/competitions/konwinski-prize/writeups/eduardo-rocha-de-andrade-1st-place-solution-write-
+- 2nd (public): https://www.kaggle.com/competitions/konwinski-prize/discussion/568888 (also /writeups/camaro-public-2nd-place-solution)
+- 3rd: https://www.kaggle.com/competitions/konwinski-prize/writeups/3rd-place-solution
+- 4th: https://www.kaggle.com/competitions/konwinski-prize/writeups/4th-place-solution
+- 5th: https://www.kaggle.com/competitions/konwinski-prize/writeups/5th-place-solution
+- 8th: https://www.kaggle.com/competitions/konwinski-prize/writeups/first-lucky-gold-8th-place-solution
+- public 4th / private 15th (GraphNinjas): https://www.kaggle.com/competitions/konwinski-prize/writeups/graphninjas-public-4th-place-private-15th-place-so
+- Winners walkthrough videos (YouTube): Eduardo RBxWC8ubA6Y, Genxxsky -7aPYpPIxMo, Kenj 6YDXKlAfSHM
+- Starter notebook discussion: https://www.kaggle.com/competitions/konwinski-prize/discussion/553294
+- Winner's notebook: https://www.kaggle.com/code/arc144/custom-agentless-fork
+- Starter notebook: https://www.kaggle.com/code/huikang/starter-notebook-select-patch-verify
