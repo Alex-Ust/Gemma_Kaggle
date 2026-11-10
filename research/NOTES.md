@@ -681,3 +681,10 @@ The public bundle equal to v01 (v02 + the three graph tools listed) reports 0.22
 - Trace check: the multi-candidate grep was adopted (24/71 first calls use `-e a -e b`, 0/71 in v30), but test-first locate was not (call 1 greps tests/ in 2/71; a test file is read within the first 4 calls in 4/71 vs 2/71). First edit: median call 16 in both, but median time 194 s vs 145 s, i.e. the longer first-call outputs cost time without changing where the model looks.
 - Conclusion: Konwinski takeaway A does not transfer as a prompt instruction to this model; D is adopted but neutral. Next experiment (v32, sentinel reproduction check) should build on v30, not v31. Quota left ~5.8 h until Saturday.
 - v30_early8 submitted 2026-11-05 17:34 UTC as 58030964 (sha256 b045704a, zip verified equal to the evaluated bundle). Kaggle GPU quota exhausted for the week; next experiments wait for Saturday or the Cyprus HPC.
+
+## 2026-11-10: v30 LB 0.17; v32_repro and v33_gate launched (Konwinski takeaways B and C, built on v30)
+- v30_early8 (58030964) scored 0.17 on the public LB, finished 2026-11-06 07:15 UTC (~13.7 h after submission, so the run itself was well inside 12 h). Fifth consecutive draw of the near-public family in 0.15-0.17.
+- v32_repro = v30 + prompt only: call 1 writes and runs /tmp/repro.py from the issue (prints REPRODUCED / RESOLVED, traceback used for locating); "Verify by executing": rerun the script after the edit, it must print RESOLVED. Replaces the old "you may run the snippet once with python -c" bullet. sha256 6b445e8c, 4420 B.
+- v33_gate = v32 + baseline the closest test file before the first edit (`pytest -q --tb=no | tail -n 3`), rerun after, revert with `git checkout -- <file>` if more tests fail. sha256 1168faf0, 4632 B.
+- Pre-flight for both: adk_submission load_yaml on the extracted zip returns the instruction byte-identical to prompts/system.md and limits 28/7; run.json identical to v30's (sound-71, concurrency 2); embedded bundles match the directories.
+- Kernels alexust/gemma-eval-v32-repro-l4c2 and alexust/gemma-eval-v33-gate-l4c2 pushed in parallel (~7 h quota). Compare each paired against v30 (28/71, 296 s mean).
