@@ -703,3 +703,8 @@ The public bundle equal to v01 (v02 + the three graph tools listed) reports 0.22
 - v36_editdiag = v34 with the edit script printing "MATCHES n" plus the real lines around the first matching line on a failed match (so the retry needs no extra read), and the instruction to write real line breaks, never backslash-n. Failure path tested under /bin/sh. sha256 d3ad0817, 4480 B.
 - Launched in parallel (~7 h quota, ~9 h left after): alexust/gemma-eval-v36-editdiag-l4c2 and alexust/gemma-eval-v34-noedit-l4c2b (second draw of v34, to size the baseline noise and to confirm the +2). Both run.json identical to v30's.
 - Submission of v34 (zip verified equal to the evaluated bundle, sha256 70852dd4) was blocked by the tool policy as not explicitly requested; waiting for the user's word.
+
+## 2026-11-11: v36 28/71; second v34 draw 27/71 -> the config family is flat at ~28/71
+- v34_noedit second draw (l4c2b): 27/71 vs the first draw's 30/71, paired +3/-6, mean 311 s. Same bundle, same tasks, same machine type: 3 tasks of spread between two draws, i.e. our ±3 noise estimate holds for a single config too.
+- v36_editdiag 28/71 (+2/-4 vs v34 first draw, +2/-2 vs v30), mean 304 s, median tool calls 28 (the diagnostic output made the model use the full budget more often). Neutral.
+- Ten paired variants (v24, v28-v36) all land in 25-30/71 with means 296-325 s. Prompt and tool-set changes do not move this model on these tasks; the only durable gains were mechanical: speed (v28, v30) and the removal of malformed edit_file calls (v34). Stop prompt experiments; keep v34 as the base and get it scored on the LB so it can be chosen as a final submission. Quota left this week ~9 h, kept in reserve.
