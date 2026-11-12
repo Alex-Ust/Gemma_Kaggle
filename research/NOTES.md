@@ -719,3 +719,21 @@ The public bundle equal to v01 (v02 + the three graph tools listed) reports 0.22
 
 ## 2026-11-12 — v34 LB 0.18
 - v34_noedit (58230365) scored **0.18** (v28 0.17, v30 0.17). v34 stays the base; v37_recall and v38_gitlog wait for the Saturday quota reset.
+
+## 2026-11-12 — survey of ~50 public repos of this competition + 2025-26 literature on ~30B agents
+- No public repo shows a measured gain over the public single-agent bundle (8 min / 28 calls, T 0.2). That family
+  averages 9.84/58 over 19 LB draws (SD 1.56 tasks); every traced 0.22-0.24 is one high draw. Identical zips drew
+  0.15/0.24, 0.18/0.13/0.13, 10/11/7 of 58. Yurnero (0.29): nothing published.
+- Negative results measured by others: LoRA on own or teacher trajectories (LB 0.08-0.15, twice 0.00), edit deadline
+  at call 8, in-task best-of-N / voting (selector picks right 57%), parallel scouts, >= 34 calls (12 h overrun),
+  no-thinking, default Gemma sampling (flat). `{name}` in a prompt = ADK state variable -> KeyError -> 0.00.
+- Literature (SWE-smith, SWE-Gym, SWE-Star, CoderForge, R2E-Gym): for ~30B models only SFT on >= 500 teacher
+  trajectories gives double-digit gains (500 -> 28%, 5000 -> 40%); own-model trajectories hurt (SWE-Gym 15.3 -> 8.7),
+  which matches our LoRA v1-v4. K=3 rollouts + selection: +2-5 pts. Prompt/scaffold: no ablated gain anywhere.
+- Method taken from fatu/gemma4-dev-agent: compare arms on the tasks that are solved only sometimes, several passes
+  per arm, adopt at pooled +3. Our ten sound-71 runs: 14 always, 32 never, 25 sometimes (35% of run time, 13.9 solved
+  per pass). New task set `flaky25` in data/task_sets.json.
+- Cheap candidate with local evidence elsewhere (dp-pcs: 44/114 vs 35/114, LB flat): `set -o pipefail` before piped
+  test commands. Built v39_pipefail = v34 + that rule (sha 62a2c5c2, loader OK, no braces).
+- Prepared, not pushed (quota resets Saturday): flaky25 x 3 passes for v37_recall, v38_gitlog, v39_pipefail, plus a
+  third v34 pass (two v34 passes exist inside the full runs). ~1.5 h quota per pass.
