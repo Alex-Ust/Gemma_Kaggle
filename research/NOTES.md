@@ -716,3 +716,6 @@ The public bundle equal to v01 (v02 + the three graph tools listed) reports 0.22
 - Statement length vs resolve rate over 11 runs: <300 chars (30 tasks) 0.18 mean, 12 ever solved; 300-1500 (29) 0.50; >=1500 (12) 0.64. Of the 32 never-solved tasks, 18 are PR titles plus "Fixes #NNNN"; hints_text is empty in all 71. The ceiling is largely the dataset, which is why every prompt lands at the same level. Git history is available in the sandbox (full log at the base commit).
 - Prepared, verified, NOT launched (weekly 30 h quota reached; two parallel 4xL4 kernels bill about 2x): v37_recall = v34 + "these are real upstream PRs; for title-only issues recall the upstream implementation and use it as the spec"; v38_gitlog = v34 + "for short issues start with git log --oneline -8 / git log -2 --stat". Kernels in runs/v37-recall-l4c2 and runs/v38-gitlog-l4c2; push after the Saturday reset.
 - v34_noedit submitted 2026-11-11 07:59 UTC as 58230365 (sha256 70852dd4, zip verified equal to the evaluated bundle). Expected 0.15-0.19; result ~10-12 h later.
+
+## 2026-11-12 — v34 LB 0.18
+- v34_noedit (58230365) scored **0.18** (v28 0.17, v30 0.17). v34 stays the base; v37_recall and v38_gitlog wait for the Saturday quota reset.
