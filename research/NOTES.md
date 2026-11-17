@@ -767,3 +767,13 @@ The public bundle equal to v01 (v02 + the three graph tools listed) reports 0.22
   no selector shown). `{problem_description}` at the end of the instruction appears in three more notebooks, each
   time without score evidence. Harness readings by others, unverified here: run_command keeps the first 5,000
   characters; an adapter shrinks the KV cache from ~46,000 to ~7,600 tokens.
+
+## 2026-11-17 (evening) — first flaky25 passes: v40_pin 19/25
+- A flaky25 pass takes 74-79 min of kernel wall time (not 45): 25 tasks x ~300 s / 2 + setup. Queue trimmed.
+- Pass 1: v37_recall 15/25 (empty 3, mean 328 s), v39_pipefail 13/25 (empty 7, 305 s), v40_pin 19/25 (empty 4,
+  297 s, fastapi 13/13). Fresh v34 pass (p3): 13/25 (300 s). v34 over three passes: 16, 13, 13. Ten earlier
+  sound-71 runs restricted to this set: 12-16.
+- v40 mechanism check: first-call prompt is 65-455 tokens longer than v34's on the same task (issue text present).
+  Tasks whose first compaction came before the first edit: v40 7/9 resolved, fresh v34 3/9 (full v34 runs 3/18,
+  4/25). Compaction frequency unchanged (0.84 vs 0.92 per task).
+- One pass, z ~ +2 against three v34 passes. Queue now: v40 p2, p3 and v34 p4, p5; v39/v37 second passes postponed.
