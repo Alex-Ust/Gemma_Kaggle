@@ -759,3 +759,11 @@ The public bundle equal to v01 (v02 + the three graph tools listed) reports 0.22
   Noise: ten-run estimate SD ~2.0 tasks per pass, so a 3-pass mean has SE ~1.15 and an arm difference SE ~1.6
   per pass. Three passes only rank the arms; the best arm gets more passes against v34 before any decision.
   Comparison: scripts/flaky_compare.py.
+- Second sweep of public notebooks (21 read as text, 2026-11-17; none has saved outputs, numbers are the authors'
+  prose): no measured gain anywhere. Trajectory-SFT LoRA with teacher corrections (990 target turns): 48 vs 51/129
+  locally, LB 0.17 / 0.15; it removes malformed calls (107 -> 1) but doubles empty patches (11 -> 23). Others: LoRA
+  2/32 vs 4/32; analyzer or panel agents 0.05-0.12; 40 calls only as single draws. A 1,350-episode study claims
+  thinking 1024 vs 4096 = 48 vs 48 of 150, submit guards flat, oracle pass@6 44% vs ~31% single (headroom exists,
+  no selector shown). `{problem_description}` at the end of the instruction appears in three more notebooks, each
+  time without score evidence. Harness readings by others, unverified here: run_command keeps the first 5,000
+  characters; an adapter shrinks the KV cache from ~46,000 to ~7,600 tokens.
