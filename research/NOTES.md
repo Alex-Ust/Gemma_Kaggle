@@ -737,3 +737,25 @@ The public bundle equal to v01 (v02 + the three graph tools listed) reports 0.22
   test commands. Built v39_pipefail = v34 + that rule (sha 62a2c5c2, loader OK, no braces).
 - Prepared, not pushed (quota resets Saturday): flaky25 x 3 passes for v37_recall, v38_gitlog, v39_pipefail, plus a
   third v34 pass (two v34 passes exist inside the full runs). ~1.5 h quota per pass.
+
+## 2026-11-17 — quota reset; flaky25 queue started; v40_pin (issue text pinned in the system prompt)
+- Public LB top unchanged: Yurnero 0.29, then fourteen teams at 0.24.
+- New public notebook (bliverrigpdoge, single LB draw 0.22, Budget-Fit base): 40 calls / 8 min, one-word final
+  reply, and the issue text appended to the system prompt as `{problem_description}` / `{hints?}`. The harness
+  puts both keys into the ADK session state on purpose (swegemma/harness/agent_runner.py, `session_state`), so
+  this is a supported feature. We used it once in v14/v15, mixed with a prompt rewrite and thoughts dropped;
+  it was never isolated.
+- v34 traces (two runs, 71 tasks each): compaction in 53/71 tasks, 0.89-0.96 per task, first one at step 17
+  (median); the step that follows takes 25-60 s (summarizer call). Resolved by where the first compaction falls:
+  before the first edit 3/18 and 4/25; between first and last edit 2/9 and 1/5; none or after the last edit
+  25/32 and 22/26. Confounded with task difficulty, but after a compaction the harness task prompt (issue text
+  included) exists only as a model-written summary.
+- Time after submit_patch: 5.6-6.8 s per task, so a one-word final reply is not worth a separate arm.
+- v40_pin = v34 + a final section "THE ISSUE, VERBATIM" with the two state keys (sha256 587162a5, 4369 B).
+  Checked locally with ADK inject_session_state: text injected verbatim, braces inside the issue left alone,
+  missing hints -> empty. Kernel bundle decoded and compared with the directory.
+- Queue (scripts/queue_kernels.sh, restartable, two sessions at a time): flaky25 passes v39 x3, v37 x3, v38 x3,
+  v40 x3, v34 p3-p5 (fresh baseline; the two old v34 passes come from the runs that defined the set).
+  Noise: ten-run estimate SD ~2.0 tasks per pass, so a 3-pass mean has SE ~1.15 and an arm difference SE ~1.6
+  per pass. Three passes only rank the arms; the best arm gets more passes against v34 before any decision.
+  Comparison: scripts/flaky_compare.py.
