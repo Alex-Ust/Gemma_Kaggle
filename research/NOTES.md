@@ -777,3 +777,9 @@ The public bundle equal to v01 (v02 + the three graph tools listed) reports 0.22
   Tasks whose first compaction came before the first edit: v40 7/9 resolved, fresh v34 3/9 (full v34 runs 3/18,
   4/25). Compaction frequency unchanged (0.84 vs 0.92 per task).
 - One pass, z ~ +2 against three v34 passes. Queue now: v40 p2, p3 and v34 p4, p5; v39/v37 second passes postponed.
+
+## 2026-11-18 — flaky25 pass 2: v40_pin 15/25, v34 14/25
+- v40_pin passes 19, 15 (mean 17.0, 299 s); v34 passes 16, 13, 13, 14 (mean 14.0, 302 s). Difference +3.0 per pass,
+  SE 1.8 (z +1.65). The ten tasks v34 solves in 4/4 passes are 2/2 in v40.
+- The compaction-before-first-edit split did not repeat in pass 2: v40 5/8, v34 4/7 (pass 1: 7/9 vs 3/9).
+- The Mac slept overnight; the queue resumed at 07:32 UTC and pushed v40 p3 and v34 p5.
