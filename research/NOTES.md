@@ -788,3 +788,12 @@ The public bundle equal to v01 (v02 + the three graph tools listed) reports 0.22
 - Quota check from the user's screen at ~07:55 UTC: 13 h 56 m left of 30 h after ~8.3 h of kernel wall time,
   so 4xL4 is billed 2x. A flaky25 pass costs ~2.5 h, a full sound-71 run ~6.1 h. Queue: v40 p3, v34 p5, then the
   full sound-71 run of v40 (runs/v40-pin-l4c2, same task order as the v34 full runs); ~4 h stay in reserve.
+
+## 2026-11-18 (afternoon) — flaky25 pass 3: v40_pin 15/25, v34 13/25
+- v40_pin passes 19, 15, 15 (pooled 49, mean 16.3, 299 s, empty 5.0); v34 passes 16, 13, 13, 14, 13 (pooled 69,
+  mean 13.8, 306 s, empty 7.0). Difference +2.5 per pass, SE 1.5 (z +1.65). Every v40 pass is at or above every
+  fresh v34 pass (15-19 vs 13-14).
+- Per task: fastapi_9753 0/5 in v34, 3/3 in v40; fastapi_14616 1/5 vs 2/3; fastapi_5624 3/5 vs 3/3. Tasks v34
+  solves in every pass stay solved in v40. No task shows a clear loss (rich_3063 1/5 vs 0/3 at most).
+- Full sound-71 run of v40 pushed 13:30 UTC (alexust/gemma-eval-v40-pin-l4c2), compared against the v34 full runs
+  (30/71, 27/71). ~4 h of quota left after it.
