@@ -797,3 +797,17 @@ The public bundle equal to v01 (v02 + the three graph tools listed) reports 0.22
   solves in every pass stay solved in v40. No task shows a clear loss (rich_3063 1/5 vs 0/3 at most).
 - Full sound-71 run of v40 pushed 13:30 UTC (alexust/gemma-eval-v40-pin-l4c2), compared against the v34 full runs
   (30/71, 27/71). ~4 h of quota left after it.
+
+## 2026-11-18 (evening) — full sound-71 run of v40: 27/71; v41 on the never-solved tasks started
+- v40_pin full run: 27/71 (v34 full runs 30 and 27), mean 302 s, empty 18, capped 14. Paired vs v34 draw 1: +3/-6;
+  vs draw 2: +3/-3. Always-set 14/14, never-set 0/32, flaky25 13/25.
+- flaky25 over all v40 passes: 19, 15, 15, 13 (mean 15.5) vs v34 16, 13, 13, 14, 13 (mean 13.8): +1.7 per pass,
+  SE 1.4 (z +1.2). The first pass was the high draw; the estimate keeps shrinking. v40 is not worse than v34 and
+  maybe one or two tasks better on the flaky set; not established.
+- The 32 never-solved tasks stayed at 0 in eleven full runs. They cap every variant at 39/71, and 23 of them
+  have statements of 1,000 characters or less (PR title plus "Fixes #NNNN").
+- v41_pinrecall = v40 + the recall paragraph of v37 with the repository named generically (sha256 c8fb0de4,
+  loader OK). Test with a near-zero baseline: task set `never24` (the 24 never-solved tasks with the shortest
+  statements), one pass, alexust/gemma-eval-v41-pinrecall-never24, pushed 16:50 UTC. Any solve is new.
+- Quota: ~26.2 h used by kernel logs (matches the user's screenshot at 07:55 UTC); this run takes ~2.7 h, ~1 h
+  stays until the Saturday reset.
