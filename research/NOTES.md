@@ -783,3 +783,8 @@ The public bundle equal to v01 (v02 + the three graph tools listed) reports 0.22
   SE 1.8 (z +1.65). The ten tasks v34 solves in 4/4 passes are 2/2 in v40.
 - The compaction-before-first-edit split did not repeat in pass 2: v40 5/8, v34 4/7 (pass 1: 7/9 vs 3/9).
 - The Mac slept overnight; the queue resumed at 07:32 UTC and pushed v40 p3 and v34 p5.
+- v40_pin submitted 2026-11-18 07:52 UTC as 58500643 on the user's word (sha256 587162a5; zip verified equal to
+  the bundle evaluated in both flaky passes). Expected 0.15-0.21 from one draw; result ~10-12 h later.
+- Quota check from the user's screen at ~07:55 UTC: 13 h 56 m left of 30 h after ~8.3 h of kernel wall time,
+  so 4xL4 is billed 2x. A flaky25 pass costs ~2.5 h, a full sound-71 run ~6.1 h. Queue: v40 p3, v34 p5, then the
+  full sound-71 run of v40 (runs/v40-pin-l4c2, same task order as the v34 full runs); ~4 h stay in reserve.
