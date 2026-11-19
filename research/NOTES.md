@@ -822,3 +822,20 @@ The public bundle equal to v01 (v02 + the three graph tools listed) reports 0.22
 - State of the week: 30 h of quota bought one small, unproven candidate (v40) and closed three (v37, v39, v41;
   v38 never run). The 32 never-solved tasks have no specification in the text and none in the model's memory.
   Final picks stay v34 plus one of v28 / v30 / v40. ~1 h of quota left until Saturday 2026-11-21.
+
+## 2026-11-19 (evening) — audit of public teacher-trajectory datasets; RunPod balance $6.79
+- Saturday queue prepared and armed (runs/_queue/saturday-2026-11-21.sh, detached, starts 00:10 UTC 2026-11-21):
+  v40_pin p4-p6 and v34_noedit p6-p8 on flaky25, ~15 h of quota.
+- RunPod: balance $6.79, old pod EXITED (no spend). RTX PRO 6000 96 GB secure $2.69/h -> ~2.5 h in total, i.e.
+  one run of ~100-135 trajectories x 2 epochs with the October pipeline (bootstrap needs no token).
+- Public teacher data in the harness's own tool format exists (audit by reading the data, 2026-11-19):
+  omallo/gemma4-swe-agent-lora-distillation (DeepSeek V4.1 Flash, 950 resolved trajectories, 505 SWE-rebench
+  tasks, CC BY 4.0; 135 trajectories pass "<= 28 calls, ends with submit_patch, <= 45k chars, no parallel calls");
+  chankhavu/gemma4-flash-sft-sample100 (same teacher, 100, two repos); foysalemonshanto/g4-budget-faithful-
+  trajectories (quantised Qwen teacher, 794 attempts); verracodeguacas/swe-smith-trajectories-transformed
+  (Claude 3.7 / 3.5 via SWE-agent, 670, outputs mostly not re-executed). Gemma-own or synthetic, not teacher data:
+  mouadberqia, maestro (fabricated three-call templates), hamenoch, harshpatel1692, berth (task pool).
+- The decisive point: the omallo author already trained 31B on ~1,000 of these DeepSeek trajectories. Their
+  results.csv: base 36.3/47 held-out and 27/50 Verified; 31B<-DeepSeek 35 and 27; at LoRA scale 2.0 25 and 16.
+  hamenoch's fine-tuned arms: 25, 26, 18, 23.5 vs base 26.0/45. Our affordable run is the same experiment at
+  one seventh of the data. Not started; recommendation to the user is to keep the $6.
