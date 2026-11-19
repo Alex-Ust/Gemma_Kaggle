@@ -811,3 +811,14 @@ The public bundle equal to v01 (v02 + the three graph tools listed) reports 0.22
   statements), one pass, alexust/gemma-eval-v41-pinrecall-never24, pushed 16:50 UTC. Any solve is new.
 - Quota: ~26.2 h used by kernel logs (matches the user's screenshot at 07:55 UTC); this run takes ~2.7 h, ~1 h
   stays until the Saturday reset.
+
+## 2026-11-19 — v40 LB 0.15; recall of upstream changes does not work (v41 1/24)
+- v40_pin (58500643) scored 0.15 on the public LB (v34 0.18, v28/v30 0.17). One draw each, per-draw SD ~0.027, so
+  the two are not separated; locally v40 is +1.7 +/- 1.4 per flaky25 pass and equal on the full set (27 vs 30, 27).
+- v41_pinrecall on never24: 1/24 (rich_3506), mean 343 s, empty 6. The first thoughts show no recollection of the
+  upstream change in any task ("vibe is not a standard HTTP method", "I cannot access the issue"); 6/24 first
+  steps even mention upstream or the PR. The model does not know these pull requests, so the recall paragraph
+  (v37, v41) is closed. One solve in 24 near-zero tasks is what chance gives.
+- State of the week: 30 h of quota bought one small, unproven candidate (v40) and closed three (v37, v39, v41;
+  v38 never run). The 32 never-solved tasks have no specification in the text and none in the model's memory.
+  Final picks stay v34 plus one of v28 / v30 / v40. ~1 h of quota left until Saturday 2026-11-21.
