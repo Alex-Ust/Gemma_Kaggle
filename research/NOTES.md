@@ -839,3 +839,10 @@ The public bundle equal to v01 (v02 + the three graph tools listed) reports 0.22
   results.csv: base 36.3/47 held-out and 27/50 Verified; 31B<-DeepSeek 35 and 27; at LoRA scale 2.0 25 and 16.
   hamenoch's fine-tuned arms: 25, 26, 18, 23.5 vs base 26.0/45. Our affordable run is the same experiment at
   one seventh of the data. Not started; recommendation to the user is to keep the $6.
+
+## 2026-11-21 — Saturday passes: v40 11/25, v34 13/25; the v40 advantage is gone
+- The armed driver waited through a night without network (DNS failures until 15:39 UTC) and then ran.
+- v40_pin p4 11/25 (empty 8, 294 s); v34 p6 13/25 (empty 8, 304 s).
+- Pooled flaky25: v40 19, 15, 15, 13, 11 (mean 14.6) vs v34 16, 13, 13, 14, 13, 13 (mean 13.7): +0.9 per pass,
+  SE 1.3 (z +0.7). The first pass (19) was a high draw; every later pass pulled the estimate down.
+- Third pair (v40 p6, v34 p8) cancelled to keep ~20 h of quota; p5 / p7 are running.
