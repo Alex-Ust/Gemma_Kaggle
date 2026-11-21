@@ -846,3 +846,17 @@ The public bundle equal to v01 (v02 + the three graph tools listed) reports 0.22
 - Pooled flaky25: v40 19, 15, 15, 13, 11 (mean 14.6) vs v34 16, 13, 13, 14, 13, 13 (mean 13.7): +0.9 per pass,
   SE 1.3 (z +0.7). The first pass (19) was a high draw; every later pass pulled the estimate down.
 - Third pair (v40 p6, v34 p8) cancelled to keep ~20 h of quota; p5 / p7 are running.
+
+### 2026-11-21, second Saturday pair (v40 p5, v34 p7)
+
+Both passes 16/25 (empty 7 each; v40 309 s mean, 4 capped; v34 306 s, 3 capped).
+
+```
+v34  passes [16, 13, 13, 14, 13, 13, 16]  pooled 98  mean 14.00  dur 306s
+v40  passes [19, 15, 15, 13, 11, 16]      pooled 89  mean 14.83  dur 301s  | vs v34: +0.83 per pass (SE 1.17, z +0.71)
+```
+
+Conclusion: v40_pin is not separated from v34 after 6 vs 7 passes; the comparison is closed. The only
+per-task effect that looks real is fastapi_9753 (v34 0/7, v40 5/6); it is offset by small losses elsewhere
+(fastapi_14873 6/7 -> 4/6, rich_3676 3/7 -> 1/6, rich_3944 2/7 -> 0/6), none of which is individually
+distinguishable from noise. Quota used this week: about 10 h of 30 (two pairs at ~2.5 h each).
