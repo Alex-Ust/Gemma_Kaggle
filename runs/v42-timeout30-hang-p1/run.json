@@ -1,0 +1,23 @@
+{
+  "task_ids": [
+    "rich_3480",
+    "rich_4006",
+    "fastapi_14258",
+    "fastapi_14448",
+    "rich_3930",
+    "rich_3772",
+    "rich_3882",
+    "rich_3052",
+    "rich_3468",
+    "fastapi_15661"
+  ],
+  "concurrency": 2,
+  "bundle": "v42_timeout30",
+  "tag": "hang-p1",
+  "mode": "agent",
+  "ood": false,
+  "ood_ids": null,
+  "adapters": [],
+  "slug": "alexust/gemma-eval-v42-timeout30-hang-p1",
+  "model": "gemma-4-31b-it-qat-w4a16-ct"
+}

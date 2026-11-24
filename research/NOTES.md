@@ -860,3 +860,33 @@ Conclusion: v40_pin is not separated from v34 after 6 vs 7 passes; the compariso
 per-task effect that looks real is fastapi_9753 (v34 0/7, v40 5/6); it is offset by small losses elsewhere
 (fastapi_14873 6/7 -> 4/6, rich_3676 3/7 -> 1/6, rich_3944 2/7 -> 0/6), none of which is individually
 distinguishable from noise. Quota used this week: about 10 h of 30 (two pairs at ~2.5 h each).
+
+## 2026-11-24 — hung commands eat 240 s of the 420 s budget -> v42_timeout30
+
+- Trigger: in the flaky25 passes rich_3480 and rich_3521 time out with only 6-13 tool calls. Decomposing each
+  step into model time and tool time (scripts/analysis/slow_steps.py, tool_durations.py, time_profile.py):
+  - rich_3480: the bug is an endless loop (`t.append(t)` with a style). The reproduction command hangs and is
+    killed only after `timeout_seconds: 240` from our own eval_config.yaml, i.e. 57% of the 7-minute session.
+    The model then often reruns it. 12 of 13 flaky passes end this way.
+  - rich_3521 runs next to rich_3480 at concurrency 2 and its model call stalls for 245-275 s exactly while the
+    neighbour's command hangs (run_command is a sync call inside the harness event loop). This is an artefact
+    of our concurrency-2 eval, not present on the sequential scorer; it has been costing rich_3521 its time in
+    every flaky pass.
+- Scale, 12 full sound-71 runs (v24..v40): 3.0-3.3 tasks per run lose >= 240 s to a timed-out command:
+  rich_3480 (solved 3/12), rich_4006 (0/12), fastapi_14258 (0/12) almost every run; fastapi_14448, rich_3930,
+  rich_3772, rich_3052, rich_3468, rich_3882, fastapi_15661 sporadically.
+- Successful run_command calls: 8,509 in eight v28-v40 runs, p99 1.6 s, max 6.0 s apart from one perf-bug
+  repro (rich_3468, 110 s) and a 19.9 s loop; on the 129-task runs the only others are network attempts in
+  psf/requests (32 s connect timeouts, 200 s pip retries) that cannot succeed in the sandbox. No useful command
+  has ever needed more than 30 s.
+- HARNESS_README 7.1: `evaluation.timeout_seconds` = single command timeout (Phase 1); the verification pytest
+  timeout is fixed at 300 s on the scorer and is not tied to it. The organizers' sample bundle uses 60.
+- v42_timeout30 = v34 + `timeout_seconds: 30` + one HARD LIMITS bullet (a timed-out command means the code
+  hangs: that is the reproduction, do not rerun it, fix the loop) + `timeout 25` instead of `timeout 150` in
+  the pytest example. sha256 31d3d7ec, 4356 B. Pre-flight: zip == directory == kernel bundles; the harness
+  subprocess executor kills `while True: pass` at the timeout (timed_out, exit 124, no leftover process).
+- New task sets: hang10 (the ten tasks above), flakyhang34 (flaky25 + the nine that are not in it).
+- Launched 10:28 UTC: alexust/gemma-eval-v42-timeout30-hang-p1 (10 tasks) and
+  alexust/gemma-eval-v42-timeout30-flakyhang-p1 (34 tasks); ~5 h of quota together.
+- Expected size: at most the three regular hangers plus rich_3521 locally, so +1-2 of 71; small but mechanical
+  and one-directional. Baseline per task comes from the 12 full runs.
