@@ -890,3 +890,27 @@ distinguishable from noise. Quota used this week: about 10 h of 30 (two pairs at
   alexust/gemma-eval-v42-timeout30-flakyhang-p1 (34 tasks); ~5 h of quota together.
 - Expected size: at most the three regular hangers plus rich_3521 locally, so +1-2 of 71; small but mechanical
   and one-directional. Baseline per task comes from the 12 full runs.
+
+## 2026-11-24 — the call wall: 9.5% of task-runs attempt their first edit at call 29 -> v43, v44
+
+- Outcome classes on flaky25, v34 x 7 passes (scripts/analysis/flaky_outcomes.py), per pass: solved 14.0,
+  wrong patch 3.3, empty without timeout 3.7, timeout with empty tree 3.4, timeout with a patch 0.6.
+- Empty-without-timeout tasks are uniform (scripts/analysis/edit_stats.py): 28 read/search calls, no edit,
+  then an edit at call 29-30 that the harness rejects with BudgetExceeded, then submit_patch on a clean tree.
+  Example rich_3777 (p7): the model has the change written out at call 27, reads twice more, hits the wall at
+  281 s of 420 s. The harness `budget_warning` field ("Only N tool call(s) remaining") is present in every
+  tool result from call 18 and is ignored ten times; the BudgetExceeded error is acted on at once. A
+  compaction at call 14 made it redo four reads.
+- 338 task-runs (v34 two full runs + five flaky passes, v40 full run), first edit vs outcome:
+  call 1-8 38/47 solved (81%), 9-12 44/56 (79%), 13-18 25/50 (50%), 19-28 46/99 (46%), none 0/86.
+  Of the 86 never-edited runs, 32 attempted the first edit only after the wall, with a median 129 s of
+  session time unused (more than 60 s left in 27 of 32). Late editors still solve 46%, so these 32 are worth
+  roughly 10-15 solves per 338 runs, i.e. about +2-3 tasks per 71.
+- Two arms against it, both on top of v42:
+  - v43_warnedit (sha256 4ea346f7): prompt only. The `budget_warning` field is named as the stop signal for
+    reading: if nothing is edited when it first appears, the next call must be the edit.
+  - v44_calls34 (sha256 fe22cd5c): `max_tool_calls: 34`, prompt limit line 28 -> 34, 7 minutes unchanged.
+    Watch the mean duration (v29 with 32 calls on the v28 base: 325 s vs 315 s, more time caps).
+- Queue (driver restarted 10:32 UTC, adopts the two running v42 kernels): v43 flaky25 p1, v44 flaky25 p1.
+  Read-outs: empty-without-timeout count per pass (v34: 3.7), edits attempted after the wall, solved,
+  mean duration. Quota plan: 5 h (v42) + 5 h (these two) of ~20 h.
