@@ -992,3 +992,8 @@ flaky25, one pass per arm, v34 = seven passes:
   fallback once any submit was made). 0 such runs in 426 (`scripts/analysis/stale_submit.py`); the 60 runs with an
   empty first submit are the call-wall runs that never edited.
 - Quota: ~2.5 h left until Saturday 00:00 UTC, kept in reserve.
+
+## 2026-11-24 18:32 UTC — v45_warn34 submitted (58845210)
+
+On the user's word. Archive verified equal to `submissions/v45_warn34` (sha256 2c435285). Score pending.
+v34 (58230365, 0.18) stays the reference; LB noise is about +/-0.03, so one score will not confirm or refute v45.
