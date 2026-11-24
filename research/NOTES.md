@@ -941,3 +941,16 @@ distinguishable from noise. Quota used this week: about 10 h of 30 (two pairs at
   stalls the event loop for 240 s); the sequential scorer never had that stall, so do not count it as gain.
 - New failure seen: fastapi_5624 looped `submit_patch` 49 times after the wall until the 80-turn limit
   (empty patch). Five E runs, four with an edit attempt at call 29 (B) -> the wall again; v43/v44/v45 target it.
+
+## 2026-11-24 12:40 UTC — v43_warnedit on flaky25 (pass 1): 15/25
+
+- v43 15 vs v34 mean 14.00 (+1.0, SE 2.2) and v42 16 (one pass each; solved counts not distinguishable).
+- The targeted mechanism moved: empty patches 4 vs 7.1 (v34) / 6 (v42); never-edited runs with an edit rejected
+  after the wall 1 vs 2.9 (v34) / 4 (v42). Class E (empty, no timeout) 1 vs 3.7 for v34.
+- First successful edit by call index, per pass (`scripts/analysis/first_edit.py`):
+  v34 1-8 2.4 | 9-12 4.6 | 13-18 3.1 | 19-24 5.0 | 25-28 2.7 | none 7.1
+  v43 1-8 3.0 | 9-12 3.0 | 13-18 5.0 | 19-24 5.0 | 25-28 5.0 | none 4.0
+  -> the three runs that left "none" landed in 25-28, i.e. the model edits at the last moment rather than at the
+  first warning (call 18). Late edits are rarely verified, so they convert to "wrong" more than to "solved".
+- Time caps 7 vs 5.1: three T runs are slow model steps (17 s/step, 19-28 calls), not hung commands.
+  dur 310 s vs 306 s — no runtime cost.
