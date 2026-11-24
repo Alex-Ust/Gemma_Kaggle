@@ -914,3 +914,17 @@ distinguishable from noise. Quota used this week: about 10 h of 30 (two pairs at
 - Queue (driver restarted 10:32 UTC, adopts the two running v42 kernels): v43 flaky25 p1, v44 flaky25 p1.
   Read-outs: empty-without-timeout count per pass (v34: 3.7), edits attempted after the wall, solved,
   mean duration. Quota plan: 5 h (v42) + 5 h (these two) of ~20 h.
+
+### 2026-11-24 11:10 UTC — v42 on hang10 (pass 1): 2/10; redundant calls; v45 queued
+
+- v42 hang10 p1: rich_3480 solved (history 3/12; two command timeouts, 60 s lost instead of 480 s), rich_3882
+  solved (12/12). rich_4006 reached an edit for the first time (709 B, wrong; two 30 s timeouts), the other
+  seven unsolved as before. Command timeouts fire at 30 s and the session carries on. Durations of 664-750 s on
+  rich_4006 / rich_3772 are the hidden tests hanging in verification (fixed 300 s there), not the agent.
+- Where the 28 calls go (scripts/analysis/call_waste.py, v34 two full runs + five flaky passes): empty-patch
+  runs make 12.3 read_file + 10.2 grep calls, 3.9 of the 28 are redundant (same call or a >= 60% overlapping
+  re-read) and 2.6 of those come after a compaction; every such run was compacted (first at call 20, median).
+  Solved runs: 2.2 redundant of 21.8. The after-wall editors miss by 1-3 calls, i.e. by about what the
+  compaction re-reads cost.
+- v45_warn34 (sha256 2c435285) = v42 + both levers: 34 calls and the `budget_warning` stop signal (first
+  warning at call 24). Queued after v44 as one flaky25 pass.
