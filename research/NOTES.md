@@ -954,3 +954,24 @@ distinguishable from noise. Quota used this week: about 10 h of 30 (two pairs at
   first warning (call 18). Late edits are rarely verified, so they convert to "wrong" more than to "solved".
 - Time caps 7 vs 5.1: three T runs are slow model steps (17 s/step, 19-28 calls), not hung commands.
   dur 310 s vs 306 s — no runtime cost.
+
+## 2026-11-24 14:05 UTC — v44_calls34 16/25, v45_warn34 18/25 (pass 1 each)
+
+flaky25, one pass per arm, v34 = seven passes:
+
+| arm | solved | empty | capped | dur | first edit none | edit rejected after wall |
+|---|---|---|---|---|---|---|
+| v34 | 14.00 | 7.1 | 5.1 | 306 s | 7.1 | 2.9 |
+| v42 timeout 30 | 16 | 6 | 4 | 288 s | 5 | 4 |
+| v43 + warning rule | 15 | 4 | 7 | 310 s | 4 | 1 |
+| v44 + 34 calls | 16 | 5 | 7 | 308 s | 4 | 1 |
+| v45 + both | 18 | 5 | 5 | 320 s | 5 | 2 |
+
+- All four arms contain the 30 s timeout and all four are above the v34 mean: family mean 16.25 vs 14.00
+  (+2.25, SE ~1.3, z ~1.7). Arms are not distinguishable from each other on one pass (SD 2.0).
+- v45 +4.0 (z +1.8) is the largest single-pass result on this set so far (v34 max 16, v40 max 19).
+- 34 calls: 4 (v44) and 2 (v45) first edits landed in calls 29-34, i.e. edits that the 28-call wall would have
+  rejected. The wall still catches some: fastapi_14616 used 34 reads in both arms.
+- Runtime: mean duration +2..+14 s per task vs v34, projection for 120 sequential tasks 10.3-10.7 h (biased upward
+  at concurrency 2). No hung-command losses above 120 s; max successful command 1.7 s.
+- Next: v45 passes 2 and 3 pushed 14:02 UTC (5 h of quota; ~2.5 h left after them).
