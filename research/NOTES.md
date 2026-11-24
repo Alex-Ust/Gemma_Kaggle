@@ -928,3 +928,16 @@ distinguishable from noise. Quota used this week: about 10 h of 30 (two pairs at
   compaction re-reads cost.
 - v45_warn34 (sha256 2c435285) = v42 + both levers: 34 calls and the `budget_warning` stop signal (first
   warning at call 24). Queued after v44 as one flaky25 pass.
+
+## 2026-11-24 12:15 UTC — v42 on flakyhang34 (pass 1): 18/34, flaky25 part 16/25
+
+- flaky25: v42 16 vs v34 mean 14.00 over seven passes (+2.0, SE 2.2, z +0.9; one pass, inside noise).
+  dur 288 s vs 306 s, capped 4.0 vs 5.1, empty 6.0 vs 7.1.
+- hang10 part: 3/10 (hang-p1 was 2/10). rich_3480 solved in both v42 runs (v34: 1/7 flaky, 3/12 full);
+  rich_3882 2/2; rich_3052 1/2. rich_4006 and fastapi_14258 still unsolved (0/2 each).
+- Timeouts: three tasks hit one (rich_3480 120 s lost, rich_4006 60 s, fastapi_14258 60 s) instead of 240-480 s each.
+  557 successful commands: p99 1.3 s, max 2.9 s -> the 30 s limit cut nothing legitimate.
+- rich_3521 solved (v34 0/7). Part of that is our concurrency-2 artefact (its neighbour rich_3480 no longer
+  stalls the event loop for 240 s); the sequential scorer never had that stall, so do not count it as gain.
+- New failure seen: fastapi_5624 looped `submit_patch` 49 times after the wall until the 80-turn limit
+  (empty patch). Five E runs, four with an edit attempt at call 29 (B) -> the wall again; v43/v44/v45 target it.
