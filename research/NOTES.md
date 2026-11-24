@@ -975,3 +975,20 @@ flaky25, one pass per arm, v34 = seven passes:
 - Runtime: mean duration +2..+14 s per task vs v34, projection for 120 sequential tasks 10.3-10.7 h (biased upward
   at concurrency 2). No hung-command losses above 120 s; max successful command 1.7 s.
 - Next: v45 passes 2 and 3 pushed 14:02 UTC (5 h of quota; ~2.5 h left after them).
+
+## 2026-11-24 16:15 UTC — v45_warn34 passes 2 and 3: 13 and 16 -> mean 15.67 over three
+
+- v45 [18, 13, 16], mean 15.67 vs v34 14.00: +1.67 per pass, SE 1.45, z +1.15. Pass 1 (18) was partly luck.
+- Family with the 30 s timeout (v42, v43, v44, v45 x3): [16, 15, 16, 18, 13, 16], mean 15.67, +1.67, SE 1.17, z +1.4.
+  Arms inside the family are not distinguishable.
+- Per task, family (6 passes) vs v34 (7): rich_3480 5/6 vs 1/7 (the hung reproduction, the one solid effect),
+  rich_3777 3/6 vs 0/7, fastapi_9753 3/6 vs 0/7, rich_3470 2/6 vs 0/7; against: fastapi_14419 1/6 vs 4/7
+  (in the unsolved runs the agent keeps writing reproduction scripts until the 7 min cap; its edits there were
+  non-asserting `replace` calls that matched nothing).
+- v45 empty patches 6.3 vs 7.1, first edit in calls 29-34: 2.7 per pass (rejected under the 28-call wall).
+- Duration: p3 mean 360 s is a slow machine (22.9 tok/s generation vs 26-28 on the other runs), not the bundle.
+  p1/p2 mean 317 s vs v34 306 s (+4%).
+- Checked and closed: "edit after the last submit_patch is not graded" (the harness skips the working-tree
+  fallback once any submit was made). 0 such runs in 426 (`scripts/analysis/stale_submit.py`); the 60 runs with an
+  empty first submit are the call-wall runs that never edited.
+- Quota: ~2.5 h left until Saturday 00:00 UTC, kept in reserve.
