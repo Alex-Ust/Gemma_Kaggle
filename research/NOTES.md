@@ -997,3 +997,9 @@ flaky25, one pass per arm, v34 = seven passes:
 
 On the user's word. Archive verified equal to `submissions/v45_warn34` (sha256 2c435285). Score pending.
 v34 (58230365, 0.18) stays the reference; LB noise is about +/-0.03, so one score will not confirm or refute v45.
+
+## 2026-11-26 — v45_warn34 public LB 0.17 (58845210)
+
+v34 0.18, v28/v30 0.17, v45 0.17, v40 0.15. One task of 58 is 0.017, so v45 and v34 differ by at most one task on
+the public set: consistent with the local estimate (+1.7 +/- 1.5 on flaky25, about +0.02 expected on LB) and with
+no effect at all. LB cannot separate them; v34 remains the first final pick, v45 a reasonable second.
