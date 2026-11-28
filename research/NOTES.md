@@ -1003,3 +1003,15 @@ v34 (58230365, 0.18) stays the reference; LB noise is about +/-0.03, so one scor
 v34 0.18, v28/v30 0.17, v45 0.17, v40 0.15. One task of 58 is 0.017, so v45 and v34 differ by at most one task on
 the public set: consistent with the local estimate (+1.7 +/- 1.5 on flaky25, about +0.02 expected on LB) and with
 no effect at all. LB cannot separate them; v34 remains the first final pick, v45 a reasonable second.
+
+## 2026-11-28 — daily draws; v45 full runs; v46_warn34pin
+
+- Public LB on 2026-11-26: 6836 teams, max 0.24 (19 teams), 0.22: 149, 0.20: 693, 0.18: 1320 (we are rank 1698),
+  0.17: 1227. Scores are k/58 truncated (0.24 = 14, 0.22 = 13, 0.20 = 12, 0.18 = 11, 0.17 = 10). Leaders have 12-56
+  submissions; the table is the best draw of a ~10/58 +/- 1.5 distribution. User decision: submit every day.
+- 11:42 UTC: v45 submitted again (59050818, same archive 2c435285, first draw 0.17).
+- Quota reset. Pushed: v45 full sound-71 x2 (`v45-warn34-l4c2`, `-l4c2b`) — first check of the 30 s timeout and
+  34 calls on the 46 stable tasks (reference: v34 30 and 27, v40 27 of 71).
+- v46_warn34pin = v45 + the verbatim-issue block of v40 (`{problem_description}`, `{hints?}` at the end of the
+  system prompt); sha256 6f618695. Two flaky25 passes queued behind the full runs.
+- Checked: runs where an edit printed success but the graded patch is empty: 4 of 426 -> not a lever.
